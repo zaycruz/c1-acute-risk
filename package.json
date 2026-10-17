@@ -5,7 +5,7 @@
   "scripts": {
     "build:data": "scripts/reproduce.sh",
     "typecheck": "tsc --noEmit",
-    "deploy": "wrangler deploy",
+    "deploy": "scripts/deploy.sh",
     "e2e": "node scripts/e2e.mjs",
     "contract": "node scripts/contract.mjs",
     "e2e:page": "node scripts/page-check.mjs"

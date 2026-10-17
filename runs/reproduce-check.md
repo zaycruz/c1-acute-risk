@@ -13,14 +13,14 @@
 | Nested folds won by the forest | 6 | `runs/autoresearch/round-nested.json` → `picks/rf|compact_raw_use` | 6 | 6 | match |
 | Top-fifth events, search | 52 | `src/data/metrics.json` → `modelSearch/top20Events/procedure` | 52 | 52 | match |
 | Top-fifth events, baseline | 45 | `src/data/metrics.json` → `modelSearch/top20Events/baseline` | 45 | 45 | match |
-| Hero: served forest 50%+ calls that came true | 59% | `src/data/metrics.json` → `servedModel/callsAt50/forest/cameTrue` | error: 'servedModel' | 59% | match |
-| Hero: served forest 50%+ CI | [46%, 71%] | `src/data/metrics.json` → `servedModel/callsAt50/forest/cameTrueCi95` | error: 'servedModel' | [46%, 71%] | match |
-| Hero: served forest 50%+ calls (n) | 59 | `src/data/metrics.json` → `servedModel/callsAt50/forest/n` | error: 'servedModel' | 59 | match |
-| Hero: baseline 50%+ calls that came true | 48% | `src/data/metrics.json` → `servedModel/callsAt50/baseline/cameTrue` | error: 'servedModel' | 48% | match |
-| Hero: baseline 50%+ calls (n) | 69 | `src/data/metrics.json` → `servedModel/callsAt50/baseline/n` | error: 'servedModel' | 69 | match |
-| Hero: difference CI (points) | [-0.2, +23] | `src/data/metrics.json` → `servedModel/callsAt50/differenceCi95` | error: 'servedModel' | [-0.2, +23] | match |
-| Expected held-out events | 57 | `src/data/metrics.json` → `servedModel/expectedHeldout/expectedEvents` | error: 'servedModel' | 57 | match |
-| Expected held-out AUROC range | 0.63 to 0.79 | `src/data/metrics.json` → `servedModel/expectedHeldout/aurocRange95` | error: 'servedModel' | 0.63 to 0.79 | match |
+| Hero: served forest 50%+ calls that came true | 59% | `src/data/metrics.json` → `servedModel/callsAt50/forest/cameTrue` | 59% | 59% | match |
+| Hero: served forest 50%+ CI | [46%, 71%] | `src/data/metrics.json` → `servedModel/callsAt50/forest/cameTrueCi95` | [46%, 71%] | [46%, 71%] | match |
+| Hero: served forest 50%+ calls (n) | 59 | `src/data/metrics.json` → `servedModel/callsAt50/forest/n` | 59 | 59 | match |
+| Hero: baseline 50%+ calls that came true | 48% | `src/data/metrics.json` → `servedModel/callsAt50/baseline/cameTrue` | 48% | 48% | match |
+| Hero: baseline 50%+ calls (n) | 69 | `src/data/metrics.json` → `servedModel/callsAt50/baseline/n` | 69 | 69 | match |
+| Hero: difference CI (points) | [-0.2, +23] | `src/data/metrics.json` → `servedModel/callsAt50/differenceCi95` | [-0.2, +23] | [-0.2, +23] | match |
+| Expected held-out events | 57 | `src/data/metrics.json` → `servedModel/expectedHeldout/expectedEvents` | 57 | 57 | match |
+| Expected held-out AUROC range | 0.63 to 0.79 | `src/data/metrics.json` → `servedModel/expectedHeldout/aurocRange95` | 0.63 to 0.79 | 0.63 to 0.79 | match |
 | 50%+ calls that came true, search | 67% | `src/data/metrics.json` → `modelSearch/callsAt50/procedure/cameTrue` | 67% | 67% | match |
 | 50%+ calls, search (n) | 55 | `src/data/metrics.json` → `modelSearch/callsAt50/procedure/n` | 55 | 55 | match |
 | 50%+ calls that came true, baseline | 49% | `src/data/metrics.json` → `modelSearch/callsAt50/baseline/cameTrue` | 49% | 49% | match |
@@ -135,3 +135,5 @@
 **Reproduction: PASS.** This run differs from the committed outputs on 0 of 130 numbers; submission CSV identical.
 
 **README: 130 of 130 numbers match this run.**
+
+**Submission sha256 (this run): `77f6006837c4081102998f7f81198985e530b5aedb6fc66df8c29b98c2013aee`.** The live API serves its hash as the `x-c1-artifact` header and `/api/c1/metrics` → `build.submissionSha256`; equal hashes mean the served predictions are these.

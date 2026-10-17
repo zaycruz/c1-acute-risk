@@ -14,6 +14,7 @@ README string is exactly what the run produced. The submission CSV is also compa
 with the committed copy (git HEAD).
 """
 import csv
+import hashlib
 import io
 import json
 import os
@@ -279,7 +280,10 @@ def main():
           f"submission CSV {'identical' if sub_ok else 'DIFFERS'}.",
           "",
           f"**README: {n - readme_bad} of {n} numbers match this run.**"
-          + (" The rest are README rounding or typo errors that the committed output shows too (listed above)." if readme_bad else "")]
+          + (" The rest are README rounding or typo errors that the committed output shows too (listed above)." if readme_bad else ""),
+          "",
+          f"**Submission sha256 (this run): `{hashlib.sha256(open(os.path.join(ROOT, 'submission', 'heldout_predictions.csv'), 'rb').read()).hexdigest()}`.** "
+          "The live API serves its hash as the `x-c1-artifact` header and `/api/c1/metrics` → `build.submissionSha256`; equal hashes mean the served predictions are these."]
     txt = "\n".join(md)
     print(txt)
     if out:

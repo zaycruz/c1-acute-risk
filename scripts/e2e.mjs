@@ -2,6 +2,7 @@
 // E2E check for C1 Care Team Risk: hits every endpoint of the deployed Worker, checks the contract,
 // validates the held-out prediction file, and saves everything under runs/ as a repeatable artifact.
 // Usage: node scripts/e2e.mjs [baseUrl]   (default: the workers.dev deploy)
+import { execSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
@@ -153,6 +154,11 @@ if (M.metrics) {
     SM.expectedHeldout?.aurocRange95?.[0] < SM.expectedHeldout.aurocRange95[1] && SM.provenance?.submissionSha256 === csvSha &&
     Number.isInteger(SM.provenance.inputRangeCheck?.total) && M.display.keyNumbers.some((k) => k.value === `${Math.round(SM.callsAt50.forest.cameTrue * 100)}%`),
     SM && { calls: SM.callsAt50.forest, sha: SM.provenance?.submissionSha256?.slice(0, 12), outOfRange: SM.provenance?.inputRangeCheck?.total });
+  const head = execSync("git rev-parse HEAD", { cwd: new URL("..", import.meta.url) }).toString().trim();
+  check("provenance: /metrics build.gitSha and the x-c1-commit header name this checkout's commit; x-c1-artifact is the committed CSV's sha256",
+    M.build?.gitSha === head && responses["/api/c1/metrics"].headers["x-c1-commit"] === head &&
+    responses["/api/c1/metrics"].headers["x-c1-artifact"] === `sha256:${csvSha}` && M.build.submissionSha256 === csvSha,
+    { served: M.build?.gitSha, local: head });
   const FMt = M.fairnessMitigation;
   check("fairness mitigation: pre-registered variants with CIs, a decision, and the language gap stated", FMt && FMt.variants?.length === 5 &&
     FMt.variants.every((v) => v.nhBlackAurocCi95?.length === 2 && Number.isFinite(v.overallLogLoss)) &&
