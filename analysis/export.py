@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Bake model outputs into the Worker's JSON (src/data/survivors.json, src/data/metrics.json).
 
-Usage: .venv/bin/python -I analysis/export.py [data/meps]   (run analysis/train.py and analysis/synthea.py first)
+Usage: uv run python -I analysis/export.py [data/meps]   (run analysis/train.py and analysis/synthea.py first)
 Roster = the 199 held-out survivors: real forward predictions, outcome unknown to us.
 """
 import json

@@ -1,0 +1,12 @@
+// c1-reproduce: runs scripts/reproduce.sh from a fresh GitHub clone inside a Cloudflare Container.
+// Deploy from THIS directory (the repo root's wrangler.jsonc deploys the live c1-acute-risk API). See src/index.js.
+{
+  "name": "c1-reproduce",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "containers": [{ "class_name": "Reproducer", "scheduling_policy": "durable_object" }],
+  "durable_objects": { "bindings": [{ "name": "REPRODUCER", "class_name": "Reproducer" }] },
+  "exports": { "Reproducer": { "type": "durable-object", "storage": "sqlite" } },
+  // Private bucket that holds the two sponsor zips for the length of one run; empty it and delete it afterwards.
+  "r2_buckets": [{ "binding": "DATA", "bucket_name": "c1-reproduce-data" }]
+}

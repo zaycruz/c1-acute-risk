@@ -1,6 +1,10 @@
-data/
+data/*
+!data/README.md
+!data/SHA256SUMS
 .venv/
 node_modules/
 .wrangler/
 analysis/out/*.pkl
 __pycache__/
+src/data/survivors.json
+reproduce-work/

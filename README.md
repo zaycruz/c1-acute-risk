@@ -1,5 +1,27 @@
 # C1 Care Team Risk: who may need acute care in 2018?
 
+**When the model says a survivor's risk is 50% or more, it is right 67% of the time. The organisers' baseline is right 49% of the time.**
+For a care team working its call list, that means about 2 in 3 calls reach someone who will go on to need the ER or a hospital bed, instead of 1 in 2.
+
+| Nested CV, 466 survivors, 134 events | Our model | Baseline | Difference [95% CI] |
+|---|---|---|---|
+| Log loss (probability quality; lower is better) | 0.539 | 0.606 | -0.067 [-0.115, -0.020], significant |
+| Calibration slope (1 = ideal; 10×5 CV) | 1.10 [0.82, 1.44] | 0.45 [0.25, 0.69] | the baseline is over-confident |
+| AUROC (ranking) | 0.711 | 0.672 | +0.039 [-0.015, +0.091], not significant |
+
+**Reproduce in 3 commands** (needs [uv](https://docs.astral.sh/uv/) and the challenge zips; see [REPRODUCE.md](REPRODUCE.md)):
+
+```bash
+git clone https://github.com/zaycruz/c1-acute-risk && cd c1-acute-risk
+unzip -q <Challenge_1>/meps.zip -d data && unzip -q <Challenge_1>/synthea.zip -d data
+scripts/reproduce.sh      # pinned deps, fixed seeds; checks every README number against the run
+```
+
+API: https://c1-acute-risk.zay-259.workers.dev ([CONTRACT.md](CONTRACT.md)) · Submission: [`submission/heldout_predictions.csv`](submission/heldout_predictions.csv) (199 rows)
+
+<details>
+<summary><b>Everything else</b>: full results, risk factors, fairness, Synthea, method, caveats</summary>
+
 eMerge Hackathon Challenge 1. From 2017 MEPS survey answers by real cancer survivors, predict who will have an
 **ER visit or hospital stay in 2018**. Name the factors linked to that risk. Test honestly whether the synthetic
 clinical records (Synthea, different people, no shared key) add anything. The results are served as the C1 module of the Coach Console.
@@ -50,10 +72,9 @@ do not move the ceiling past about 0.71. The best predictor of acute care next y
 That marks need; it is not a lever. Within the prior-use group the search procedure ranks better than the baseline
 (+0.094 [-0.002, +0.206]). The baseline mostly separates "had acute care in 2017" from "did not".
 
-**Proposed alternative target: the first acute event.** Finding last year's repeat users is easy. Prevention needs the *first* event.
-Among the 326 survivors with no ER visit or hospital stay in 2017 (70 had a first one in 2018), the nested-CV search ranks at AUROC 0.653
+**Footnote: first acute events.** Among the 326 survivors with no ER visit or hospital stay in 2017 (70 had a first one in 2018), the nested-CV search ranks at AUROC 0.653
 vs the baseline's 0.634: +0.019 [-0.065, +0.103] (`/api/c1/metrics` → `firstEvent`). No model we tried finds first events much better
-than the baseline. That is why we propose it as the next target: it is the hard, useful part of the problem.
+than the baseline, and the difference is not significant.
 
 **Factors.** TreeSHAP on the forest gives each survivor's drivers on the calibrated log-odds scale (`analysis/explain.py`).
 Mean impact, largest first: spending, age, hospital nights, prescription fills, office visits, ER visits, mental health score (low raises risk),
@@ -103,7 +124,7 @@ The submission uses a MEPS-only model. A Synthea-prior candidate was tried in th
   Utilisation is log-transformed. Only the 2017 file feeds the model. From the 2018 file we read only `ID` and the outcome,
   because it reuses names such as `VPCS42` and `K6SUM42` for 2018 measures. An assert guards against 2018 columns.
 - **Model:** sigmoid-calibrated random forest on the 16 features in `final_features()` (`analysis/features.py`), with missing indicators.
-  The model search and its nested CV are in `analysis/autoresearch.py` (`.venv/bin/python -I analysis/autoresearch.py nested`, about 90 s). `build:data` reads its committed outputs in `runs/autoresearch/`; it does not regenerate them. Explanations: TreeSHAP per calibration fold,
+  The model search and its nested CV are in `analysis/autoresearch.py` (`uv run python -I analysis/autoresearch.py nested`, about 90 s). `scripts/reproduce.sh` regenerates the nested runs every time and rounds 1–3 with `--full`. Explanations: TreeSHAP per calibration fold,
   multiplied by the fold's sigmoid slope, so each contribution is exact on that fold's calibrated log-odds; we report the mean over folds.
 - **Validation:** 10× repeated stratified 5-fold CV, one row per survivor. The baseline and every comparator run on the same folds.
   Out-of-fold predictions are averaged over repeats. 95% CIs come from a 2,000-sample patient bootstrap, and differences are paired.
@@ -111,20 +132,19 @@ The submission uses a MEPS-only model. A Synthea-prior candidate was tried in th
 
 ## Run it
 
-Use short-lived commands only; nothing stays running. The data is not committed: copy it in first.
+**To reproduce every number in this README, follow [REPRODUCE.md](REPRODUCE.md).** It covers the data step (sponsor data, not committed:
+[`data/README.md`](data/README.md)), then one command: `scripts/reproduce.sh`. It uses pinned dependencies (`pyproject.toml` + `uv.lock`, Python 3.14.7),
+fixed seeds, and a table that maps each README number to its file and key (`scripts/check_numbers.py`).
+
+To redeploy and test the Worker after a rebuild (short-lived commands only; nothing stays running):
 
 ```bash
-mkdir -p data && cp -R ~/Downloads/Challenge_1/meps data/ && cp -R ~/Downloads/Challenge_1/synthea data/
-uv venv .venv && uv pip install --python .venv/bin/python pandas scikit-learn numpy pyarrow shap
-npm install
-npm run build:data      # train.py (about 4 min) -> synthea.py (about 1 min) -> export.py; writes submission/ and src/data/
+npm ci
 npm run typecheck && npm run deploy
-npm run e2e             # hits every endpoint and validates the submission; writes runs/e2e-<time>.json
+npm run e2e             # hits every endpoint and validates the submission; writes runs/e2e-<time>.json and runs/e2e-latest.json
 npm run e2e:page        # headless browser check (desktop and phone); writes runs/demo-page-*.png
 npm run contract        # regenerates CONTRACT.md from the latest E2E responses
 ```
-
-The seeds are fixed (`SEED = 20261017`), so a rerun gives the same numbers.
 
 ## 2-minute demo story
 
@@ -134,7 +154,7 @@ The seeds are fixed (`SEED = 20261017`), so a rerun gives the same numbers.
    care team, coach and survivor ("call the team first").
 3. **Can we trust the numbers? (40 s)** Look at the model card: "same-or-better ranking, significantly better probabilities".
    Nested CV says AUROC 0.711 vs 0.672 (not significant) and log loss significantly better. When the model says 50%+, it is right 67% of the time; the baseline is right 49%.
-4. **The insight (20 s).** Heavy care this year predicts acute care next year; nothing else moves the ceiling. So we propose the harder target: the *first* acute event, where no model beats the baseline much yet (0.653 vs 0.634).
+4. **The insight (20 s).** Heavy care this year predicts acute care next year; nothing else moves the ceiling. The value is calibrated triage: the risk numbers can be taken at face value.
 5. **Fairness and clinical records (15 s).** It holds by sex and insurance; NH Black ranking is weak and flagged. We did not fake a join: clinical detail adds nothing even inside Synthea.
 
 ## Caveats
@@ -145,3 +165,5 @@ The seeds are fixed (`SEED = 20261017`), so a rerun gives the same numbers.
 - Synthea is synthetic. Nothing from it is evidence about real patients. The Synthea year (Y → Y+1, 2015–2025) is simulated time, not 2017–18.
 - In `factors[]`, `meanAbsLogit` is the mean absolute TreeSHAP contribution on the calibrated log-odds scale. It ranks drivers; it is not an effect size.
 - The 10×5 CV numbers for the forest are after selection. Quote the nested-CV numbers as the estimate for new survivors.
+
+</details>

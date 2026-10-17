@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Autoresearch loop: search models x feature sets for C1, then score the *search itself* with nested CV.
 
-Usage: .venv/bin/python -I analysis/autoresearch.py <round> [data/meps]
+Usage: uv run python -I analysis/autoresearch.py <round> [data/meps]
   round = 1 (broad), 2 (refine, candidates chosen after reading round 1), nested (honest estimate of picking the best).
 Writes runs/autoresearch/round-<round>.json and appends to runs/autoresearch/log.md.
 
@@ -510,11 +510,13 @@ def main():
     elif rnd == "3":
         run_round(3, {**{k: ROUND1[k] for k in ("baseline|baseline", "lr_l2|domain")}, "rf|compact_raw_use": ROUND2["rf|compact_raw_use"], **ROUND3}, F, y, c)
     elif rnd == "nested":
-        pool = {**ROUND1, **ROUND2, **ROUND3}
+        # Rounds 1-2 only (37 candidates): this is the search the README and runs/autoresearch/round-nested.json report.
+        # Round 3 was scored afterwards against its winner (rf|compact_raw_use) and did not beat it.
+        pool = {**ROUND1, **ROUND2}
         nested(pool, F, y, c)
     elif rnd == "nested-interpretable":
         # Pre-stated restriction: only models whose per-survivor drivers can be read off directly (linear / spline GLMs).
-        pool = {k: v for k, v in {**ROUND1, **ROUND2, **ROUND3}.items() if k.split("|")[0] in ("baseline", "lr_l2", "lr_l2_wide", "lr_l1", "lr_enet", "spline_lr", "poisson_glm", "synthea_prior", "aux_logcost", "bag(spline_lr)")}
+        pool = {k: v for k, v in {**ROUND1, **ROUND2}.items() if k.split("|")[0] in ("baseline", "lr_l2", "lr_l2_wide", "lr_l1", "lr_enet", "spline_lr", "poisson_glm")}
         nested(pool, F, y, c, tag="nested-interpretable")
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """C1: predict acute care (any ER visit or hospital stay) in 2018 from 2017 MEPS answers.
 
-Usage: .venv/bin/python -I analysis/train.py [data/meps]
+Usage: uv run python -I analysis/train.py [data/meps]
 Writes analysis/out/{oof.csv, metrics_meps.json, model.pkl} and submission/heldout_predictions.csv.
 
 Validation: 10 x repeated stratified 5-fold CV, patient level (one row per survivor). Every model,

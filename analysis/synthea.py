@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Do the synthetic clinical records (Synthea) add anything beyond the MEPS survey?
 
-Usage: .venv/bin/python -I analysis/synthea.py [data]     (expects data/meps and data/synthea; run train.py first)
+Usage: uv run python -I analysis/synthea.py [data]     (expects data/meps and data/synthea; run train.py first)
 Writes analysis/out/synthea.json.
 
 There is no key between MEPS and Synthea, so no individual can be linked. Three pre-registered questions:

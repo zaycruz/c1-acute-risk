@@ -1,0 +1,7 @@
+{
+  "name": "c1-reproduce",
+  "private": true,
+  "type": "module",
+  "scripts": { "deploy": "wrangler deploy", "run-reproduce": "sh run.sh" },
+  "devDependencies": { "wrangler": "4.151.1" }
+}
