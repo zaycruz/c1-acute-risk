@@ -1,0 +1,1406 @@
+{
+ "outcome": "Any ER visit or hospital stay in 2018 (outcome_acute_care_2018)",
+ "n_dev": 466,
+ "positives_dev": 134,
+ "n_heldout": 199,
+ "validation": "10x repeated stratified 5-fold CV on the development set, one row per survivor; OOF predictions averaged over repeats; 2000-sample patient bootstrap for 95% CIs; paired bootstrap for differences.",
+ "finalModel": "logistic",
+ "finalC": 0.004641588833612777,
+ "metrics": {
+  "baseline": {
+   "auroc": {
+    "value": 0.6593463405862255,
+    "ci95": [
+     0.6025372827387513,
+     0.7180033339033569
+    ]
+   },
+   "auprc": {
+    "value": 0.42264841486447235,
+    "ci95": [
+     0.35602526986661986,
+     0.5171181223936807
+    ]
+   },
+   "brier": {
+    "value": 0.20076214529615172,
+    "ci95": [
+     0.17854780373247575,
+     0.22241324230065246
+    ]
+   },
+   "cal_intercept": {
+    "value": -0.004893078249502067,
+    "ci95": [
+     -0.25396237737998567,
+     0.2322263259073171
+    ]
+   },
+   "cal_slope": {
+    "value": 0.44605594589114866,
+    "ci95": [
+     0.24817686681625262,
+     0.6949211576173276
+    ]
+   },
+   "mean_pred": {
+    "value": 0.2883706966173635,
+    "ci95": [
+     0.27141169287645445,
+     0.30583014352847154
+    ]
+   },
+   "auroc_per_repeat": {
+    "mean": 0.6462102139902896,
+    "sd": 0.012053828559189763
+   }
+  },
+  "logistic": {
+   "auroc": {
+    "value": 0.6661571659773422,
+    "ci95": [
+     0.6095965552293442,
+     0.7246160569076577
+    ]
+   },
+   "auprc": {
+    "value": 0.43815222144065064,
+    "ci95": [
+     0.366760822894479,
+     0.5332875310514751
+    ]
+   },
+   "brier": {
+    "value": 0.19210365226411782,
+    "ci95": [
+     0.17423579475742795,
+     0.21039385619245546
+    ]
+   },
+   "cal_intercept": {
+    "value": -0.000578279240339202,
+    "ci95": [
+     -0.21849813843644184,
+     0.19854213885590177
+    ]
+   },
+   "cal_slope": {
+    "value": 1.093224415389126,
+    "ci95": [
+     0.6774200964975093,
+     1.6271456624251441
+    ]
+   },
+   "mean_pred": {
+    "value": 0.28766579325990455,
+    "ci95": [
+     0.27870646642792213,
+     0.29739649003052265
+    ]
+   },
+   "auroc_per_repeat": {
+    "mean": 0.6580965653659414,
+    "sd": 0.009326636724961698
+   }
+  },
+  "gbm_calibrated": {
+   "auroc": {
+    "value": 0.6444209674518971,
+    "ci95": [
+     0.5888829243353783,
+     0.6982034537118479
+    ]
+   },
+   "auprc": {
+    "value": 0.44914554504600834,
+    "ci95": [
+     0.36987541754718156,
+     0.5344638852840932
+    ]
+   },
+   "brier": {
+    "value": 0.19248804177999934,
+    "ci95": [
+     0.17567669655060159,
+     0.20916980780385241
+    ]
+   },
+   "cal_intercept": {
+    "value": -0.031390779637911294,
+    "ci95": [
+     -0.24924448837571983,
+     0.16916511147663954
+    ]
+   },
+   "cal_slope": {
+    "value": 1.2994497887244418,
+    "ci95": [
+     0.8526235626007613,
+     1.7820051342063217
+    ]
+   },
+   "mean_pred": {
+    "value": 0.29376792741951907,
+    "ci95": [
+     0.2855617649502317,
+     0.30158552393438676
+    ]
+   },
+   "auroc_per_repeat": {
+    "mean": 0.6388599172810645,
+    "sd": 0.010243580359654569
+   }
+  }
+ },
+ "deltaVsBaseline": {
+  "logistic": {
+   "auroc": {
+    "value": 0.006810825391116659,
+    "ci95": [
+     -0.03830729529839445,
+     0.049672308835254794
+    ],
+    "p_better": 0.6355
+   },
+   "auprc": {
+    "value": 0.01550380657617828,
+    "ci95": [
+     -0.03321932989513826,
+     0.06902988583121802
+    ],
+    "p_better": 0.73
+   },
+   "brier": {
+    "value": -0.008658493032033893,
+    "ci95": [
+     -0.020539336312090643,
+     0.0028582695377787123
+    ],
+    "p_better": 0.9195
+   }
+  },
+  "gbm_calibrated": {
+   "auroc": {
+    "value": -0.014925373134328401,
+    "ci95": [
+     -0.06470608816858056,
+     0.03379348080146012
+    ],
+    "p_better": 0.281
+   },
+   "auprc": {
+    "value": 0.02649713018153599,
+    "ci95": [
+     -0.03993772690142378,
+     0.0868810471873842
+    ],
+    "p_better": 0.749
+   },
+   "brier": {
+    "value": -0.008274103516152376,
+    "ci95": [
+     -0.021462356325298138,
+     0.005455364034018353
+    ],
+    "p_better": 0.877
+   }
+  }
+ },
+ "calibrationCurve": {
+  "baseline": [
+   {
+    "bin": 1,
+    "n": 94,
+    "meanPredicted": 0.08083671528704685,
+    "observed": 0.19148936170212766,
+    "observedCi95": [
+     0.12470043241202647,
+     0.2825046827945932
+    ]
+   },
+   {
+    "bin": 2,
+    "n": 93,
+    "meanPredicted": 0.15920810415975367,
+    "observed": 0.15053763440860216,
+    "observedCi95": [
+     0.09184093232479834,
+     0.2369599135926586
+    ]
+   },
+   {
+    "bin": 3,
+    "n": 93,
+    "meanPredicted": 0.24226781138009804,
+    "observed": 0.23655913978494625,
+    "observedCi95": [
+     0.16172548448287755,
+     0.3322936147472054
+    ]
+   },
+   {
+    "bin": 4,
+    "n": 93,
+    "meanPredicted": 0.35221405284547475,
+    "observed": 0.3870967741935484,
+    "observedCi95": [
+     0.29445899414987403,
+     0.48869204837730434
+    ]
+   },
+   {
+    "bin": 5,
+    "n": 93,
+    "meanPredicted": 0.6095583476007916,
+    "observed": 0.4731182795698925,
+    "observedCi95": [
+     0.3747376923069333,
+     0.5736316035328711
+    ]
+   }
+  ],
+  "logistic": [
+   {
+    "bin": 1,
+    "n": 94,
+    "meanPredicted": 0.174237133087403,
+    "observed": 0.14893617021276595,
+    "observedCi95": [
+     0.09083965063643759,
+     0.23460065287454338
+    ]
+   },
+   {
+    "bin": 2,
+    "n": 93,
+    "meanPredicted": 0.22303151318743022,
+    "observed": 0.21505376344086022,
+    "observedCi95": [
+     0.14374913397362912,
+     0.30896540192829725
+    ]
+   },
+   {
+    "bin": 3,
+    "n": 93,
+    "meanPredicted": 0.26772550621735963,
+    "observed": 0.23655913978494625,
+    "observedCi95": [
+     0.16172548448287755,
+     0.3322936147472054
+    ]
+   },
+   {
+    "bin": 4,
+    "n": 93,
+    "meanPredicted": 0.3206084726817987,
+    "observed": 0.3763440860215054,
+    "observedCi95": [
+     0.284633031376476,
+     0.4778657294866242
+    ]
+   },
+   {
+    "bin": 5,
+    "n": 93,
+    "meanPredicted": 0.45394600413813857,
+    "observed": 0.46236559139784944,
+    "observedCi95": [
+     0.36454451284102324,
+     0.5631725013347029
+    ]
+   }
+  ],
+  "gbm_calibrated": [
+   {
+    "bin": 1,
+    "n": 94,
+    "meanPredicted": 0.17681297599472295,
+    "observed": 0.14893617021276595,
+    "observedCi95": [
+     0.09083965063643759,
+     0.23460065287454338
+    ]
+   },
+   {
+    "bin": 2,
+    "n": 93,
+    "meanPredicted": 0.23809912946003897,
+    "observed": 0.21505376344086022,
+    "observedCi95": [
+     0.14374913397362912,
+     0.30896540192829725
+    ]
+   },
+   {
+    "bin": 3,
+    "n": 93,
+    "meanPredicted": 0.2864496623838773,
+    "observed": 0.3118279569892473,
+    "observedCi95": [
+     0.2267273118974027,
+     0.411857758981228
+    ]
+   },
+   {
+    "bin": 4,
+    "n": 93,
+    "meanPredicted": 0.33583666826426983,
+    "observed": 0.3118279569892473,
+    "observedCi95": [
+     0.2267273118974027,
+     0.411857758981228
+    ]
+   },
+   {
+    "bin": 5,
+    "n": 93,
+    "meanPredicted": 0.4328987811175338,
+    "observed": 0.45161290322580644,
+    "observedCi95": [
+     0.3543959312279996,
+     0.5526688012836483
+    ]
+   }
+  ]
+ },
+ "fairness": [
+  {
+   "attribute": "age",
+   "group": "18-49",
+   "n": 50,
+   "positives": 12,
+   "observedRate": 0.24,
+   "meanPredicted": 0.2195627720049579,
+   "oe": 1.0930814810198362,
+   "brier": 0.17871772196378932,
+   "auroc": 0.5942982456140351,
+   "tooSmall": false
+  },
+  {
+   "attribute": "age",
+   "group": "50-64",
+   "n": 146,
+   "positives": 34,
+   "observedRate": 0.2328767123287671,
+   "meanPredicted": 0.26666396002194503,
+   "oe": 0.8732965351208412,
+   "brier": 0.17143137448411816,
+   "auroc": 0.6685924369747899,
+   "tooSmall": false
+  },
+  {
+   "attribute": "age",
+   "group": "65-74",
+   "n": 151,
+   "positives": 36,
+   "observedRate": 0.23841059602649006,
+   "meanPredicted": 0.28575236894155703,
+   "oe": 0.8343258777156474,
+   "brier": 0.16925235585762607,
+   "auroc": 0.6603864734299518,
+   "tooSmall": false
+  },
+  {
+   "attribute": "age",
+   "group": "75+ (85 = top-coded)",
+   "n": 119,
+   "positives": 52,
+   "observedRate": 0.4369747899159664,
+   "meanPredicted": 0.34447542172679446,
+   "oe": 1.2685224035012104,
+   "brier": 0.2520868020815685,
+   "auroc": 0.5998851894374283,
+   "tooSmall": false
+  },
+  {
+   "attribute": "sex",
+   "group": "Female",
+   "n": 253,
+   "positives": 64,
+   "observedRate": 0.25296442687747034,
+   "meanPredicted": 0.2739455543975461,
+   "oe": 0.9234113232236351,
+   "brier": 0.17540057882190305,
+   "auroc": 0.6765873015873016,
+   "tooSmall": false
+  },
+  {
+   "attribute": "sex",
+   "group": "Male",
+   "n": 213,
+   "positives": 70,
+   "observedRate": 0.3286384976525822,
+   "meanPredicted": 0.3039626028006402,
+   "oe": 1.081180693363539,
+   "brier": 0.2119434531133213,
+   "auroc": 0.6437562437562439,
+   "tooSmall": false
+  },
+  {
+   "attribute": "race_ethnicity",
+   "group": "Hispanic",
+   "n": 28,
+   "positives": 7,
+   "observedRate": 0.25,
+   "meanPredicted": 0.2983502786030078,
+   "oe": 0.83794123193247,
+   "brier": 0.1804328541243736,
+   "auroc": 0.5986394557823129,
+   "tooSmall": true
+  },
+  {
+   "attribute": "race_ethnicity",
+   "group": "NH Asian",
+   "n": 6,
+   "positives": 1,
+   "observedRate": 0.16666666666666666,
+   "meanPredicted": 0.19651442022429644,
+   "oe": 0.8481141815264125,
+   "brier": 0.098524245378245,
+   "auroc": 1.0,
+   "tooSmall": true
+  },
+  {
+   "attribute": "race_ethnicity",
+   "group": "NH Black",
+   "n": 47,
+   "positives": 11,
+   "observedRate": 0.23404255319148937,
+   "meanPredicted": 0.2858753087822447,
+   "oe": 0.8186875396425471,
+   "brier": 0.20890656399602667,
+   "auroc": 0.4318181818181818,
+   "tooSmall": false
+  },
+  {
+   "attribute": "race_ethnicity",
+   "group": "NH White",
+   "n": 371,
+   "positives": 113,
+   "observedRate": 0.3045822102425876,
+   "meanPredicted": 0.2909723216184326,
+   "oe": 1.04677382559432,
+   "brier": 0.19421084148987827,
+   "auroc": 0.6930781367908347,
+   "tooSmall": false
+  },
+  {
+   "attribute": "race_ethnicity",
+   "group": "NH other/multiple",
+   "n": 14,
+   "positives": 2,
+   "observedRate": 0.14285714285714285,
+   "meanPredicted": 0.22374960740582345,
+   "oe": 0.6384687978380996,
+   "brier": 0.14330041905491933,
+   "auroc": 0.29166666666666663,
+   "tooSmall": true
+  },
+  {
+   "attribute": "insurance",
+   "group": "Any private",
+   "n": 297,
+   "positives": 80,
+   "observedRate": 0.26936026936026936,
+   "meanPredicted": 0.2707441210445665,
+   "oe": 0.9948887101261586,
+   "brier": 0.18884348435821674,
+   "auroc": 0.6432027649769586,
+   "tooSmall": false
+  },
+  {
+   "attribute": "insurance",
+   "group": "Public only",
+   "n": 162,
+   "positives": 52,
+   "observedRate": 0.32098765432098764,
+   "meanPredicted": 0.3197798361357949,
+   "oe": 1.0037770304713016,
+   "brier": 0.19944697085079785,
+   "auroc": 0.6840909090909091,
+   "tooSmall": false
+  },
+  {
+   "attribute": "insurance",
+   "group": "Uninsured",
+   "n": 7,
+   "positives": 2,
+   "observedRate": 0.2857142857142857,
+   "meanPredicted": 0.2624174649829272,
+   "oe": 1.0887777066700732,
+   "brier": 0.16048254612275376,
+   "auroc": 0.9,
+   "tooSmall": true
+  },
+  {
+   "attribute": "cancer_type",
+   "group": "breast",
+   "n": 94,
+   "positives": 24,
+   "observedRate": 0.2553191489361702,
+   "meanPredicted": 0.27183744538339105,
+   "oe": 0.939234653916336,
+   "brier": 0.18484805084220032,
+   "auroc": 0.6255952380952381,
+   "tooSmall": false
+  },
+  {
+   "attribute": "cancer_type",
+   "group": "colon",
+   "n": 23,
+   "positives": 7,
+   "observedRate": 0.30434782608695654,
+   "meanPredicted": 0.30215225814114716,
+   "oe": 1.0072664290491047,
+   "brier": 0.20367586908716245,
+   "auroc": 0.6875,
+   "tooSmall": true
+  },
+  {
+   "attribute": "cancer_type",
+   "group": "lung",
+   "n": 20,
+   "positives": 7,
+   "observedRate": 0.35,
+   "meanPredicted": 0.3341163157695805,
+   "oe": 1.0475393851803798,
+   "brier": 0.19801451733383885,
+   "auroc": 0.6813186813186813,
+   "tooSmall": true
+  },
+  {
+   "attribute": "cancer_type",
+   "group": "other only",
+   "n": 269,
+   "positives": 76,
+   "observedRate": 0.2825278810408922,
+   "meanPredicted": 0.2824334738061319,
+   "oe": 1.000334263617864,
+   "brier": 0.1853421069666881,
+   "auroc": 0.6964139623670575,
+   "tooSmall": false
+  },
+  {
+   "attribute": "cancer_type",
+   "group": "prostate",
+   "n": 60,
+   "positives": 20,
+   "observedRate": 0.3333333333333333,
+   "meanPredicted": 0.31488511810982084,
+   "oe": 1.0585871295990508,
+   "brier": 0.2273787177698576,
+   "auroc": 0.55125,
+   "tooSmall": false
+  }
+ ],
+ "fairnessBaseline": [
+  {
+   "attribute": "age",
+   "group": "18-49",
+   "n": 50,
+   "positives": 12,
+   "observedRate": 0.24,
+   "meanPredicted": 0.1612815306145348,
+   "oe": 1.4880811155841738,
+   "brier": 0.17860359977548057,
+   "auroc": 0.5328947368421053,
+   "tooSmall": false
+  },
+  {
+   "attribute": "age",
+   "group": "50-64",
+   "n": 146,
+   "positives": 34,
+   "observedRate": 0.2328767123287671,
+   "meanPredicted": 0.24856705144000157,
+   "oe": 0.9368768345589771,
+   "brier": 0.17524829356009156,
+   "auroc": 0.6869747899159664,
+   "tooSmall": false
+  },
+  {
+   "attribute": "age",
+   "group": "65-74",
+   "n": 151,
+   "positives": 36,
+   "observedRate": 0.23841059602649006,
+   "meanPredicted": 0.28699465738216884,
+   "oe": 0.8307144049340852,
+   "brier": 0.18821029407302897,
+   "auroc": 0.6072463768115942,
+   "tooSmall": false
+  },
+  {
+   "attribute": "age",
+   "group": "75+ (85 = top-coded)",
+   "n": 119,
+   "positives": 52,
+   "observedRate": 0.4369747899159664,
+   "meanPredicted": 0.3923502967900582,
+   "oe": 1.113736356238278,
+   "brier": 0.2573023063397642,
+   "auroc": 0.5869690011481056,
+   "tooSmall": false
+  },
+  {
+   "attribute": "sex",
+   "group": "Female",
+   "n": 253,
+   "positives": 64,
+   "observedRate": 0.25296442687747034,
+   "meanPredicted": 0.25474578145125176,
+   "oe": 0.9930073245427921,
+   "brier": 0.18066360027516323,
+   "auroc": 0.6647652116402116,
+   "tooSmall": false
+  },
+  {
+   "attribute": "sex",
+   "group": "Male",
+   "n": 213,
+   "positives": 70,
+   "observedRate": 0.3286384976525822,
+   "meanPredicted": 0.32831014984283896,
+   "oe": 1.0010001147083036,
+   "brier": 0.22463506496896907,
+   "auroc": 0.6354645354645355,
+   "tooSmall": false
+  },
+  {
+   "attribute": "race_ethnicity",
+   "group": "Hispanic",
+   "n": 28,
+   "positives": 7,
+   "observedRate": 0.25,
+   "meanPredicted": 0.2676719749683548,
+   "oe": 0.9339789868907865,
+   "brier": 0.17545653300117062,
+   "auroc": 0.7210884353741497,
+   "tooSmall": true
+  },
+  {
+   "attribute": "race_ethnicity",
+   "group": "NH Asian",
+   "n": 6,
+   "positives": 1,
+   "observedRate": 0.16666666666666666,
+   "meanPredicted": 0.18443852863649715,
+   "oe": 0.9036434409815945,
+   "brier": 0.20943619824313234,
+   "auroc": 0.0,
+   "tooSmall": true
+  },
+  {
+   "attribute": "race_ethnicity",
+   "group": "NH Black",
+   "n": 47,
+   "positives": 11,
+   "observedRate": 0.23404255319148937,
+   "meanPredicted": 0.24377302897238662,
+   "oe": 0.9600838705499308,
+   "brier": 0.2554886643069597,
+   "auroc": 0.393939393939394,
+   "tooSmall": false
+  },
+  {
+   "attribute": "race_ethnicity",
+   "group": "NH White",
+   "n": 371,
+   "positives": 113,
+   "observedRate": 0.3045822102425876,
+   "meanPredicted": 0.30216841568280994,
+   "oe": 1.007988242432033,
+   "brier": 0.19730014014554062,
+   "auroc": 0.6894765726829938,
+   "tooSmall": false
+  },
+  {
+   "attribute": "race_ethnicity",
+   "group": "NH other/multiple",
+   "n": 14,
+   "positives": 2,
+   "observedRate": 0.14285714285714285,
+   "meanPredicted": 0.15839168376670082,
+   "oe": 0.9019232541751422,
+   "brier": 0.15567431272088947,
+   "auroc": 0.125,
+   "tooSmall": true
+  },
+  {
+   "attribute": "insurance",
+   "group": "Any private",
+   "n": 297,
+   "positives": 80,
+   "observedRate": 0.26936026936026936,
+   "meanPredicted": 0.2709748102026856,
+   "oe": 0.9940417308855809,
+   "brier": 0.18935367733727976,
+   "auroc": 0.661578341013825,
+   "tooSmall": false
+  },
+  {
+   "attribute": "insurance",
+   "group": "Public only",
+   "n": 162,
+   "positives": 52,
+   "observedRate": 0.32098765432098764,
+   "meanPredicted": 0.31789599200096574,
+   "oe": 1.0097253894286673,
+   "brier": 0.2257536763867109,
+   "auroc": 0.6339160839160839,
+   "tooSmall": false
+  },
+  {
+   "attribute": "insurance",
+   "group": "Uninsured",
+   "n": 7,
+   "positives": 2,
+   "observedRate": 0.2857142857142857,
+   "meanPredicted": 0.34315361276247397,
+   "oe": 0.8326133693135647,
+   "brier": 0.10643170916963747,
+   "auroc": 1.0,
+   "tooSmall": true
+  },
+  {
+   "attribute": "cancer_type",
+   "group": "breast",
+   "n": 94,
+   "positives": 24,
+   "observedRate": 0.2553191489361702,
+   "meanPredicted": 0.27205186472693504,
+   "oe": 0.9384943903708953,
+   "brier": 0.2013202609139273,
+   "auroc": 0.6172619047619047,
+   "tooSmall": false
+  },
+  {
+   "attribute": "cancer_type",
+   "group": "colon",
+   "n": 23,
+   "positives": 7,
+   "observedRate": 0.30434782608695654,
+   "meanPredicted": 0.3308080708783706,
+   "oe": 0.9200133034204513,
+   "brier": 0.19691026779601875,
+   "auroc": 0.6607142857142857,
+   "tooSmall": true
+  },
+  {
+   "attribute": "cancer_type",
+   "group": "lung",
+   "n": 20,
+   "positives": 7,
+   "observedRate": 0.35,
+   "meanPredicted": 0.3307162120885486,
+   "oe": 1.0583091702389484,
+   "brier": 0.24624952700216074,
+   "auroc": 0.5494505494505494,
+   "tooSmall": true
+  },
+  {
+   "attribute": "cancer_type",
+   "group": "other only",
+   "n": 269,
+   "positives": 76,
+   "observedRate": 0.2825278810408922,
+   "meanPredicted": 0.2770257170048953,
+   "oe": 1.019861564101284,
+   "brier": 0.19209635857997662,
+   "auroc": 0.6855058631033543,
+   "tooSmall": false
+  },
+  {
+   "attribute": "cancer_type",
+   "group": "prostate",
+   "n": 60,
+   "positives": 20,
+   "observedRate": 0.3333333333333333,
+   "meanPredicted": 0.3344173598844862,
+   "oe": 0.9967584620860374,
+   "brier": 0.2250534670788697,
+   "auroc": 0.63625,
+   "tooSmall": false
+  }
+ ],
+ "tiers": {
+  "watch": 0.29,
+  "alert": 0.36,
+  "tiers": [
+   {
+    "status": "alert",
+    "riskFrom": 0.36,
+    "riskTo": 1.0,
+    "n": 100,
+    "positives": 46,
+    "observedRate": 0.46,
+    "shareOfAllPositives": 0.34328358208955223
+   },
+   {
+    "status": "watch",
+    "riskFrom": 0.29,
+    "riskTo": 0.36,
+    "n": 84,
+    "positives": 32,
+    "observedRate": 0.38095238095238093,
+    "shareOfAllPositives": 0.23880597014925373
+   },
+   {
+    "status": "ok",
+    "riskFrom": 0.0,
+    "riskTo": 0.29,
+    "n": 282,
+    "positives": 56,
+    "observedRate": 0.19858156028368795,
+    "shareOfAllPositives": 0.417910447761194
+   }
+  ]
+ },
+ "factors": [
+  {
+   "feature": "er_visits_17",
+   "label": "ER visits in 2017 (log)",
+   "coefPerSd": 0.1261927618478373,
+   "oddsRatioPerSd": 1.1345008356844413,
+   "ci95": [
+    0.06539006399969027,
+    0.17907264650215152
+   ],
+   "sameSignShare": 1.0
+  },
+  {
+   "feature": "hosp_stays_17",
+   "label": "Hospital stays in 2017 (log)",
+   "coefPerSd": 0.10023947126623242,
+   "oddsRatioPerSd": 1.1054356064461672,
+   "ci95": [
+    0.0379229434739241,
+    0.16187359400317103
+   ],
+   "sameSignShare": 1.0
+  },
+  {
+   "feature": "rx_fills_17",
+   "label": "Prescription fills in 2017 (log)",
+   "coefPerSd": 0.09841121621644539,
+   "oddsRatioPerSd": 1.103416434559493,
+   "ci95": [
+    0.05189978902356016,
+    0.14016539080767804
+   ],
+   "sameSignShare": 1.0
+  },
+  {
+   "feature": "office_visits_17",
+   "label": "Office visits in 2017 (log)",
+   "coefPerSd": 0.08537700482708517,
+   "oddsRatioPerSd": 1.0891275956687132,
+   "ci95": [
+    0.025632635747634754,
+    0.14859008102736945
+   ],
+   "sameSignShare": 1.0
+  },
+  {
+   "feature": "age",
+   "label": "Age (years)",
+   "coefPerSd": 0.08263344360445143,
+   "oddsRatioPerSd": 1.0861436026861953,
+   "ci95": [
+    0.0335734457418126,
+    0.13632273384649904
+   ],
+   "sameSignShare": 1.0
+  },
+  {
+   "feature": "home_health_17",
+   "label": "Any home health care in 2017",
+   "coefPerSd": 0.06627334762010766,
+   "oddsRatioPerSd": 1.0685187543088768,
+   "ci95": [
+    0.003046407167752745,
+    0.12346518780662132
+   ],
+   "sameSignShare": 0.98
+  },
+  {
+   "feature": "female",
+   "label": "Female",
+   "coefPerSd": -0.050788518763173154,
+   "oddsRatioPerSd": 0.95047965789278,
+   "ci95": [
+    -0.09629380070056269,
+    0.0021906109550584984
+   ],
+   "sameSignShare": 0.9666666666666667
+  },
+  {
+   "feature": "physical_score",
+   "label": "Physical health summary (VR-12 PCS, higher = better)",
+   "coefPerSd": -0.04922629394638614,
+   "oddsRatioPerSd": 0.95196568125125,
+   "ci95": [
+    -0.10035145118711074,
+    -0.005364997897202846
+   ],
+   "sameSignShare": 0.9966666666666667
+  },
+  {
+   "feature": "missing:poor_physical_rating",
+   "label": "Missing: Self-rated physical health (1 excellent - 5 poor)",
+   "coefPerSd": 0.04761562544306056,
+   "oddsRatioPerSd": 1.0487674583129767,
+   "ci95": [
+    -0.006522972799764546,
+    0.09435824177082322
+   ],
+   "sameSignShare": 0.96
+  },
+  {
+   "feature": "mental_score",
+   "label": "Mental health summary (VR-12 MCS, higher = better)",
+   "coefPerSd": -0.04745636427352982,
+   "oddsRatioPerSd": 0.9536520855262779,
+   "ci95": [
+    -0.09361798045787323,
+    -0.0015107693291091895
+   ],
+   "sameSignShare": 0.9733333333333334
+  },
+  {
+   "feature": "distress_k6",
+   "label": "Psychological distress (K6, 0-24)",
+   "coefPerSd": 0.046553941810025354,
+   "oddsRatioPerSd": 1.047654589929233,
+   "ci95": [
+    -0.0005915596194489216,
+    0.09142236408267586
+   ],
+   "sameSignShare": 0.97
+  },
+  {
+   "feature": "poor_physical_rating",
+   "label": "Self-rated physical health (1 excellent - 5 poor)",
+   "coefPerSd": 0.04608378268202033,
+   "oddsRatioPerSd": 1.0471621413344538,
+   "ci95": [
+    -0.008345738830169726,
+    0.0941366199330801
+   ],
+   "sameSignShare": 0.9466666666666667
+  },
+  {
+   "feature": "n_cancer_types",
+   "label": "Number of cancer types",
+   "coefPerSd": 0.04268538735558626,
+   "oddsRatioPerSd": 1.0436095104485612,
+   "ci95": [
+    -0.02155133108056816,
+    0.10052785395282993
+   ],
+   "sameSignShare": 0.9066666666666666
+  },
+  {
+   "feature": "depression_phq2",
+   "label": "Depression screen (PHQ-2, 0-6)",
+   "coefPerSd": 0.041872129333849935,
+   "oddsRatioPerSd": 1.042761131664813,
+   "ci95": [
+    -0.0013851855560407665,
+    0.09338276210403555
+   ],
+   "sameSignShare": 0.9666666666666667
+  },
+  {
+   "feature": "not_married",
+   "label": "Not married",
+   "coefPerSd": 0.04106786327982922,
+   "oddsRatioPerSd": 1.041922811445599,
+   "ci95": [
+    -0.013357146993036419,
+    0.10039994071284698
+   ],
+   "sameSignShare": 0.93
+  },
+  {
+   "feature": "missing:distress_k6",
+   "label": "Missing: Psychological distress (K6, 0-24)",
+   "coefPerSd": 0.038156709133864986,
+   "oddsRatioPerSd": 1.0388940243054392,
+   "ci95": [
+    -0.008594493134482874,
+    0.0839683350189067
+   ],
+   "sameSignShare": 0.9333333333333333
+  },
+  {
+   "feature": "nh_black",
+   "label": "Non-Hispanic Black",
+   "coefPerSd": -0.035505880487916246,
+   "oddsRatioPerSd": 0.9651170588541111,
+   "ci95": [
+    -0.09244507434795604,
+    0.02103045559032511
+   ],
+   "sameSignShare": 0.8733333333333333
+  },
+  {
+   "feature": "missing:fatigue",
+   "label": "Missing: Average fatigue last 7 days (1-5)",
+   "coefPerSd": 0.03472847962049098,
+   "oddsRatioPerSd": 1.0353385551144678,
+   "ci95": [
+    -0.018701185014937217,
+    0.07742505112233672
+   ],
+   "sameSignShare": 0.9133333333333333
+  },
+  {
+   "feature": "nh_asian_other",
+   "label": "Non-Hispanic Asian or other race",
+   "coefPerSd": -0.033296636131426076,
+   "oddsRatioPerSd": 0.9672515952578087,
+   "ci95": [
+    -0.07581092464616761,
+    0.019388743643415675
+   ],
+   "sameSignShare": 0.8966666666666666
+  },
+  {
+   "feature": "missing:cost_delay",
+   "label": "Missing: Delayed or skipped care because of cost (0-7)",
+   "coefPerSd": -0.03314697268414413,
+   "oddsRatioPerSd": 0.96739636829929,
+   "ci95": [
+    -0.07119187435975796,
+    0.015115202659912712
+   ],
+   "sameSignShare": 0.9066666666666666
+  },
+  {
+   "feature": "hispanic",
+   "label": "Hispanic",
+   "coefPerSd": -0.02527054496456798,
+   "oddsRatioPerSd": 0.9750460825332201,
+   "ci95": [
+    -0.07912190084781975,
+    0.03037770193297498
+   ],
+   "sameSignShare": 0.8333333333333334
+  },
+  {
+   "feature": "activity_limited",
+   "label": "Activities limited by cancer",
+   "coefPerSd": -0.024525216279231026,
+   "oddsRatioPerSd": 0.9757730832416437,
+   "ci95": [
+    -0.06924400881717567,
+    0.029005560498994096
+   ],
+   "sameSignShare": 0.7933333333333333
+  },
+  {
+   "feature": "family_caregiver",
+   "label": "Family member provides care",
+   "coefPerSd": -0.02395215723739046,
+   "oddsRatioPerSd": 0.976332419080703,
+   "ci95": [
+    -0.07215314631519507,
+    0.031526770464011464
+   ],
+   "sameSignShare": 0.8133333333333334
+  },
+  {
+   "feature": "fear_recurrence",
+   "label": "Worry cancer will come back (1-5)",
+   "coefPerSd": -0.022308262431748205,
+   "oddsRatioPerSd": 0.9779387268117383,
+   "ci95": [
+    -0.07592675966604805,
+    0.0346782989356768
+   ],
+   "sameSignShare": 0.79
+  },
+  {
+   "feature": "missing:family_caregiver",
+   "label": "Missing: Family member provides care",
+   "coefPerSd": 0.01964844836348624,
+   "oddsRatioPerSd": 1.0198427496113127,
+   "ci95": [
+    -0.045615542941343734,
+    0.07844107082239292
+   ],
+   "sameSignShare": 0.7233333333333334
+  },
+  {
+   "feature": "pain",
+   "label": "Average pain last 7 days (0-10)",
+   "coefPerSd": -0.01854777760228814,
+   "oddsRatioPerSd": 0.9816231738698004,
+   "ci95": [
+    -0.06744968703443051,
+    0.02699996075555249
+   ],
+   "sameSignShare": 0.8066666666666666
+  },
+  {
+   "feature": "cost_delay",
+   "label": "Delayed or skipped care because of cost (0-7)",
+   "coefPerSd": 0.018317134444599065,
+   "oddsRatioPerSd": 1.0184859221457272,
+   "ci95": [
+    -0.03600045563233488,
+    0.06727834725720915
+   ],
+   "sameSignShare": 0.7333333333333333
+  },
+  {
+   "feature": "missing:fear_recurrence",
+   "label": "Missing: Worry cancer will come back (1-5)",
+   "coefPerSd": -0.01773709466366628,
+   "oddsRatioPerSd": 0.9824192816809217,
+   "ci95": [
+    -0.056363245292388425,
+    0.029316456469641455
+   ],
+   "sameSignShare": 0.7433333333333333
+  },
+  {
+   "feature": "current_treatment",
+   "label": "Currently treated for cancer",
+   "coefPerSd": -0.016099861036774576,
+   "oddsRatioPerSd": 0.9840290489875932,
+   "ci95": [
+    -0.07182813936084952,
+    0.0379846133637007
+   ],
+   "sameSignShare": 0.7333333333333333
+  },
+  {
+   "feature": "missing:current_treatment",
+   "label": "Missing: Currently treated for cancer",
+   "coefPerSd": 0.014233561582958392,
+   "oddsRatioPerSd": 1.0143353410420404,
+   "ci95": [
+    -0.048632032475785285,
+    0.07936022815766286
+   ],
+   "sameSignShare": 0.6633333333333333
+  },
+  {
+   "feature": "ca_prostate",
+   "label": "Prostate cancer",
+   "coefPerSd": 0.012882755392257313,
+   "oddsRatioPerSd": 1.0129660955847366,
+   "ci95": [
+    -0.04004559174955033,
+    0.0670977551159534
+   ],
+   "sameSignShare": 0.6733333333333333
+  },
+  {
+   "feature": "missing:activity_limited",
+   "label": "Missing: Activities limited by cancer",
+   "coefPerSd": 0.012072894408148523,
+   "oddsRatioPerSd": 1.0121460659655146,
+   "ci95": [
+    -0.042951626283577925,
+    0.06351194208720494
+   ],
+   "sameSignShare": 0.65
+  },
+  {
+   "feature": "missing:depression_phq2",
+   "label": "Missing: Depression screen (PHQ-2, 0-6)",
+   "coefPerSd": 0.010761613114604905,
+   "oddsRatioPerSd": 1.0108197275543025,
+   "ci95": [
+    -0.026367868257566908,
+    0.060116359171824646
+   ],
+   "sameSignShare": 0.64
+  },
+  {
+   "feature": "missing:pain",
+   "label": "Missing: Average pain last 7 days (0-10)",
+   "coefPerSd": 0.010572740477011828,
+   "oddsRatioPerSd": 1.0106288293945151,
+   "ci95": [
+    -0.03749022831252322,
+    0.06093163496767505
+   ],
+   "sameSignShare": 0.6766666666666666
+  },
+  {
+   "feature": "ca_colon",
+   "label": "Colon cancer",
+   "coefPerSd": 0.010311846037127585,
+   "oddsRatioPerSd": 1.0103651963438334,
+   "ci95": [
+    -0.042495344572806626,
+    0.059772988451527315
+   ],
+   "sameSignShare": 0.6633333333333333
+  },
+  {
+   "feature": "financial_toxicity",
+   "label": "Financial hardship items (0-7)",
+   "coefPerSd": -0.007947175879555887,
+   "oddsRatioPerSd": 0.9920843194345156,
+   "ci95": [
+    -0.05254591534571628,
+    0.03799599950071548
+   ],
+   "sameSignShare": 0.5966666666666667
+  },
+  {
+   "feature": "recurrence",
+   "label": "Told cancer came back",
+   "coefPerSd": -0.0075443369773589295,
+   "oddsRatioPerSd": 0.9924840501007691,
+   "ci95": [
+    -0.05758848746919973,
+    0.04218584796185146
+   ],
+   "sameSignShare": 0.64
+  },
+  {
+   "feature": "ca_lung",
+   "label": "Lung cancer",
+   "coefPerSd": 0.006655641720982513,
+   "oddsRatioPerSd": 1.0066778397243341,
+   "ci95": [
+    -0.03992628149384954,
+    0.059994263649690564
+   ],
+   "sameSignShare": 0.6433333333333333
+  },
+  {
+   "feature": "no_saq",
+   "label": "Did not complete the health questionnaire",
+   "coefPerSd": 0.00633073813807686,
+   "oddsRatioPerSd": 1.0063508196152553,
+   "ci95": [
+    -0.024539872499980308,
+    0.039028522849622174
+   ],
+   "sameSignShare": 0.6533333333333333
+  },
+  {
+   "feature": "missing:physical_score",
+   "label": "Missing: Physical health summary (VR-12 PCS, higher = better)",
+   "coefPerSd": 0.00633073813807686,
+   "oddsRatioPerSd": 1.0063508196152553,
+   "ci95": [
+    -0.024539872499980308,
+    0.039028522849622174
+   ],
+   "sameSignShare": 0.6533333333333333
+  },
+  {
+   "feature": "missing:mental_score",
+   "label": "Missing: Mental health summary (VR-12 MCS, higher = better)",
+   "coefPerSd": 0.00633073813807686,
+   "oddsRatioPerSd": 1.0063508196152553,
+   "ci95": [
+    -0.024539872499980308,
+    0.039028522849622174
+   ],
+   "sameSignShare": 0.6533333333333333
+  },
+  {
+   "feature": "missing:recurrence",
+   "label": "Missing: Told cancer came back",
+   "coefPerSd": -0.005539587647622258,
+   "oddsRatioPerSd": 0.9944757275749745,
+   "ci95": [
+    -0.05655204382379667,
+    0.05546310329195729
+   ],
+   "sameSignShare": 0.5966666666666667
+  },
+  {
+   "feature": "fatigue",
+   "label": "Average fatigue last 7 days (1-5)",
+   "coefPerSd": 0.005172682795852501,
+   "oddsRatioPerSd": 1.0051860842166414,
+   "ci95": [
+    -0.03892410791078935,
+    0.050988235997616885
+   ],
+   "sameSignShare": 0.5933333333333334
+  },
+  {
+   "feature": "ca_breast",
+   "label": "Breast cancer",
+   "coefPerSd": -0.00449814587159009,
+   "oddsRatioPerSd": 0.9955119556348587,
+   "ci95": [
+    -0.05678046410046051,
+    0.04566165964374106
+   ],
+   "sameSignShare": 0.5766666666666667
+  },
+  {
+   "feature": "uninsured",
+   "label": "Uninsured all of 2017",
+   "coefPerSd": 0.00316925175033999,
+   "oddsRatioPerSd": 1.003174279138285,
+   "ci95": [
+    -0.03986186077597492,
+    0.041834480852154125
+   ],
+   "sameSignShare": 0.49333333333333335
+  },
+  {
+   "feature": "low_income",
+   "label": "Family income below 200% of poverty",
+   "coefPerSd": 0.0027197346540906576,
+   "oddsRatioPerSd": 1.0027234364876259,
+   "ci95": [
+    -0.045130664071744986,
+    0.05743083150789931
+   ],
+   "sameSignShare": 0.5533333333333333
+  },
+  {
+   "feature": "public_only",
+   "label": "Public insurance only",
+   "coefPerSd": 0.0026837488503433185,
+   "oddsRatioPerSd": 1.0026873533280722,
+   "ci95": [
+    -0.045437982787137225,
+    0.05086231860603376
+   ],
+   "sameSignShare": 0.5166666666666667
+  },
+  {
+   "feature": "missing:home_health_17",
+   "label": "Missing: Any home health care in 2017",
+   "coefPerSd": 0.0005491336088647713,
+   "oddsRatioPerSd": 1.000549284410327,
+   "ci95": [
+    -0.04696331145444612,
+    0.053174904437945
+   ],
+   "sameSignShare": 0.4266666666666667
+  },
+  {
+   "feature": "missing:financial_toxicity",
+   "label": "Missing: Financial hardship items (0-7)",
+   "coefPerSd": 5.858525619240191e-05,
+   "oddsRatioPerSd": 1.000058586972342,
+   "ci95": [
+    -0.05177220825807775,
+    0.06135864109309202
+   ],
+   "sameSignShare": 0.5366666666666666
+  }
+ ],
+ "heldoutSummary": {
+  "meanPredicted": 0.29313292578697553,
+  "min": 0.13508504533790136,
+  "max": 0.7323117426041795
+ }
+}

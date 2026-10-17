@@ -1,0 +1,16 @@
+{
+  "name": "c1-acute-risk",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build:data": ".venv/bin/python -I analysis/train.py data/meps && .venv/bin/python -I analysis/synthea.py data && .venv/bin/python -I analysis/export.py data/meps",
+    "typecheck": "tsc --noEmit",
+    "deploy": "wrangler deploy",
+    "e2e": "node scripts/e2e.mjs",
+    "contract": "node scripts/contract.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "wrangler": "^4.135.0"
+  }
+}
