@@ -1,0 +1,357 @@
+{
+ "verdict": {
+  "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain",
+  "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02: the shared risk pattern (prior acute care, age, insurance) transports. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.002, +0.011], d Brier -0.0012 [-0.0022, -0.0002]; Synthea prior d AUROC +0.004 [-0.003, +0.010], d Brier -0.0009 [-0.0018, +0.0001]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses the MEPS-only model."
+ },
+ "design": "Do the synthetic clinical records (Synthea) add anything beyond the MEPS survey?\n\nUsage: .venv/bin/python -I analysis/synthea.py [data]     (expects data/meps and data/synthea; run train.py first)\nWrites analysis/out/synthea.json.\n\nThere is no key between MEPS and Synthea, so no individual can be linked. Three pre-registered questions:\n  Q1 (inside Synthea): do clinical-only features (stage, comorbidities, metastasis, opioids, kidney function)\n     add AUROC over the features both sources share? Person-years, CV grouped by patient.\n     Pass: paired dAUROC 95% CI above 0.\n  Q2 (transport): a Synthea model trained on shared features only, applied unchanged to MEPS dev survivors.\n     Pass: AUROC CI above 0.5. Also reports calibration (O/E) to show the population shift.\n  Q3 (increment in MEPS): add Synthea-derived features to the MEPS model, same repeated CV as train.py,\n     paired against MEPS-only. (a) transferred \"clinical burden\" score = E[clinical part of the Synthea logit |\n     shared features]; (b) shrunken stratum features (acute rate, advanced-stage share, comorbidity burden)\n     under three stratum definitions. Pass: dAUROC CI above 0 or dBrier CI below 0.\nOnly MEPS survivors with breast, colon, lung or prostate cancer are aligned to strata (Synthea has only those);\neveryone else gets the overall Synthea mean plus an \"unaligned\" flag.",
+ "q1WithinSynthea": {
+  "personYears": 4033,
+  "patients": 660,
+  "outcomeRate": 0.22018348623853212,
+  "aurocShared": 0.6710342098855613,
+  "aurocSharedPlusClinical": 0.6702706283389908,
+  "deltaAuroc": -0.0007635815465705242,
+  "deltaAurocCi95": [
+   -0.00791328082669567,
+   0.006818053039826115
+  ],
+  "clinicalCoefPerSd": {
+   "stage_advanced": 0.0860007965248515,
+   "stage_missing": 0.01845909286476743,
+   "metastatic": -0.06575232612674234,
+   "n_comorbid": 0.13036270861012753,
+   "opioid": -0.018288163378877304,
+   "low_egfr": 0.0032544567090979095,
+   "obese": -0.017479272594399624,
+   "years_since_dx": 0.03186334784318901
+  },
+  "stageMissingShare": 0.8601537317133647
+ },
+ "q2Transport": {
+  "aurocInMeps": 0.6863648624348139,
+  "ci95": [
+   0.633852534835573,
+   0.7404358744282351
+  ],
+  "meanPredicted": 0.2809606474536869,
+  "observedRate": 0.2875536480686695,
+  "oe": 1.0234659219173012
+ },
+ "q3Increment": {
+  "baseline": {
+   "auroc": {
+    "value": 0.6631226398129834,
+    "ci95": [
+     0.6069323606684207,
+     0.7167662134186239
+    ]
+   },
+   "brier": {
+    "value": 0.19248951216660448,
+    "ci95": [
+     0.1744997935744277,
+     0.212159746749017
+    ]
+   },
+   "cal_slope": {
+    "value": 1.0098634577167478,
+    "ci95": [
+     0.6046813901113645,
+     1.4858495823540825
+    ]
+   }
+  },
+  "transfer_prior_logit": {
+   "auroc": {
+    "value": 0.6667415932386261,
+    "ci95": [
+     0.6100727391014176,
+     0.7204044457504256
+    ]
+   },
+   "brier": {
+    "value": 0.1916292854310936,
+    "ci95": [
+     0.17377290882748375,
+     0.21103963931063224
+    ]
+   },
+   "cal_slope": {
+    "value": 1.0407435696330904,
+    "ci95": [
+     0.6401751351076869,
+     1.4905723937521749
+    ]
+   },
+   "delta": {
+    "auroc": {
+     "value": 0.003618953425642779,
+     "ci95": [
+      -0.0025979621181149103,
+      0.009801696839423385
+     ],
+     "p_better": 0.885
+    },
+    "auprc": {
+     "value": 0.0031494550323312165,
+     "ci95": [
+      -0.006973268951476638,
+      0.013565754671347876
+     ],
+     "p_better": 0.7525
+    },
+    "brier": {
+     "value": -0.0008602267355108939,
+     "ci95": [
+      -0.0018076016686281963,
+      5.872783486357256e-05
+     ],
+     "p_better": 0.9665
+    }
+   }
+  },
+  "transfer_clinical_burden": {
+   "auroc": {
+    "value": 0.6675957561589643,
+    "ci95": [
+     0.6110265845916908,
+     0.721662353328196
+    ]
+   },
+   "brier": {
+    "value": 0.1913174447899356,
+    "ci95": [
+     0.17331487161364606,
+     0.21081800508090195
+    ]
+   },
+   "cal_slope": {
+    "value": 1.036597713700482,
+    "ci95": [
+     0.6426039163986483,
+     1.4852722768774975
+    ]
+   },
+   "delta": {
+    "auroc": {
+     "value": 0.00447311634598091,
+     "ci95": [
+      -0.002475590976751904,
+      0.01146186939639226
+     ],
+     "p_better": 0.892
+    },
+    "auprc": {
+     "value": 0.002781305512154497,
+     "ci95": [
+      -0.006413922542295373,
+      0.01297224450100483
+     ],
+     "p_better": 0.711
+    },
+    "brier": {
+     "value": -0.0011720673766688894,
+     "ci95": [
+      -0.002165206635217888,
+      -0.00022568616194075812
+     ],
+     "p_better": 0.9885
+    }
+   }
+  },
+  "strata_cancer": {
+   "auroc": {
+    "value": 0.6600656356770366,
+    "ci95": [
+     0.6032812333328532,
+     0.7138425525009148
+    ]
+   },
+   "brier": {
+    "value": 0.19298171145405643,
+    "ci95": [
+     0.17506310646452422,
+     0.2125689754914805
+    ]
+   },
+   "cal_slope": {
+    "value": 1.0093045334538264,
+    "ci95": [
+     0.5922278546608322,
+     1.4946171454843649
+    ]
+   },
+   "delta": {
+    "auroc": {
+     "value": -0.0030570041359467837,
+     "ci95": [
+      -0.006289575008062117,
+      0.00023824834812177456
+     ],
+     "p_better": 0.0325
+    },
+    "auprc": {
+     "value": -0.0039212983969662,
+     "ci95": [
+      -0.009762788572944747,
+      0.0005447855205178943
+     ],
+     "p_better": 0.042
+    },
+    "brier": {
+     "value": 0.0004921992874519499,
+     "ci95": [
+      3.759405843917901e-05,
+      0.0009485918302571205
+     ],
+     "p_better": 0.015
+    }
+   }
+  },
+  "strata_age_sex_cancer": {
+   "auroc": {
+    "value": 0.6567164179104478,
+    "ci95": [
+     0.6006673744099269,
+     0.7116812875512524
+    ]
+   },
+   "brier": {
+    "value": 0.19337864329818988,
+    "ci95": [
+     0.17572910186827448,
+     0.212908980137829
+    ]
+   },
+   "cal_slope": {
+    "value": 1.0084868404313123,
+    "ci95": [
+     0.5929906101066751,
+     1.4835616734819608
+    ]
+   },
+   "delta": {
+    "auroc": {
+     "value": -0.0064062219025355915,
+     "ci95": [
+      -0.011933048910733508,
+      -0.001255605196020976
+     ],
+     "p_better": 0.0085
+    },
+    "auprc": {
+     "value": -0.008114519036660217,
+     "ci95": [
+      -0.018071649846458596,
+      0.0015079422273110304
+     ],
+     "p_better": 0.045
+    },
+    "brier": {
+     "value": 0.0008891311315853967,
+     "ci95": [
+      5.749495090564342e-05,
+      0.0017630816595234527
+     ],
+     "p_better": 0.018
+    }
+   }
+  },
+  "strata_age_sex_cancer_hispanic": {
+   "auroc": {
+    "value": 0.6590541269555836,
+    "ci95": [
+     0.6033206391988237,
+     0.7139375904578018
+    ]
+   },
+   "brier": {
+    "value": 0.19317636257254275,
+    "ci95": [
+     0.1754404554905687,
+     0.2126690175021894
+    ]
+   },
+   "cal_slope": {
+    "value": 1.0191964532264461,
+    "ci95": [
+     0.601571456619246,
+     1.5004625300243002
+    ]
+   },
+   "delta": {
+    "auroc": {
+     "value": -0.004068512857399731,
+     "ci95": [
+      -0.011836203198889898,
+      0.0032461691421111992
+     ],
+     "p_better": 0.138
+    },
+    "auprc": {
+     "value": -0.005051791693275853,
+     "ci95": [
+      -0.01760284803004481,
+      0.007029587943853581
+     ],
+     "p_better": 0.193
+    },
+    "brier": {
+     "value": 0.0006868504059382718,
+     "ci95": [
+      -0.0005095107193563133,
+      0.0018681088859865626
+     ],
+     "p_better": 0.132
+    }
+   }
+  }
+ },
+ "transferBurdenR2": 0.2777683278581887,
+ "strata": {
+  "cancer": {
+   "alignedDev": 197,
+   "unalignedDev": 269,
+   "minStratumN_used": 91,
+   "medianStratumN_used": 1050.0,
+   "nStrata": 4,
+   "devAlignedInStrataUnder10": 0
+  },
+  "age_sex_cancer": {
+   "alignedDev": 197,
+   "unalignedDev": 269,
+   "minStratumN_used": 1,
+   "medianStratumN_used": 293.0,
+   "nStrata": 26,
+   "devAlignedInStrataUnder10": 8
+  },
+  "age_sex_cancer_hispanic": {
+   "alignedDev": 196,
+   "unalignedDev": 270,
+   "minStratumN_used": 1,
+   "medianStratumN_used": 158.0,
+   "nStrata": 48,
+   "devAlignedInStrataUnder10": 7
+  }
+ },
+ "populationShift": {
+  "mepsHispanicShare": 0.06834030683403068,
+  "syntheaHispanicShare": 0.5444444444444444,
+  "mepsDevOutcomeRate": 0.2875536480686695,
+  "syntheaPersonYearOutcomeRate": 0.22018348623853212,
+  "mepsDevWithSyntheaCancerType": 197,
+  "syntheaHispanicPatientsByCancer": {
+   "breast": 147,
+   "colon": 98,
+   "prostate": 79,
+   "lung": 19
+  },
+  "mepsHispanicDevByCancer": {
+   "breast": 6,
+   "lung": 4,
+   "prostate": 4,
+   "colon": 2
+  }
+ },
+ "notAligned": "MEPS survivors with only skin, melanoma, uterine, cervical, bladder, lymphoma or other cancers (Synthea has none) get the overall Synthea mean and an 'unaligned' flag. Individual records were never matched: with no key, a person-level join on age/sex/race/cancer would be mostly noise."
+}
