@@ -1,0 +1,22 @@
+{
+ "at": "2026-10-17T14:40:41.642Z",
+ "base": "https://c1-acute-risk.zay-259.workers.dev",
+ "views": [
+  {
+   "name": "desktop",
+   "width": 1280,
+   "errors": [],
+   "horizontalScroll": false,
+   "rosterItems": 199,
+   "ok": true
+  },
+  {
+   "name": "phone",
+   "width": 390,
+   "errors": [],
+   "horizontalScroll": false,
+   "rosterItems": 199,
+   "ok": true
+  }
+ ]
+}

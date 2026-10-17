@@ -48,6 +48,13 @@ FACTOR_PLAYBOOK = {
     "not_married": ("support", "coach", "May have less support at home: ask who helps them day to day."),
     "age": ("demographic", "care-team", "Older age: a lower bar for proactive check-ins is reasonable."),
 }
+SHORT = {"er_visits_17": "ER visits last year", "hosp_stays_17": "hospital stays last year", "rx_fills_17": "many prescriptions",
+         "office_visits_17": "many office visits", "home_health_17": "home health care", "physical_score": "low physical function",
+         "poor_physical_rating": "poor self-rated health", "activity_limited": "activity limits", "pain": "pain", "fatigue": "fatigue",
+         "distress_k6": "psychological distress", "depression_phq2": "depression symptoms", "mental_score": "low mental health score",
+         "fear_recurrence": "worry about recurrence", "financial_toxicity": "financial hardship", "cost_delay": "cost-related care delays",
+         "uninsured": "no insurance", "public_only": "public-only insurance", "low_income": "low income", "current_treatment": "active treatment",
+         "recurrence": "recurrence", "family_caregiver": "caregiver needs", "not_married": "limited support at home", "age": "age"}
 NON_ACTIONABLE = {"female", "hispanic", "nh_black", "nh_asian_other", "ca_breast", "ca_colon", "ca_lung", "ca_prostate",
                   "n_cancer_types", "no_saq"}
 
@@ -156,12 +163,12 @@ def main():
         ranked = [(f, v) for f, v in c.sort_values(ascending=False).items() if not f.startswith("missing:")]
         up = [(f, v) for f, v in ranked if v > 0.02 and f not in NON_ACTIONABLE and not np.isnan(x[f])][:4]
         down = [(f, v) for f, v in reversed(ranked) if v < -0.05 and f not in NON_ACTIONABLE and not np.isnan(x[f])][:2]
-        lead = FEATURE_LABELS[up[0][0]].split(" (")[0].lower() if up else None
+        lead = SHORT.get(up[0][0], FEATURE_LABELS[up[0][0]].split(" (")[0].lower()) if up else None
         pct = round(p * 100)
         if st == "alert":
             headline = f"Acute care risk {pct}% for 2018 (high), driven by {lead}" if lead else f"Acute care risk {pct}% for 2018 (high)"
         elif st == "watch":
-            headline = f"Acute care risk {pct}% for 2018 (raised), mostly {lead}" if lead else f"Acute care risk {pct}% for 2018 (raised)"
+            headline = f"Acute care risk {pct}% for 2018 (raised), mostly from {lead}" if lead else f"Acute care risk {pct}% for 2018 (raised)"
         else:
             headline = f"Acute care risk {pct}% for 2018, below the {round(base_rate * 100)}% average"
         evidence = [{"kind": "model", "text": f"Predicted chance of an ER visit or hospital stay in 2018: {pct}%. "
