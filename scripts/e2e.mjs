@@ -45,8 +45,8 @@ responses["/api/c1/survivors"] = roster;
 const list = Array.isArray(roster.body) ? roster.body : [];
 check("roster 200, one tile per held-out survivor", roster.status === 200 && list.length === tIds.length, { count: list.length });
 check("roster CORS header", roster.headers["access-control-allow-origin"] === "*");
-const keys = ["survivorId", "displayName", "status", "headline", "updatedAt"];
-check("roster tiles have exactly the contract keys", list.every((r) => JSON.stringify(Object.keys(r).sort()) === JSON.stringify([...keys].sort())));
+const keys = ["survivorId", "displayName", "status", "headline", "updatedAt", "fairnessFlags", "humanCheck", "tags"];
+check("roster tiles have the contract keys plus fairnessFlags, humanCheck and tags", list.every((r) => JSON.stringify(Object.keys(r).sort()) === JSON.stringify([...keys].sort())));
 check("roster ids are c1-<MEPS ID>", list.every((r) => /^c1-S[0-9A-F]{8}$/.test(r.survivorId)));
 check("roster status in ok|watch|alert", list.every((r) => STATUSES.includes(r.status)));
 check("roster sorted alert > watch > ok", list.every((r, i) => i === 0 || STATUSES.indexOf(list[i - 1].status) <= STATUSES.indexOf(r.status)));
@@ -94,6 +94,12 @@ for (const r of list) {
   if (!(hc && typeof hc.required === "boolean" && hc.required === (weakRace && b.status !== "ok") &&
         (hc.required ? typeof hc.reason === "string" && hc.reason.length <= 120 : hc.reason === null))) over.push([r.survivorId, "humanCheck"]);
 }
+check("roster fairness fields agree with each survivor panel (flags, humanCheck, tags at most 40 characters)", list.every((r) => {
+  const b = panels[r.survivorId];
+  return b && Array.isArray(r.fairnessFlags) && JSON.stringify(r.fairnessFlags) === JSON.stringify((b.fairnessFlags || []).map((f) => ({ attribute: f.attribute, group: f.group, flag: f.flag }))) &&
+    r.humanCheck === b.humanCheck?.required && Array.isArray(r.tags) && r.tags.length === r.fairnessFlags.length + (r.humanCheck ? 1 : 0) &&
+    r.tags.every((t) => typeof t.label === "string" && t.label.length <= 40 && typeof t.kind === "string");
+}), { humanCheck: list.filter((r) => r.humanCheck).length, flagged: list.filter((r) => r.fairnessFlags?.length).length });
 check("console display fields within agreed lengths (riskWords 60, forEllie 160 with caveat, headline 90, evidence 120), redFlags well formed, humanCheck set exactly for weak-ranking groups off the ok tier", over.length === 0 && Object.keys(panels).length === list.length, { over: over.slice(0, 10) });
 check("every survivor panel matches the contract, the submission risk and its tier", ok === list.length, { ok, failures: failures.slice(0, 10) });
 const missing = await get("/api/c1/survivors/c1-nope");

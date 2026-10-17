@@ -171,9 +171,11 @@ Only the `"seconds"` fields and the appended sections of `runs/autoresearch/log.
 | Top-tenth precision | `src/data/metrics.json` → `alertBudget/cutoffs[topShare=0.1]/devObservedRate` | 60% |
 | Submission CSV | `submission/heldout_predictions.csv` | 199 rows, same IDs and order, max |
 
-Four README strings disagree with the committed outputs in the last digit (they are README typos, not reproduction differences); the check lists them as
-"README differs from the committed output too": the 10×5 Δ log loss CI upper bound (README -0.027, output -0.026), the male AUROC (README 0.71, output 0.70),
-and the two Synthea Q3 ΔAUROC CIs (README [-0.002, +0.011] and [-0.003, +0.010]; output [-0.003, +0.012] and [-0.002, +0.010]).
+All 122 README numbers match. Four README typos in the last digit (the 10×5 Δ log loss CI upper bound, the male AUROC, and the two
+Synthea Q3 ΔAUROC CIs) were corrected to the committed outputs on 2026-10-17; the outputs themselves did not change.
+
+**Per-person files.** `analysis/out/oof.csv` and `runs/autoresearch/*-oof.csv` hold out-of-fold predictions and 2018 outcomes keyed by MEPS public-use IDs,
+so that the numbers above can be recomputed. No attempt has been or may be made to re-identify anyone, per the MEPS public-use data terms.
 
 ## 4. E2E against the live Worker
 

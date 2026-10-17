@@ -19,6 +19,8 @@ The MEPS extract is built from the public AHRQ Medical Expenditure Panel Survey 
 filtered and recoded by the organisers. Synthea (https://synthetichealth.github.io/synthea/) is synthetic patient data; the release contains the generated CSVs, so you do not run Synthea.
 No other public data is used.
 
+Committed outputs include per-person out-of-fold predictions keyed by MEPS public-use IDs (`analysis/out/oof.csv`, `runs/autoresearch/*-oof.csv`); no re-identification, per the MEPS use terms.
+
 ## Layout
 
 ```bash

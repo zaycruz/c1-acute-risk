@@ -22,6 +22,8 @@ Predictions are for the **199 held-out MEPS survivors** (\`meps/heldout_ids.csv\
 Sorted by \`status\` (alert, then watch, then ok), then by risk. Status comes from calibrated risk tiers set on out-of-fold development predictions:
 \`alert\` = predicted risk >= ${M.tiers.alert} (top fifth; ${Math.round(M.tiers.tiers[0].observedRate * 100)}% of development survivors in this tier had acute care),
 \`watch\` = >= ${M.tiers.watch} (the base rate; ${Math.round(M.tiers.tiers[1].observedRate * 100)}% had it), \`ok\` = below (${Math.round(M.tiers.tiers[2].observedRate * 100)}%).
+Extra fields on each tile: \`fairnessFlags[{attribute, group, flag}]\` (the same flags as the survivor panel, without text), \`humanCheck\` (true when outreach needs a human check first; see \`humanCheck\` on the panel) and \`tags[{label, kind}]\` (labels at most 40 characters, e.g. \"Human check before outreach\", \"Weak ranking: NH Black\"; \`kind\` is \`human-check\` or the fairness flag), the shape challenge-mcp passes through.
+
 ${roster.length} survivors (${M.heldoutStatusMix.alert} alert, ${M.heldoutStatusMix.watch} watch, ${M.heldoutStatusMix.ok} ok), showing 3:
 
 ${j(roster.slice(0, 3))}

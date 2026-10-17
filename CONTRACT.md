@@ -1,7 +1,7 @@
 # C1 Care Team Risk: API contract
 
-Base URL (deployed): `https://c1-acute-risk.zay-259.workers.dev`. All responses are JSON with `access-control-allow-origin: *`; only `GET` (and `OPTIONS`) are accepted, anything else is `405`.
-The examples below are real responses, captured by `npm run e2e` on 2026-10-17T17:15:10.262Z (36/36 checks passed) and turned into this file by `npm run contract`.
+Base URL (deployed): `https://4366ae42-c1-acute-risk.zay-259.workers.dev`. All responses are JSON with `access-control-allow-origin: *`; only `GET` (and `OPTIONS`) are accepted, anything else is `405`.
+The examples below are real responses, captured by `npm run e2e` on 2026-10-17T17:39:11.496Z (37/37 checks passed) and turned into this file by `npm run contract`.
 
 Predictions are for the **199 held-out MEPS survivors** (`meps/heldout_ids.csv`): real people, forward predictions, outcome unknown to us.
 `survivorId` = `c1-` + the challenge's MEPS `ID`. `updatedAt` is the as-of date of the data (end of 2017), not the build time.
@@ -11,6 +11,8 @@ Predictions are for the **199 held-out MEPS survivors** (`meps/heldout_ids.csv`)
 Sorted by `status` (alert, then watch, then ok), then by risk. Status comes from calibrated risk tiers set on out-of-fold development predictions:
 `alert` = predicted risk >= 0.43 (top fifth; 57% of development survivors in this tier had acute care),
 `watch` = >= 0.29 (the base rate; 30% had it), `ok` = below (19%).
+Extra fields on each tile: `fairnessFlags[{attribute, group, flag}]` (the same flags as the survivor panel, without text), `humanCheck` (true when outreach needs a human check first; see `humanCheck` on the panel) and `tags[{label, kind}]` (labels at most 40 characters, e.g. "Human check before outreach", "Weak ranking: NH Black"; `kind` is `human-check` or the fairness flag), the shape challenge-mcp passes through.
+
 199 survivors (40 alert, 43 watch, 116 ok), showing 3:
 
 ```json
@@ -20,21 +22,30 @@ Sorted by `status` (alert, then watch, then ok), then by risk. Status comes from
     "displayName": "S71188550 · 85M · prostate",
     "status": "alert",
     "headline": "Acute care risk 70% for 2018 (high), driven by nights in hospital last year",
-    "updatedAt": "2017-12-31T00:00:00Z"
+    "updatedAt": "2017-12-31T00:00:00Z",
+    "fairnessFlags": [],
+    "humanCheck": false,
+    "tags": []
   },
   {
     "survivorId": "c1-S13BA2BCD",
     "displayName": "S13BA2BCD · 67F · other",
     "status": "alert",
     "headline": "Acute care risk 65% for 2018 (high), driven by nights in hospital last year",
-    "updatedAt": "2017-12-31T00:00:00Z"
+    "updatedAt": "2017-12-31T00:00:00Z",
+    "fairnessFlags": [],
+    "humanCheck": false,
+    "tags": []
   },
   {
     "survivorId": "c1-S9707145E",
     "displayName": "S9707145E · 74F · breast",
     "status": "alert",
     "headline": "Acute care risk 65% for 2018 (high), driven by nights in hospital last year",
-    "updatedAt": "2017-12-31T00:00:00Z"
+    "updatedAt": "2017-12-31T00:00:00Z",
+    "fairnessFlags": [],
+    "humanCheck": false,
+    "tags": []
   }
 ]
 ```

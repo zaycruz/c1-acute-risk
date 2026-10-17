@@ -483,8 +483,13 @@ def main():
              "humanCheck": human_check,
              "evidence": evidence, "recommendations": recs, "charts": charts, "profile": profile, "caveat": caveat}
         details[f"c1-{sid}"] = d
+        tag_words = {"weak-ranking": "Weak ranking", "under-predicted": "Under-predicted", "over-predicted": "Over-predicted",
+                     "too-small": "Few in training"}
+        tags = ([{"label": "Human check before outreach", "kind": "human-check"}] if human_check["required"] else []) + \
+               [{"label": f"{tag_words[f['flag']]}: {f['group'].split(' (')[0]}", "kind": f["flag"]} for f in flags]
         roster.append({"survivorId": d["survivorId"], "displayName": display, "status": st, "headline": headline,
-                       "updatedAt": AS_OF, "_risk": p})
+                       "updatedAt": AS_OF, "fairnessFlags": [{k: f[k] for k in ("attribute", "group", "flag")} for f in flags],
+                       "humanCheck": human_check["required"], "tags": tags, "_risk": p})
     order = {"alert": 0, "watch": 1, "ok": 2}
     roster.sort(key=lambda r: (order[r["status"]], -r["_risk"]))
     for r in roster:

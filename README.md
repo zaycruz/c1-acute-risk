@@ -56,7 +56,7 @@ The same 10×5 repeated CV as before scores the final model after selection, whi
 | AUROC | 0.659 [0.603, 0.718] | 0.666 | **0.713** [0.662, 0.764] (nested: 0.711 vs 0.672) | +0.053 [-0.001, +0.105], not significant |
 | AUPRC | 0.423 | 0.438 | **0.508** | +0.085 [+0.017, +0.146] |
 | Brier | 0.2008 | 0.1921 | **0.1796** | -0.021 [-0.035, -0.007] |
-| Log loss | 0.606 | 0.570 | **0.539** | -0.067 [-0.107, -0.027] |
+| Log loss | 0.606 | 0.570 | **0.539** | -0.067 [-0.107, -0.026] |
 | Calibration slope (1 = ideal) | 0.45 [0.25, 0.69] | 1.09 | **1.10** [0.82, 1.44] | |
 
 Why the ranking gain is not significant: at n = 466 with 134 events an AUROC gain must be about +0.056 to clear a 95% CI.
@@ -86,7 +86,7 @@ These are associations. The care team can act on symptoms, distress and depressi
 These become the per-survivor recommendations, one per kind of driver.
 
 **Fairness** (out-of-fold, `/api/c1/metrics` → `fairness`):
-- Similar by sex (AUROC 0.72 F, 0.71 M) and insurance (0.68 private, 0.75 public-only).
+- Similar by sex (AUROC 0.72 F, 0.70 M) and insurance (0.68 private, 0.75 public-only).
 - Age 75+ is no longer clearly under-predicted: observed/expected 1.15 [0.91, 1.37]. With the logistic model it was 1.27 [1.00, 1.53].
 - **Weak ranking for NH Black survivors**: AUROC 0.48 [0.25, 0.70], n = 47, 11 events. This is a flag, not a pass. We tried to fix it (below); nothing worked, so their alerts get a human check.
 - **All survivors other than NH White, pooled:** AUROC 0.56 [0.41, 0.71], n = 95, 21 events, and observed/expected 0.72 [0.46, 1.01]. Ranking is weaker than for NH White survivors (0.75).
@@ -127,8 +127,8 @@ In MEPS 7% of survivors are Hispanic; in Synthea 54% are. We asked three questio
    This is our strongest integration result. A risk pattern on shared variables (prior acute care, age, insurance), learned from synthetic Miami records,
    ranks real national survivors as well as a model fitted on the survey itself, and is calibrated.
 3. **Increment in MEPS** (same repeated CV, paired against the MEPS-only logistic, because a linear model takes a Synthea score as one feature):
-   - The clinical-burden score is the clinical part of the Synthea model, projected onto shared variables. ΔAUROC +0.004 [-0.002, +0.011], ΔBrier -0.0012 [-0.0022, -0.0002].
-   - The Synthea prior gives ΔAUROC +0.004 [-0.003, +0.010].
+   - The clinical-burden score is the clinical part of the Synthea model, projected onto shared variables. ΔAUROC +0.004 [-0.003, +0.012], ΔBrier -0.0012 [-0.0022, -0.0002].
+   - The Synthea prior gives ΔAUROC +0.004 [-0.002, +0.010].
    - The MEPS-only reference in Q3 is 0.663, not 0.666, because it uses a wider C grid.
    - Shrunken stratum features (age band × sex × cancer type; with and without Hispanic; cancer type only) give ΔAUROC -0.006 to -0.003.
      Sensitivity: the finer strata get worse, and 7–8 aligned development survivors fall in strata with fewer than 10 Synthea person-years.
