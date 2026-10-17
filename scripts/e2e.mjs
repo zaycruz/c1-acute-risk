@@ -2,6 +2,7 @@
 // E2E check for C1 Care Team Risk: hits every endpoint of the deployed Worker, checks the contract,
 // validates the held-out prediction file, and saves everything under runs/ as a repeatable artifact.
 // Usage: node scripts/e2e.mjs [baseUrl]   (default: the workers.dev deploy)
+import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const BASE = (process.argv[2] || "https://c1-acute-risk.zay-259.workers.dev").replace(/\/$/, "");
@@ -145,6 +146,13 @@ if (M.metrics) {
   check("display block within agreed lengths (headline 140, KPI value 9 / label 60 / sub 50, lines 200)", D && D.headline.length <= 140 &&
     D.keyNumbers.every((k) => k.value.length <= 9 && k.label.length <= 60 && k.sub.length <= 50) &&
     [...D.howSure, ...D.limits, D.nextQuestion].every((x) => x.length <= 200), D && { headline: D.headline.length, keyNumbers: D.keyNumbers.map((k) => [k.value.length, k.label.length, k.sub.length]) });
+  const SM = M.servedModel;
+  const csvSha = createHash("sha256").update(readFileSync(new URL("../submission/heldout_predictions.csv", import.meta.url))).digest("hex");
+  check("served model: its own 50%+ calls with CIs, expected held-out AUROC range, and the API's submission hash equals the committed CSV",
+    SM && SM.callsAt50?.forest?.cameTrueCi95?.length === 2 && SM.callsAt50.forest.n > 0 && SM.callsAt50.differenceCi95?.length === 2 &&
+    SM.expectedHeldout?.aurocRange95?.[0] < SM.expectedHeldout.aurocRange95[1] && SM.provenance?.submissionSha256 === csvSha &&
+    Number.isInteger(SM.provenance.inputRangeCheck?.total) && M.display.keyNumbers.some((k) => k.value === `${Math.round(SM.callsAt50.forest.cameTrue * 100)}%`),
+    SM && { calls: SM.callsAt50.forest, sha: SM.provenance?.submissionSha256?.slice(0, 12), outOfRange: SM.provenance?.inputRangeCheck?.total });
   const FMt = M.fairnessMitigation;
   check("fairness mitigation: pre-registered variants with CIs, a decision, and the language gap stated", FMt && FMt.variants?.length === 5 &&
     FMt.variants.every((v) => v.nhBlackAurocCi95?.length === 2 && Number.isFinite(v.overallLogLoss)) &&

@@ -163,6 +163,43 @@ def model_search(y):
                          "the held-out set (199, about 57 events) has an AUROC standard error of about 0.04."}
 
 
+def served_model(y, oof, Xf, dev_ids, held_ids, sub_path, n_held=199, seed=20261017):
+    """The served forest's own numbers (10x5 OOF, after selection), what to expect on the 199 held-out survivors, and provenance."""
+    import hashlib
+    from sklearn.metrics import roc_auc_score
+    pf, pb = oof.p_forest.values, oof.p_baseline.values
+    rg = np.random.default_rng(seed)
+    pre, pre_b, au = [], [], []
+    for _ in range(2000):
+        j = rg.integers(0, len(y), len(y))
+        m, mb = pf[j] >= 0.5, pb[j] >= 0.5
+        pre.append(y[j][m].mean()); pre_b.append(y[j][mb].mean())
+        h = rg.integers(0, len(y), n_held)
+        if 0 < y[h].sum() < n_held:
+            au.append(roc_auc_score(y[h], pf[h]))
+    ci = lambda v: [float(np.percentile(v, 2.5)), float(np.percentile(v, 97.5))]
+    d = np.array(pre) - np.array(pre_b)
+    lo, hi = Xf.loc[dev_ids].min(), Xf.loc[dev_ids].max()
+    Xh = Xf.loc[held_ids]
+    out_of_range = {c: int(((Xh[c] < lo[c]) | (Xh[c] > hi[c])).sum()) for c in Xf.columns}
+    return {
+        "note": "The served model is the final forest (finalModel.key). These are its own out-of-fold predictions from the 10x5 CV, after "
+                "model selection; modelSearch holds the nested estimate of the whole search, and modelSearch.*.submitted is our FIRST "
+                "submission (logistic), not the served model.",
+        "callsAt50": {"forest": {"n": int((pf >= 0.5).sum()), "cameTrue": float(y[pf >= 0.5].mean()), "cameTrueCi95": ci(pre)},
+                      "baseline": {"n": int((pb >= 0.5).sum()), "cameTrue": float(y[pb >= 0.5].mean()), "cameTrueCi95": ci(pre_b)},
+                      "difference": float(y[pf >= 0.5].mean() - y[pb >= 0.5].mean()), "differenceCi95": ci(d)},
+        "expectedHeldout": {"survivors": n_held, "expectedEvents": round(float(y.mean()) * n_held),
+                            "aurocRange95": ci(au),
+                            "note": f"Resampling {n_held} development survivors 2,000 times: with about {round(float(y.mean()) * n_held)} events, "
+                                    "the held-out AUROC can land anywhere in this range from chance alone."},
+        "provenance": {"submissionSha256": hashlib.sha256(open(sub_path, "rb").read()).hexdigest(),
+                       "inputRangeCheck": {"features": len(Xf.columns), "heldoutValuesOutsideDevRange": out_of_range,
+                                           "total": int(sum(out_of_range.values())),
+                                           "rule": "Each held-out input is compared with the min-max range seen in development; values outside it are extrapolation."}},
+    }
+
+
 def first_event(Xd, y):  # y in dev order
     """Alternative target: among survivors with no ER visit or hospital stay in 2017, who has a FIRST one in 2018?"""
     # nested-CV OOF (unbiased for the search); rows are in dev order, which the label check below guards
@@ -320,7 +357,7 @@ def add_display(m):
         "keyNumbers": [
             {"value": P(top["observedRate"]), "label": "of alert-tier survivors had an ER visit or hospital stay", "sub": f"average survivor {P(m['data']['devPositives'] / m['data']['devSurvivors'])}"},
             {"value": f"{S['top20Events']['procedure']} of {S['top20Events']['of']}", "label": "events caught by calling the top fifth", "sub": f"the organisers' baseline catches {S['top20Events']['baseline']}"},
-            {"value": P(S["callsAt50"]["procedure"]["cameTrue"]), "label": "of 50%+ risk calls came true", "sub": f"baseline {P(S['callsAt50']['baseline']['cameTrue'])}"},
+            {"value": P(m["servedModel"]["callsAt50"]["forest"]["cameTrue"]), "label": "of 50%+ risk calls came true", "sub": f"baseline {P(m['servedModel']['callsAt50']['baseline']['cameTrue'])}; nested search {P(S['callsAt50']['procedure']['cameTrue'])}"},
             {"value": f"{S['auroc']['search']:.2f}", "label": "ranking quality (AUROC; 0.5 = coin flip, 1 = perfect)", "sub": f"baseline {S['auroc']['baseline']:.2f}; gap may be chance"},
         ],
         "howSure": [
@@ -510,6 +547,7 @@ def main():
                        "explanations": "TreeSHAP per survivor, converted to calibrated log-odds (analysis/explain.py)",
                        "previous": "L2 logistic regression on 34 survey-domain features (the first submission)"},
         "metrics": M["metrics"], "deltaVsBaseline": M["deltaVsBaseline"], "deltaVsPrevious": M["deltaVsPrevious"],
+        "servedModel": served_model(y, oof_dev, Xf, dev.index, sub.index, os.path.join(ROOT, "submission", "heldout_predictions.csv")),
         "modelSearch": model_search(y),
         "firstEvent": first_event(Xd.loc[dev.index], y),  # nested-CV estimate
         "calibrationCurve": M["calibrationCurve"],

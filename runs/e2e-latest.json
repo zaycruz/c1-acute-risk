@@ -1,8 +1,8 @@
 {
- "at": "2026-10-17T17:39:11.496Z",
- "base": "https://4366ae42-c1-acute-risk.zay-259.workers.dev",
- "passed": 37,
- "total": 37,
+ "at": "2026-10-17T17:44:04.133Z",
+ "base": "https://d9da612a-c1-acute-risk.zay-259.workers.dev",
+ "passed": 38,
+ "total": 38,
  "checks": [
   {
    "name": "submission header is exactly ID,predicted_risk",
@@ -294,9 +294,9 @@
       "sub": "the organisers' baseline catches 45"
      },
      {
-      "value": "67%",
+      "value": "59%",
       "label": "of 50%+ risk calls came true",
-      "sub": "baseline 49%"
+      "sub": "baseline 48%; nested search 67%"
      },
      {
       "value": "0.71",
@@ -325,7 +325,7 @@
      [
       3,
       28,
-      12
+      31
      ],
      [
       4,
@@ -333,6 +333,22 @@
       32
      ]
     ]
+   }
+  },
+  {
+   "name": "served model: its own 50%+ calls with CIs, expected held-out AUROC range, and the API's submission hash equals the committed CSV",
+   "ok": true,
+   "info": {
+    "calls": {
+     "n": 59,
+     "cameTrue": 0.5932203389830508,
+     "cameTrueCi95": [
+      0.4628888888888889,
+      0.7142857142857143
+     ]
+    },
+    "sha": "77f6006837c4",
+    "outOfRange": 11
    }
   },
   {
@@ -362,25 +378,25 @@
  "responses": {
   "/": {
    "status": 200,
-   "ms": 701,
+   "ms": 1425,
    "bytes": 10104
   },
   "/api/c1/survivors": {
    "status": 200,
-   "ms": 239,
+   "ms": 151,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c114226a9617a9-MIA",
+    "cf-ray": "a4c11b675df41921-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 17:38:44 GMT",
+    "date": "Sat, 17 Oct 2026 17:43:42 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=7tHIkoctJOCL1lfxERSVyn4Jo6fAym0bzoBdy8svxhBKpBDH0idBAFOlpAkuBv5QxDAUFamgdklhEdKt1yn59Az5v0NvTf0Bfkh5OiooHvcKykuXf1BKZhAa5AHCv6svc%2BvGXOMObXHYRig%2FU7A6pnDNkom0KyFk3U%2F0YCQ%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=OcGhsBpr%2FM%2FwdAdGE9NbbWYukx%2B02ruAfk63%2BMF5Ooigh5BSaWLqBkQlxbkoHkw8jdGET2ruOItouOep3lwJvAwW6YfFekLs2gHWCzhJ4o31%2F3Kbduews%2BE13rtwcUhUblj3%2BkTTmm1dPCaKMJUUI%2Fksn4sPB0OVUYolo0I%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked",
     "x-robots-tag": "noindex"
@@ -3082,20 +3098,20 @@
   },
   "/api/c1/survivors/c1-S71188550": {
    "status": 200,
-   "ms": 112,
+   "ms": 216,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c11423effd17a9-MIA",
+    "cf-ray": "a4c11b686a171921-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 17:38:44 GMT",
+    "date": "Sat, 17 Oct 2026 17:43:42 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=ce7OzeSbSLWNFq2Y74JbpjuTH3%2FQbtLtIhc227%2Bt2J%2FNiDZyRBpcaZ%2Bb%2FbsNPfclEb%2FmOG9xfN50by%2F%2Bzg0zFnfgRkhbXDdVDDZ6nrRc07s52tDCFccnIAuYXOnFb4wyoUv2tvMNuRHa0ESJpLJQNE8fwXSpaTNRReuym%2FY%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=JPfCPcaKWTyJOF4R2hJV6ll1uh7KjNdF%2BBfParK2p3hStIXliVL32Nt6e0BW9mQa6Vl%2FDzsYW4F9aEf8x8oje5N9dnqCzvE8VoEcN7Y2M0KmVB7WOoq6R6jWXA2AZg3Fggk06%2Bf7kAqcobb0ztMnbe6Uc%2Fpd4GS7yBITrJg%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked",
     "x-robots-tag": "noindex"
@@ -3256,20 +3272,20 @@
   },
   "/api/c1/survivors/c1-nope": {
    "status": 404,
-   "ms": 87,
+   "ms": 57,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c114c9780617a9-MIA",
+    "cf-ray": "a4c11bf068691921-MIA",
     "connection": "keep-alive",
     "content-length": "30",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 17:39:10 GMT",
+    "date": "Sat, 17 Oct 2026 17:44:03 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=QYf8irSMhDZ6bk1HyvlPpeRBvDkGzUWIABvZFcZBqbbteNL7Xh9U8bXuDvUgmIHs5tEAtsh2%2FDAbEv51SFUynZzTW3r4HfP99Uy%2BHXeNOPS9vEyzdfq3kKUEi2yIlEXY9bRUI8KivzgkPIek3UBII8f5EKsJxO1Jg2ygM7Y%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=jGvE82ou1wMQp1UGc7OS6YaeV%2Btt78kyiOzSk236Xs0mLleN1%2FcvlWm2WVEi2qj6zB5bynZNDMxVBPFAkOFCXYSs5LhXgvGjUn6tAVtsJkKeRPyvKxf32QOZlOWSBNeQL9e%2BA%2Bwyx%2FlMQtvMF36XQZWXGOZcQFk%2FHHLfL5I%3D\"}]}",
     "server": "cloudflare",
     "x-robots-tag": "noindex"
    },
@@ -3279,20 +3295,20 @@
   },
   "/api/c1/metrics": {
    "status": 200,
-   "ms": 205,
+   "ms": 42,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c114cbc9d917a9-MIA",
+    "cf-ray": "a4c11bf1ac8b1921-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 17:39:11 GMT",
+    "date": "Sat, 17 Oct 2026 17:44:04 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=SeWLHNfNM29VWTB7tyATFC8l%2BFRyIlyb3wuv4nQ3cxsUU1rprsFiEQkfon6QdJtTXfqcNIKSE4VLTLyZDF8X%2FnTZ%2Bg4bzq6YmRURZixIE4BcNpwBD0jCoK%2F%2FmNjlYsKcepCiWbKdLCwNWtSLIXKeH4CjEahCgblwJF51dw0%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=n14ZT3debhOlLIiig%2FW%2FtMZpRPR24q8lyyXhoATmfbfBkA1LZvzm3Z3KdnQMFKmXZCkI5RZUOgsxSaOtg1SDRxxCcN06X2LuLqaF3f1xpc0aOhTi2zQGNQuU650gu1PgPpEzCCsbWbIqZKQekjKVRBl4ycWhWv1YncoHWyM%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked",
     "x-robots-tag": "noindex"
@@ -3673,6 +3689,67 @@
        -0.012863468226682799
       ],
       "p_better": 1
+     }
+    },
+    "servedModel": {
+     "note": "The served model is the final forest (finalModel.key). These are its own out-of-fold predictions from the 10x5 CV, after model selection; modelSearch holds the nested estimate of the whole search, and modelSearch.*.submitted is our FIRST submission (logistic), not the served model.",
+     "callsAt50": {
+      "forest": {
+       "n": 59,
+       "cameTrue": 0.5932203389830508,
+       "cameTrueCi95": [
+        0.4628888888888889,
+        0.7142857142857143
+       ]
+      },
+      "baseline": {
+       "n": 69,
+       "cameTrue": 0.4782608695652174,
+       "cameTrueCi95": [
+        0.36228864734299515,
+        0.5964912280701754
+       ]
+      },
+      "difference": 0.11495946941783342,
+      "differenceCi95": [
+       -0.0018839064665536805,
+       0.23056089743589736
+      ]
+     },
+     "expectedHeldout": {
+      "survivors": 199,
+      "expectedEvents": 57,
+      "aurocRange95": [
+       0.629620277803731,
+       0.7850505961472258
+      ],
+      "note": "Resampling 199 development survivors 2,000 times: with about 57 events, the held-out AUROC can land anywhere in this range from chance alone."
+     },
+     "provenance": {
+      "submissionSha256": "77f6006837c4081102998f7f81198985e530b5aedb6fc66df8c29b98c2013aee",
+      "inputRangeCheck": {
+       "features": 16,
+       "heldoutValuesOutsideDevRange": {
+        "er_visits_17": 3,
+        "hosp_stays_17": 1,
+        "rx_fills_17": 1,
+        "office_visits_17": 2,
+        "home_health_17": 0,
+        "age": 0,
+        "physical_score": 3,
+        "mental_score": 1,
+        "depression_phq2": 0,
+        "distress_k6": 0,
+        "poor_physical_rating": 0,
+        "hosp_nights_17": 0,
+        "outpatient_visits_17": 0,
+        "home_health_days_17": 0,
+        "spending_17": 0,
+        "missed_work_days_17": 0
+       },
+       "total": 11,
+       "rule": "Each held-out input is compared with the min-max range seen in development; values outside it are extrapolation."
+      }
      }
     },
     "modelSearch": {
@@ -5805,9 +5882,9 @@
        "sub": "the organisers' baseline catches 45"
       },
       {
-       "value": "67%",
+       "value": "59%",
        "label": "of 50%+ risk calls came true",
-       "sub": "baseline 49%"
+       "sub": "baseline 48%; nested search 67%"
       },
       {
        "value": "0.71",

@@ -1,7 +1,7 @@
 # C1 Care Team Risk: API contract
 
-Base URL (deployed): `https://4366ae42-c1-acute-risk.zay-259.workers.dev`. All responses are JSON with `access-control-allow-origin: *`; only `GET` (and `OPTIONS`) are accepted, anything else is `405`.
-The examples below are real responses, captured by `npm run e2e` on 2026-10-17T17:39:11.496Z (37/37 checks passed) and turned into this file by `npm run contract`.
+Base URL (deployed): `https://d9da612a-c1-acute-risk.zay-259.workers.dev`. All responses are JSON with `access-control-allow-origin: *`; only `GET` (and `OPTIONS`) are accepted, anything else is `405`.
+The examples below are real responses, captured by `npm run e2e` on 2026-10-17T17:44:04.133Z (38/38 checks passed) and turned into this file by `npm run contract`.
 
 Predictions are for the **199 held-out MEPS survivors** (`meps/heldout_ids.csv`): real people, forward predictions, outcome unknown to us.
 `survivorId` = `c1-` + the challenge's MEPS `ID`. `updatedAt` is the as-of date of the data (end of 2017), not the build time.
@@ -219,11 +219,12 @@ Unknown id: `404 {"error":"survivor not found"}`.
 
 ## `GET /api/c1/metrics`: model card
 
-Top-level keys: `asOf`, `outcome`, `data`, `validation`, `finalModel`, `metrics`, `deltaVsBaseline`, `deltaVsPrevious`, `modelSearch`, `firstEvent`, `calibrationCurve`, `tiers`, `fairness`, `fairnessBaseline`, `factors`, `plainFactors`, `clinicalRecords`, `clinicalRecordsDetail`, `heldoutStatusMix`, `fairnessMitigation`, `alertBudget`, `caveats`, `display`.
+Top-level keys: `asOf`, `outcome`, `data`, `validation`, `finalModel`, `metrics`, `deltaVsBaseline`, `deltaVsPrevious`, `servedModel`, `modelSearch`, `firstEvent`, `calibrationCurve`, `tiers`, `fairness`, `fairnessBaseline`, `factors`, `plainFactors`, `clinicalRecords`, `clinicalRecordsDetail`, `heldoutStatusMix`, `fairnessMitigation`, `alertBudget`, `caveats`, `display`.
 
 - `finalModel`: `{key, name, chosenBy, explanations, previous}`. `finalModel.key` (`forest`) names the final model in `metrics`, `deltaVsBaseline` and `calibrationCurve`.
 - `metrics.{baseline,logistic,gbm_calibrated,forest}`: `auroc, auprc, brier, log_loss, cal_intercept, cal_slope, mean_pred`, each `{value, ci95}`, out-of-fold on the 466 development survivors. `logistic` is the previous submission.
 - `modelSearch`: the unbiased nested-CV estimate of the model search (the 10x5 CV numbers for `forest` are post-selection). `deltaVsPrevious`: forest vs the previous logistic model, paired.
+- `servedModel`: the served forest's own numbers (10×5 out-of-fold, after selection): `callsAt50{forest, baseline, difference, differenceCi95}` (each `{n, cameTrue, cameTrueCi95}`), `expectedHeldout{survivors, expectedEvents, aurocRange95, note}` and `provenance{submissionSha256, inputRangeCheck}` (the E2E checks the hash against the committed CSV). In `modelSearch`, `submitted` is the first submission (logistic), not the served model.
 - `fairnessMitigation`: the pre-registered attempt to fix NH Black ranking: `variants[{variant, label, nhBlackAuroc, nhBlackAurocCi95, nhBlackOe, overallAuroc, overallLogLoss, vsCurrent, passes}]`, `passCriterion`, `passed[]`, `decision`, `extraSubgroups[]` (Hispanic, pooled not-NH-White), `language{available, note}`, `safeguard`, `whoThisDoesNotServeYet[]`.
 - `alertBudget`: workload of the alert tier: `current` (the alert tier), `cutoffs[]` (top 5/10/15/20/30%, with events found, precision and calls per 100 survivors per week) and `justification`.
 - `display`: plain-language, ready-to-render summary for apps: `headline`, `keyNumbers[{value, label, sub}]`, `howSure[]`, `insight`, `nextQuestion`, `limits[]` (includes flagged fairness groups). `plainFactors[].text`, `tiers.tiers[].text`, `tiers.source`, `fairness[].flag` (`ok | too-small | weak-ranking | under-predicted | over-predicted`) and `fairness[].text` are also plain sentences. Read the final model's metrics as `metrics[finalModel.key]`; `finalModel.name` is a description.
@@ -538,9 +539,9 @@ Excerpt:
         "sub": "the organisers' baseline catches 45"
       },
       {
-        "value": "67%",
+        "value": "59%",
         "label": "of 50%+ risk calls came true",
-        "sub": "baseline 49%"
+        "sub": "baseline 48%; nested search 67%"
       },
       {
         "value": "0.71",
@@ -709,6 +710,67 @@ Excerpt:
       "text": "Age 75 or older: 44% had an ER visit or hospital stay in 2018, vs 24% without it (1.8x)"
     }
   ],
+  "servedModel": {
+    "note": "The served model is the final forest (finalModel.key). These are its own out-of-fold predictions from the 10x5 CV, after model selection; modelSearch holds the nested estimate of the whole search, and modelSearch.*.submitted is our FIRST submission (logistic), not the served model.",
+    "callsAt50": {
+      "forest": {
+        "n": 59,
+        "cameTrue": 0.5932203389830508,
+        "cameTrueCi95": [
+          0.4628888888888889,
+          0.7142857142857143
+        ]
+      },
+      "baseline": {
+        "n": 69,
+        "cameTrue": 0.4782608695652174,
+        "cameTrueCi95": [
+          0.36228864734299515,
+          0.5964912280701754
+        ]
+      },
+      "difference": 0.11495946941783342,
+      "differenceCi95": [
+        -0.0018839064665536805,
+        0.23056089743589736
+      ]
+    },
+    "expectedHeldout": {
+      "survivors": 199,
+      "expectedEvents": 57,
+      "aurocRange95": [
+        0.629620277803731,
+        0.7850505961472258
+      ],
+      "note": "Resampling 199 development survivors 2,000 times: with about 57 events, the held-out AUROC can land anywhere in this range from chance alone."
+    },
+    "provenance": {
+      "submissionSha256": "77f6006837c4081102998f7f81198985e530b5aedb6fc66df8c29b98c2013aee",
+      "inputRangeCheck": {
+        "features": 16,
+        "heldoutValuesOutsideDevRange": {
+          "er_visits_17": 3,
+          "hosp_stays_17": 1,
+          "rx_fills_17": 1,
+          "office_visits_17": 2,
+          "home_health_17": 0,
+          "age": 0,
+          "physical_score": 3,
+          "mental_score": 1,
+          "depression_phq2": 0,
+          "distress_k6": 0,
+          "poor_physical_rating": 0,
+          "hosp_nights_17": 0,
+          "outpatient_visits_17": 0,
+          "home_health_days_17": 0,
+          "spending_17": 0,
+          "missed_work_days_17": 0
+        },
+        "total": 11,
+        "rule": "Each held-out input is compared with the min-max range seen in development; values outside it are extrapolation."
+      }
+    }
+  },
   "clinicalRecords": {
     "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the final survey model (tie within CI)",
     "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02, vs the MEPS model's 0.713 out-of-fold (paired d -0.026 [-0.068, +0.013]): the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.003, +0.012], d Brier -0.0012 [-0.0022, -0.0001]; Synthea prior d AUROC +0.004 [-0.002, +0.010], d Brier -0.0009 [-0.0018, -0.0000]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. (Q3 adds each Synthea score as one feature to the MEPS L2 logistic on 34 domain features, our earlier model; its reference AUROC is 0.663 with a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses a MEPS-only model (the calibrated forest)."

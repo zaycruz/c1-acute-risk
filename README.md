@@ -1,13 +1,15 @@
 # C1 Care Team Risk: who may need acute care in 2018?
 
-**When the model says a survivor's risk is 50% or more, it is right 67% of the time. The organisers' baseline is right 49% of the time.**
-For a care team working its call list, that means about 2 in 3 calls reach someone who will go on to need the ER or a hospital bed, instead of 1 in 2.
+**When the model we serve says a survivor's risk is 50% or more, it is right 59% of the time [46%, 71%]. The organisers' baseline is right 48%.**
+That is 59 and 69 calls among 466 development survivors, out of fold. For a care team working its call list, about 3 in 5 calls reach someone who will go on to need the ER or a hospital bed, instead of 1 in 2. The gain, +11 points [-0.2, +23], is just short of significant; nested CV of the whole model search gives 67% vs 49%.
 
 | Nested CV, 466 survivors, 134 events | Our model | Baseline | Difference [95% CI] |
 |---|---|---|---|
 | Log loss (probability quality; lower is better) | 0.539 | 0.606 | -0.067 [-0.115, -0.020], significant |
 | Calibration slope (1 = ideal; 10×5 CV) | 1.10 [0.82, 1.44] | 0.45 [0.25, 0.69] | the baseline is over-confident |
 | AUROC (ranking) | 0.711 | 0.672 | +0.039 [-0.015, +0.091], not significant |
+
+On the 199 held-out survivors (about 57 events), expect an AUROC anywhere from 0.63 to 0.79 from chance alone (resampling the development set). Served-model numbers: `/api/c1/metrics` → `servedModel`.
 
 **Reproduce in 3 commands** (needs [uv](https://docs.astral.sh/uv/) and the challenge zips; see [REPRODUCE.md](REPRODUCE.md)):
 
@@ -45,7 +47,7 @@ chose it. It replaces our first submission, an L2 logistic regression on 34 doma
 | AUROC | **0.711** | 0.672 | +0.039 [-0.015, +0.091], not significant (P(better) 0.93) |
 | Log loss (lower = better) | **0.539** | 0.606 | -0.067 [-0.115, -0.020], **significant** |
 | Events caught in the top fifth (of 134) | **52** | 45 | |
-| Risk called ≥ 50% that came true | **67%** of 55 calls | 49% of 73 calls | |
+| Risk called ≥ 50% that came true | **67%** of 55 calls | 49% of 73 calls | the served forest alone, 10×5 CV: 59% of 59 vs 48% of 69 |
 
 Against our first submission: AUROC +0.034 [-0.001, +0.066], log loss -0.027 [-0.043, -0.009].
 
@@ -175,7 +177,7 @@ npm run contract        # regenerates CONTRACT.md from the latest E2E responses
    (S71188550: 85, 26 nights in hospital in 2017). The evidence lists this person's SHAP drivers. The recommendations split into
    care team, coach and survivor ("call the team first").
 3. **Can we trust the numbers? (40 s)** Look at the model card: "same-or-better ranking, significantly better probabilities".
-   Nested CV says AUROC 0.711 vs 0.672 (not significant) and log loss significantly better. When the model says 50%+, it is right 67% of the time; the baseline is right 49%.
+   Nested CV says AUROC 0.711 vs 0.672 (not significant) and log loss significantly better. When the served model says 50%+, it is right 59% of the time (baseline 48%); for the nested search the figures are 67% and 49%.
 4. **The insight (20 s).** Heavy care this year predicts acute care next year; nothing else moves the ceiling. The value is calibrated triage: the risk numbers can be taken at face value.
 5. **Fairness and clinical records (15 s).** It holds by sex and insurance; NH Black ranking is weak and flagged. We did not fake a join: clinical detail adds nothing even inside Synthea.
 

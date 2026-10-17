@@ -13,6 +13,14 @@
 | Nested folds won by the forest | 6 | `runs/autoresearch/round-nested.json` → `picks/rf|compact_raw_use` | 6 | 6 | match |
 | Top-fifth events, search | 52 | `src/data/metrics.json` → `modelSearch/top20Events/procedure` | 52 | 52 | match |
 | Top-fifth events, baseline | 45 | `src/data/metrics.json` → `modelSearch/top20Events/baseline` | 45 | 45 | match |
+| Hero: served forest 50%+ calls that came true | 59% | `src/data/metrics.json` → `servedModel/callsAt50/forest/cameTrue` | error: 'servedModel' | 59% | match |
+| Hero: served forest 50%+ CI | [46%, 71%] | `src/data/metrics.json` → `servedModel/callsAt50/forest/cameTrueCi95` | error: 'servedModel' | [46%, 71%] | match |
+| Hero: served forest 50%+ calls (n) | 59 | `src/data/metrics.json` → `servedModel/callsAt50/forest/n` | error: 'servedModel' | 59 | match |
+| Hero: baseline 50%+ calls that came true | 48% | `src/data/metrics.json` → `servedModel/callsAt50/baseline/cameTrue` | error: 'servedModel' | 48% | match |
+| Hero: baseline 50%+ calls (n) | 69 | `src/data/metrics.json` → `servedModel/callsAt50/baseline/n` | error: 'servedModel' | 69 | match |
+| Hero: difference CI (points) | [-0.2, +23] | `src/data/metrics.json` → `servedModel/callsAt50/differenceCi95` | error: 'servedModel' | [-0.2, +23] | match |
+| Expected held-out events | 57 | `src/data/metrics.json` → `servedModel/expectedHeldout/expectedEvents` | error: 'servedModel' | 57 | match |
+| Expected held-out AUROC range | 0.63 to 0.79 | `src/data/metrics.json` → `servedModel/expectedHeldout/aurocRange95` | error: 'servedModel' | 0.63 to 0.79 | match |
 | 50%+ calls that came true, search | 67% | `src/data/metrics.json` → `modelSearch/callsAt50/procedure/cameTrue` | 67% | 67% | match |
 | 50%+ calls, search (n) | 55 | `src/data/metrics.json` → `modelSearch/callsAt50/procedure/n` | 55 | 55 | match |
 | 50%+ calls that came true, baseline | 49% | `src/data/metrics.json` → `modelSearch/callsAt50/baseline/cameTrue` | 49% | 49% | match |
@@ -42,7 +50,7 @@
 | 10×5 log loss, logistic | 0.570 | `analysis/out/metrics_meps.json` → `metrics/logistic/log_loss/value` | 0.570 | 0.570 | match |
 | 10×5 log loss, forest | 0.539 | `analysis/out/metrics_meps.json` → `metrics/forest/log_loss/value` | 0.539 | 0.539 | match |
 | 10×5 Δlog loss | -0.067 | `analysis/out/metrics_meps.json` → `deltaVsBaseline/forest/log_loss/value` | -0.067 | -0.067 | match |
-| 10×5 Δlog loss CI | [-0.107, -0.027] | `analysis/out/metrics_meps.json` → `deltaVsBaseline/forest/log_loss/ci95` | [-0.107, -0.026] | [-0.107, -0.026] | MISMATCH: README differs from the committed output too (README rounding/typo, not the rerun) |
+| 10×5 Δlog loss CI | [-0.107, -0.026] | `analysis/out/metrics_meps.json` → `deltaVsBaseline/forest/log_loss/ci95` | [-0.107, -0.026] | [-0.107, -0.026] | match |
 | Calibration slope, baseline | 0.45 | `analysis/out/metrics_meps.json` → `metrics/baseline/cal_slope/value` | 0.45 | 0.45 | match |
 | Calibration slope CI, baseline | [0.25, 0.69] | `analysis/out/metrics_meps.json` → `metrics/baseline/cal_slope/ci95` | [0.25, 0.69] | [0.25, 0.69] | match |
 | Calibration slope, logistic | 1.09 | `analysis/out/metrics_meps.json` → `metrics/logistic/cal_slope/value` | 1.09 | 1.09 | match |
@@ -72,7 +80,7 @@
 | Age 75+ rate with | 44% | `src/data/metrics.json` → `plainFactors/1/withFactor/rate` | 44% | 44% | match |
 | Age 75+ rate without | 24% | `src/data/metrics.json` → `plainFactors/1/without/rate` | 24% | 24% | match |
 | Fairness AUROC, female | 0.72 | `src/data/metrics.json` → `fairness[group="Female"]/auroc` | 0.72 | 0.72 | match |
-| Fairness AUROC, male | 0.71 | `src/data/metrics.json` → `fairness[group="Male"]/auroc` | 0.70 | 0.70 | MISMATCH: README differs from the committed output too (README rounding/typo, not the rerun) |
+| Fairness AUROC, male | 0.70 | `src/data/metrics.json` → `fairness[group="Male"]/auroc` | 0.70 | 0.70 | match |
 | Fairness AUROC, any private | 0.68 | `src/data/metrics.json` → `fairness[group="Any private"]/auroc` | 0.68 | 0.68 | match |
 | Fairness AUROC, public only | 0.75 | `src/data/metrics.json` → `fairness[group="Public only"]/auroc` | 0.75 | 0.75 | match |
 | Age 75+ O/E | 1.15 | `src/data/metrics.json` → `fairness[group="75+ (85 = top-coded)"]/oe` | 1.15 | 1.15 | match |
@@ -91,39 +99,39 @@
 | Synthea Q2 Δ vs forest | -0.026 | `analysis/out/synthea.json` → `q2Transport/vsMepsModel/deltaAuroc` | -0.026 | -0.026 | match |
 | Synthea Q2 Δ CI | [-0.068, +0.013] | `analysis/out/synthea.json` → `q2Transport/vsMepsModel/ci95` | [-0.068, +0.013] | [-0.068, +0.013] | match |
 | Synthea Q3 burden ΔAUROC | +0.004 | `analysis/out/synthea.json` → `q3Increment/transfer_clinical_burden/delta/auroc/value` | +0.004 | +0.004 | match |
-| Synthea Q3 burden ΔAUROC CI | [-0.002, +0.011] | `analysis/out/synthea.json` → `q3Increment/transfer_clinical_burden/delta/auroc/ci95` | [-0.003, +0.012] | [-0.003, +0.012] | MISMATCH: README differs from the committed output too (README rounding/typo, not the rerun) |
+| Synthea Q3 burden ΔAUROC CI | [-0.003, +0.012] | `analysis/out/synthea.json` → `q3Increment/transfer_clinical_burden/delta/auroc/ci95` | [-0.003, +0.012] | [-0.003, +0.012] | match |
 | Synthea Q3 prior ΔAUROC | +0.004 | `analysis/out/synthea.json` → `q3Increment/transfer_prior_logit/delta/auroc/value` | +0.004 | +0.004 | match |
-| Synthea Q3 prior ΔAUROC CI | [-0.003, +0.010] | `analysis/out/synthea.json` → `q3Increment/transfer_prior_logit/delta/auroc/ci95` | [-0.002, +0.010] | [-0.002, +0.010] | MISMATCH: README differs from the committed output too (README rounding/typo, not the rerun) |
+| Synthea Q3 prior ΔAUROC CI | [-0.002, +0.010] | `analysis/out/synthea.json` → `q3Increment/transfer_prior_logit/delta/auroc/ci95` | [-0.002, +0.010] | [-0.002, +0.010] | match |
 | Synthea Q3 MEPS-only reference | 0.663 | `analysis/out/synthea.json` → `q3Increment/baseline/auroc/value` | 0.663 | 0.663 | match |
 | Synthea-prior candidate (round 3) | 0.692 | `runs/autoresearch/round-3.json` → `results[candidate="synthea_prior|prior_use"]/auroc` | 0.692 | 0.692 | match |
-| Mitigation: current NH Black AUROC CI (2,000 draws) | [0.25, 0.71] | `analysis/out/fairness_mitigation.json` → `variants/current/nhBlack/aurocCi95` | n/a | [0.25, 0.71] | match |
-| Mitigation: current NH Black O/E | 0.73 | `analysis/out/fairness_mitigation.json` → `variants/current/nhBlack/oe` | n/a | 0.73 | match |
-| Mitigation: recalibrated NH Black AUROC | 0.44 | `analysis/out/fairness_mitigation.json` → `variants/recalibrated/nhBlack/auroc` | n/a | 0.44 | match |
-| Mitigation: recalibrated NH Black O/E | 1.00 | `analysis/out/fairness_mitigation.json` → `variants/recalibrated/nhBlack/oe` | n/a | 1.00 | match |
-| Mitigation: recalibrated Δ within group | -0.040 | `analysis/out/fairness_mitigation.json` → `variants/recalibrated/vsCurrent/groupDeltaAuroc` | n/a | -0.040 | match |
-| Mitigation: recalibrated log loss | 0.542 | `analysis/out/fairness_mitigation.json` → `variants/recalibrated/overall/logLoss` | n/a | 0.542 | match |
-| Mitigation: reweighted NH Black AUROC | 0.46 | `analysis/out/fairness_mitigation.json` → `variants/reweighted/nhBlack/auroc` | n/a | 0.46 | match |
-| Mitigation: reweighted Δ CI | [-0.068, +0.029] | `analysis/out/fairness_mitigation.json` → `variants/reweighted/vsCurrent/groupDeltaAurocCi95` | n/a | [-0.068, +0.029] | match |
-| Mitigation: reweighted log loss | 0.546 | `analysis/out/fairness_mitigation.json` → `variants/reweighted/overall/logLoss` | n/a | 0.546 | match |
-| Mitigation: group features NH Black AUROC | 0.47 | `analysis/out/fairness_mitigation.json` → `variants/group_features/nhBlack/auroc` | n/a | 0.47 | match |
-| Mitigation: group features Δ | -0.008 | `analysis/out/fairness_mitigation.json` → `variants/group_features/vsCurrent/groupDeltaAuroc` | n/a | -0.008 | match |
-| Mitigation: both NH Black O/E | 0.81 | `analysis/out/fairness_mitigation.json` → `variants/both/nhBlack/oe` | n/a | 0.81 | match |
-| Mitigation: both log loss | 0.545 | `analysis/out/fairness_mitigation.json` → `variants/both/overall/logLoss` | n/a | 0.545 | match |
-| Mitigation: variants passing | No variant passes | `analysis/out/fairness_mitigation.json` → `len(passed)` | n/a | No variant passes | match |
-| Pooled not-NH-White AUROC | 0.56 | `analysis/out/fairness_mitigation.json` → `extraSubgroups/1/auroc` | n/a | 0.56 | match |
-| Pooled not-NH-White AUROC CI | [0.41, 0.71] | `analysis/out/fairness_mitigation.json` → `extraSubgroups/1/aurocCi95` | n/a | [0.41, 0.71] | match |
-| Pooled not-NH-White n | 95 | `analysis/out/fairness_mitigation.json` → `extraSubgroups/1/n` | n/a | 95 | match |
-| Pooled not-NH-White O/E CI | [0.46, 1.01] | `analysis/out/fairness_mitigation.json` → `extraSubgroups/1/oeCi95` | n/a | [0.46, 1.01] | match |
-| Hispanic AUROC | 0.64 | `analysis/out/fairness_mitigation.json` → `extraSubgroups/0/auroc` | n/a | 0.64 | match |
-| Hispanic AUROC CI | [0.38, 0.86] | `analysis/out/fairness_mitigation.json` → `extraSubgroups/0/aurocCi95` | n/a | [0.38, 0.86] | match |
+| Mitigation: current NH Black AUROC CI (2,000 draws) | [0.25, 0.71] | `analysis/out/fairness_mitigation.json` → `variants/current/nhBlack/aurocCi95` | [0.25, 0.71] | [0.25, 0.71] | match |
+| Mitigation: current NH Black O/E | 0.73 | `analysis/out/fairness_mitigation.json` → `variants/current/nhBlack/oe` | 0.73 | 0.73 | match |
+| Mitigation: recalibrated NH Black AUROC | 0.44 | `analysis/out/fairness_mitigation.json` → `variants/recalibrated/nhBlack/auroc` | 0.44 | 0.44 | match |
+| Mitigation: recalibrated NH Black O/E | 1.00 | `analysis/out/fairness_mitigation.json` → `variants/recalibrated/nhBlack/oe` | 1.00 | 1.00 | match |
+| Mitigation: recalibrated Δ within group | -0.040 | `analysis/out/fairness_mitigation.json` → `variants/recalibrated/vsCurrent/groupDeltaAuroc` | -0.040 | -0.040 | match |
+| Mitigation: recalibrated log loss | 0.542 | `analysis/out/fairness_mitigation.json` → `variants/recalibrated/overall/logLoss` | 0.542 | 0.542 | match |
+| Mitigation: reweighted NH Black AUROC | 0.46 | `analysis/out/fairness_mitigation.json` → `variants/reweighted/nhBlack/auroc` | 0.46 | 0.46 | match |
+| Mitigation: reweighted Δ CI | [-0.068, +0.029] | `analysis/out/fairness_mitigation.json` → `variants/reweighted/vsCurrent/groupDeltaAurocCi95` | [-0.068, +0.029] | [-0.068, +0.029] | match |
+| Mitigation: reweighted log loss | 0.546 | `analysis/out/fairness_mitigation.json` → `variants/reweighted/overall/logLoss` | 0.546 | 0.546 | match |
+| Mitigation: group features NH Black AUROC | 0.47 | `analysis/out/fairness_mitigation.json` → `variants/group_features/nhBlack/auroc` | 0.47 | 0.47 | match |
+| Mitigation: group features Δ | -0.008 | `analysis/out/fairness_mitigation.json` → `variants/group_features/vsCurrent/groupDeltaAuroc` | -0.008 | -0.008 | match |
+| Mitigation: both NH Black O/E | 0.81 | `analysis/out/fairness_mitigation.json` → `variants/both/nhBlack/oe` | 0.81 | 0.81 | match |
+| Mitigation: both log loss | 0.545 | `analysis/out/fairness_mitigation.json` → `variants/both/overall/logLoss` | 0.545 | 0.545 | match |
+| Mitigation: variants passing | No variant passes | `analysis/out/fairness_mitigation.json` → `len(passed)` | No variant passes | No variant passes | match |
+| Pooled not-NH-White AUROC | 0.56 | `analysis/out/fairness_mitigation.json` → `extraSubgroups/1/auroc` | 0.56 | 0.56 | match |
+| Pooled not-NH-White AUROC CI | [0.41, 0.71] | `analysis/out/fairness_mitigation.json` → `extraSubgroups/1/aurocCi95` | [0.41, 0.71] | [0.41, 0.71] | match |
+| Pooled not-NH-White n | 95 | `analysis/out/fairness_mitigation.json` → `extraSubgroups/1/n` | 95 | 95 | match |
+| Pooled not-NH-White O/E CI | [0.46, 1.01] | `analysis/out/fairness_mitigation.json` → `extraSubgroups/1/oeCi95` | [0.46, 1.01] | [0.46, 1.01] | match |
+| Hispanic AUROC | 0.64 | `analysis/out/fairness_mitigation.json` → `extraSubgroups/0/auroc` | 0.64 | 0.64 | match |
+| Hispanic AUROC CI | [0.38, 0.86] | `analysis/out/fairness_mitigation.json` → `extraSubgroups/0/aurocCi95` | [0.38, 0.86] | [0.38, 0.86] | match |
 | NH White AUROC | 0.75 | `src/data/metrics.json` → `fairness[group="NH White"]/auroc` | 0.75 | 0.75 | match |
 | Held-out survivors with humanCheck | 4 | `src/data/survivors.json` → `count(details[].humanCheck.required)` | n/a | 4 | match |
-| Alert calls/week per 500 survivors | 1.9 | `src/data/metrics.json` → `alertBudget/cutoffs[topShare=0.2]/per100SurvivorsPerWeek x 5` | error: 'alertBudget' | 1.9 | match |
+| Alert calls/week per 500 survivors | 1.9 | `src/data/metrics.json` → `alertBudget/cutoffs[topShare=0.2]/per100SurvivorsPerWeek x 5` | 1.9 | 1.9 | match |
 | Alert calls per event found | 1.8 | `src/data/metrics.json` → `tiers/tiers/0/observedRate` | 1.8 | 1.8 | match |
-| Top-tenth share of events | 21% | `src/data/metrics.json` → `alertBudget/cutoffs[topShare=0.1]/shareOfAllEvents` | error: 'alertBudget' | 21% | match |
-| Top-tenth precision | 60% | `src/data/metrics.json` → `alertBudget/cutoffs[topShare=0.1]/devObservedRate` | error: 'alertBudget' | 60% | match |
+| Top-tenth share of events | 21% | `src/data/metrics.json` → `alertBudget/cutoffs[topShare=0.1]/shareOfAllEvents` | 21% | 21% | match |
+| Top-tenth precision | 60% | `src/data/metrics.json` → `alertBudget/cutoffs[topShare=0.1]/devObservedRate` | 60% | 60% | match |
 | Submission CSV | committed copy | `submission/heldout_predictions.csv` | | 199 rows, same IDs and order, max |Δ predicted_risk| = 0.00e+00 | match |
 
-**Reproduction: PASS.** This run differs from the committed outputs on 0 of 122 numbers; submission CSV identical.
+**Reproduction: PASS.** This run differs from the committed outputs on 0 of 130 numbers; submission CSV identical.
 
-**README: 118 of 122 numbers match this run.** The rest are README rounding or typo errors that the committed output shows too (listed above).
+**README: 130 of 130 numbers match this run.**
