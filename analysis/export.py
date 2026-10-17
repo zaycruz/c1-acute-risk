@@ -495,7 +495,7 @@ def main():
                 caveat += f" The model under-predicted acute care for {grp} survivors (observed {fr['oe']:.2f}x predicted): the true risk may be higher."
             if fr["oeCi95"][1] < 1:
                 caveat += f" The model over-predicted acute care for {grp} survivors (observed {fr['oe']:.2f}x predicted)."
-        # Console display fields (limits agreed with t-0003): riskWords <= 60, forEllie <= 160 incl. the caveat.
+        # Console display fields (limits agreed with t-0003): riskWords <= 60, forAssistant <= 160 incl. the caveat.
         k10 = max(1, min(9, round(p * 10)))
         lead_word = {"alert": "Higher than most", "watch": "Above average", "ok": "Below average"}[st]
         risk_words = f"{lead_word}: about {k10} in 10 like them had one"
@@ -508,15 +508,17 @@ def main():
         small = next((f for f in flags if f["flag"] == "too-small"), None)
         tail = (f" Less reliable for {weak['group']} survivors." if weak else f" Few {small['group']} survivors in training." if small else "") + " Association, not cause."
         driver = f", mainly {lead}" if lead and st != "ok" else ""
-        for_ellie = f"Hospital risk {pct}% next year ({ {'alert': 'high', 'watch': 'raised', 'ok': 'low'}[st]}; average {round(base_rate * 100)}%){driver}.{tail}"
-        if len(for_ellie) > 160:
-            for_ellie = f"Hospital risk {pct}% next year{driver}.{tail}"
+        for_assistant = f"Hospital risk {pct}% next year ({ {'alert': 'high', 'watch': 'raised', 'ok': 'low'}[st]}; average {round(base_rate * 100)}%){driver}.{tail}"
+        if len(for_assistant) > 160:
+            for_assistant = f"Hospital risk {pct}% next year{driver}.{tail}"
         weak_race = any(f["attribute"] == "race_ethnicity" and f["flag"] == "weak-ranking" for f in flags)
         human_check = ({"required": True, "reason": f"Check before outreach: the model ranks {g.race_ethnicity} survivors no better than chance."}
                        if weak_race and st != "ok" else {"required": False, "reason": None})
         d = {"survivorId": f"c1-{sid}", "displayName": display, "status": st, "headline": headline, "summary": summary,
              "risk": round(p, 4), "thresholds": {"alert": T["alert"], "watch": T["watch"]},
-             "riskWords": risk_words, "forEllie": for_ellie, "fairnessFlags": flags, "redFlags": red_flags(x, s17.loc[sid], st),
+             "riskWords": risk_words, "forAssistant": for_assistant,
+             "forEllie": for_assistant,  # deprecated alias of forAssistant, removed once Patient 360 reads forAssistant
+             "fairnessFlags": flags, "redFlags": red_flags(x, s17.loc[sid], st),
              "humanCheck": human_check,
              "evidence": evidence, "recommendations": recs, "charts": charts, "profile": profile, "caveat": caveat}
         details[f"c1-{sid}"] = d

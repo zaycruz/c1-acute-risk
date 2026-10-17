@@ -83,13 +83,14 @@ for (const r of list) {
   if (good) ok++; else failures.push(r.survivorId);
   if (r === list[0]) responses[`/api/c1/survivors/${r.survivorId}`] = d;
 }
-const LIM = { riskWords: 60, forEllie: 160, headline: 90, evidence: 120 };
+const LIM = { riskWords: 60, forAssistant: 160, headline: 90, evidence: 120 };
 const over = [];
 for (const r of list) {
   const b = panels[r.survivorId];
   if (!b) continue;
   if (!(typeof b.riskWords === "string" && b.riskWords.length <= LIM.riskWords)) over.push([r.survivorId, "riskWords"]);
-  if (!(typeof b.forEllie === "string" && b.forEllie.length <= LIM.forEllie && /not cause/i.test(b.forEllie))) over.push([r.survivorId, "forEllie"]);
+  if (!(typeof b.forAssistant === "string" && b.forAssistant.length <= LIM.forAssistant && /not cause/i.test(b.forAssistant))) over.push([r.survivorId, "forAssistant"]);
+  if ("forEllie" in b && b.forEllie !== b.forAssistant) over.push([r.survivorId, "forEllie alias differs from forAssistant"]);
   if (b.headline.length > LIM.headline) over.push([r.survivorId, "headline"]);
   if (b.evidence.some((e) => e.text.length > LIM.evidence)) over.push([r.survivorId, "evidence"]);
   const rf = b.redFlags;
@@ -108,7 +109,7 @@ check("roster fairness fields agree with each survivor panel (flags, humanCheck,
     r.humanCheck === b.humanCheck?.required && Array.isArray(r.tags) && r.tags.length === r.fairnessFlags.length + (r.humanCheck ? 1 : 0) &&
     r.tags.every((t) => typeof t.label === "string" && t.label.length <= 40 && typeof t.kind === "string");
 }), { humanCheck: list.filter((r) => r.humanCheck).length, flagged: list.filter((r) => r.fairnessFlags?.length).length });
-check("console display fields within agreed lengths (riskWords 60, forEllie 160 with caveat, headline 90, evidence 120), redFlags well formed, humanCheck set exactly for weak-ranking groups off the ok tier", over.length === 0 && Object.keys(panels).length === list.length, { over: over.slice(0, 10) });
+check("console display fields within agreed lengths (riskWords 60, forAssistant 160 with caveat, headline 90, evidence 120), redFlags well formed, humanCheck set exactly for weak-ranking groups off the ok tier", over.length === 0 && Object.keys(panels).length === list.length, { over: over.slice(0, 10) });
 check("every survivor panel matches the contract, the submission risk and its tier", ok === list.length, { ok, failures: failures.slice(0, 10) });
 const missing = await get("/api/c1/survivors/c1-nope");
 check("unknown survivor returns 404 JSON", missing.status === 404 && missing.body?.error);

@@ -190,4 +190,13 @@ npm run contract        # regenerates CONTRACT.md from the latest E2E responses
 - In `factors[]`, `meanAbsLogit` is the mean absolute TreeSHAP contribution on the calibrated log-odds scale. It ranks drivers; it is not an effect size.
 - The 10×5 CV numbers for the forest are after selection. Quote the nested-CV numbers as the estimate for new survivors.
 
+## Future work
+
+Raised by the judges' panel and not built for this submission:
+- A decision-curve or net-benefit comparison with the baseline at the alert threshold, with a CI.
+- Extending `humanCheck` to every group whose AUROC CI includes 0.5 (Hispanic, the pooled non-NH-White group), and reporting the added calls per week.
+- A monitoring protocol with alert thresholds for each weak subgroup, and a data-collection plan for language, Haitian origin and neighbourhood (MEPS has none of these).
+- A comparison of the MEPS sample with Miami-Dade demographics, with a reweighting sensitivity check.
+- A temporal or external validation once held-out labels or a second MEPS panel are available.
+
 </details>
