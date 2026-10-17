@@ -1,7 +1,7 @@
 # C1 Care Team Risk: API contract
 
 Base URL (deployed): `https://c1-acute-risk.zay-259.workers.dev`. All responses are JSON with `access-control-allow-origin: *`; only `GET` (and `OPTIONS`) are accepted, anything else is `405`.
-The examples below are real responses, captured by `npm run e2e` on 2026-10-17T18:36:56.211Z (40/40 checks passed) and turned into this file by `npm run contract`.
+The examples below are real responses, captured by `npm run e2e` on 2026-10-17T18:51:04.812Z (41/41 checks passed) and turned into this file by `npm run contract`.
 
 Predictions are for the **199 held-out MEPS survivors** (`meps/heldout_ids.csv`): real people, forward predictions, outcome unknown to us.
 `survivorId` = `c1-` + the challenge's MEPS `ID`. `updatedAt` is the as-of date of the data (end of 2017), not the build time.
@@ -52,7 +52,7 @@ Extra fields on each tile: `fairnessFlags[{attribute, group, flag}]` (the same f
 
 ## `GET /api/c1/survivors/:id`: survivor panel
 
-Contract fields: `survivorId, status, headline, summary, evidence, recommendations, charts, profile, caveat`. Extra fields: `displayName`, `risk` (0..1, identical to the submitted `predicted_risk`), `thresholds`, `riskWords` (at most 60 characters, for under the risk number), `forAssistant` (one line of at most 160 characters that always includes the caveat, for the care-team assistant to use verbatim; `forEllie` is a deprecated alias with the same text, removed once Patient 360 reads `forAssistant`), `fairnessFlags[]` (`{attribute, group, flag, text}` for each of this survivor's groups whose fairness flag is not `ok`; empty when none). `redFlags`: what should go to the care team today, for the console's banner: `careTeamToday` (true when a 2017 answer needs a same-day ask), `banner` (at most 120 characters), `fromSurvey[{code, urgency: today|this-week, text}]` (codes `hopeless, serious-distress, severe-pain, repeat-acute-care`), `callTodayIf[]` (the 5 standing symptoms: fever, chest pain or breathing, fall or confusion, swollen leg, hopelessness or self-harm), `callTodayText`, `socialNeeds{needed, reasons[], text}` (the referral line) and `asOf`. `humanCheck{required, reason}`: `required` is true when the survivor belongs to a group the model ranks poorly (today NH Black) and the tier is not `ok`; the console should ask a human to review before outreach. `reason` is at most 120 characters, `null` when not required. The same standing rules are in `display.redFlagRules` on the metrics endpoint.
+Contract fields: `survivorId, status, headline, summary, evidence, recommendations, charts, profile, caveat`. Extra fields: `displayName`, `risk` (0..1, identical to the submitted `predicted_risk`), `thresholds`, `riskWords` (at most 60 characters, for under the risk number), `forAssistant` (one line of at most 160 characters that always includes the caveat, for the care-team assistant to use verbatim), `fairnessFlags[]` (`{attribute, group, flag, text}` for each of this survivor's groups whose fairness flag is not `ok`; empty when none). `redFlags`: what should go to the care team today, for the console's banner: `careTeamToday` (true when a 2017 answer needs a same-day ask), `banner` (at most 120 characters), `fromSurvey[{code, urgency: today|this-week, text}]` (codes `hopeless, serious-distress, severe-pain, repeat-acute-care`), `callTodayIf[]` (the 5 standing symptoms: fever, chest pain or breathing, fall or confusion, swollen leg, hopelessness or self-harm), `callTodayText`, `socialNeeds{needed, reasons[], text}` (the referral line) and `asOf`. `humanCheck{required, reason}`: `required` is true when the survivor belongs to a group the model ranks poorly (today NH Black) and the tier is not `ok`; the console should ask a human to review before outreach. `reason` is at most 120 characters, `null` when not required. The same standing rules are in `display.redFlagRules` on the metrics endpoint.
 
 - `evidence[]`: `{kind, text}`. The first item (`kind: "model"`) states the risk and what the tier meant on development data. Then up to 4 factors that raise this person's risk and up to 2 that lower it, biggest first. Extra keys: `feature`, `logitContribution` (TreeSHAP contribution on the calibrated log-odds scale, relative to an average survivor; see analysis/explain.py). `kind` is one of `prior-acute-care, medications, care-intensity, physical-function, symptoms, distress, financial-toxicity, access, treatment, support, demographic`.
 - `recommendations[]`: `{audience: "coach" | "care-team" | "survivor", text}`. Tier action first, then one per actionable driver. The coach does not diagnose; clinical items go to `care-team`.
@@ -73,7 +73,6 @@ Contract fields: `survivorId, status, headline, summary, evidence, recommendatio
   },
   "riskWords": "Higher than most: about 7 in 10 like them had one",
   "forAssistant": "Hospital risk 70% next year (high; average 29%), mainly nights in hospital last year. Association, not cause.",
-  "forEllie": "Hospital risk 70% next year (high; average 29%), mainly nights in hospital last year. Association, not cause.",
   "fairnessFlags": [],
   "redFlags": {
     "careTeamToday": false,
