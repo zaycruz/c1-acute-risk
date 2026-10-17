@@ -1,7 +1,7 @@
 # C1 Care Team Risk: API contract
 
 Base URL (deployed): `https://c1-acute-risk.zay-259.workers.dev`. All responses are JSON with `access-control-allow-origin: *`; only `GET` (and `OPTIONS`) are accepted, anything else is `405`.
-The examples below are real responses, captured by `npm run e2e` on 2026-10-17T16:21:55.669Z (34/34 checks passed) and turned into this file by `npm run contract`.
+The examples below are real responses, captured by `npm run e2e` on 2026-10-17T17:15:10.262Z (36/36 checks passed) and turned into this file by `npm run contract`.
 
 Predictions are for the **199 held-out MEPS survivors** (`meps/heldout_ids.csv`): real people, forward predictions, outcome unknown to us.
 `survivorId` = `c1-` + the challenge's MEPS `ID`. `updatedAt` is the as-of date of the data (end of 2017), not the build time.
@@ -41,7 +41,7 @@ Sorted by `status` (alert, then watch, then ok), then by risk. Status comes from
 
 ## `GET /api/c1/survivors/:id`: survivor panel
 
-Contract fields: `survivorId, status, headline, summary, evidence, recommendations, charts, profile, caveat`. Extra fields: `displayName`, `risk` (0..1, identical to the submitted `predicted_risk`), `thresholds`, `riskWords` (at most 60 characters, for under the risk number), `forEllie` (one line of at most 160 characters that always includes the caveat, for Ellie to use verbatim), `fairnessFlags[]` (`{attribute, group, flag, text}` for each of this survivor's groups whose fairness flag is not `ok`; empty when none). `redFlags`: what should go to the care team today, for the console's banner: `careTeamToday` (true when a 2017 answer needs a same-day ask), `banner` (at most 120 characters), `fromSurvey[{code, urgency: today|this-week, text}]` (codes `hopeless, serious-distress, severe-pain, repeat-acute-care`), `callTodayIf[]` (the 5 standing symptoms: fever, chest pain or breathing, fall or confusion, swollen leg, hopelessness or self-harm), `callTodayText`, `socialNeeds{needed, reasons[], text}` (the referral line) and `asOf`. The same standing rules are in `display.redFlagRules` on the metrics endpoint.
+Contract fields: `survivorId, status, headline, summary, evidence, recommendations, charts, profile, caveat`. Extra fields: `displayName`, `risk` (0..1, identical to the submitted `predicted_risk`), `thresholds`, `riskWords` (at most 60 characters, for under the risk number), `forEllie` (one line of at most 160 characters that always includes the caveat, for Ellie to use verbatim), `fairnessFlags[]` (`{attribute, group, flag, text}` for each of this survivor's groups whose fairness flag is not `ok`; empty when none). `redFlags`: what should go to the care team today, for the console's banner: `careTeamToday` (true when a 2017 answer needs a same-day ask), `banner` (at most 120 characters), `fromSurvey[{code, urgency: today|this-week, text}]` (codes `hopeless, serious-distress, severe-pain, repeat-acute-care`), `callTodayIf[]` (the 5 standing symptoms: fever, chest pain or breathing, fall or confusion, swollen leg, hopelessness or self-harm), `callTodayText`, `socialNeeds{needed, reasons[], text}` (the referral line) and `asOf`. `humanCheck{required, reason}`: `required` is true when the survivor belongs to a group the model ranks poorly (today NH Black) and the tier is not `ok`; the console should ask a human to review before outreach. `reason` is at most 120 characters, `null` when not required. The same standing rules are in `display.redFlagRules` on the metrics endpoint.
 
 - `evidence[]`: `{kind, text}`. The first item (`kind: "model"`) states the risk and what the tier meant on development data. Then up to 4 factors that raise this person's risk and up to 2 that lower it, biggest first. Extra keys: `feature`, `logitContribution` (TreeSHAP contribution on the calibrated log-odds scale, relative to an average survivor; see analysis/explain.py). `kind` is one of `prior-acute-care, medications, care-intensity, physical-function, symptoms, distress, financial-toxicity, access, treatment, support, demographic`.
 - `recommendations[]`: `{audience: "coach" | "care-team" | "survivor", text}`. Tier action first, then one per actionable driver. The coach does not diagnose; clinical items go to `care-team`.
@@ -89,6 +89,10 @@ Contract fields: `survivorId, status, headline, summary, evidence, recommendatio
       "text": "Refer to a social worker or financial navigator (income under 200% of poverty)."
     },
     "asOf": "2017 survey answers: they say what to ask about now, not that an emergency is happening"
+  },
+  "humanCheck": {
+    "required": false,
+    "reason": null
   },
   "evidence": [
     {
@@ -204,11 +208,13 @@ Unknown id: `404 {"error":"survivor not found"}`.
 
 ## `GET /api/c1/metrics`: model card
 
-Top-level keys: `asOf`, `outcome`, `data`, `validation`, `finalModel`, `metrics`, `deltaVsBaseline`, `deltaVsPrevious`, `modelSearch`, `firstEvent`, `calibrationCurve`, `tiers`, `fairness`, `fairnessBaseline`, `factors`, `plainFactors`, `clinicalRecords`, `clinicalRecordsDetail`, `heldoutStatusMix`, `caveats`, `display`.
+Top-level keys: `asOf`, `outcome`, `data`, `validation`, `finalModel`, `metrics`, `deltaVsBaseline`, `deltaVsPrevious`, `modelSearch`, `firstEvent`, `calibrationCurve`, `tiers`, `fairness`, `fairnessBaseline`, `factors`, `plainFactors`, `clinicalRecords`, `clinicalRecordsDetail`, `heldoutStatusMix`, `fairnessMitigation`, `alertBudget`, `caveats`, `display`.
 
 - `finalModel`: `{key, name, chosenBy, explanations, previous}`. `finalModel.key` (`forest`) names the final model in `metrics`, `deltaVsBaseline` and `calibrationCurve`.
 - `metrics.{baseline,logistic,gbm_calibrated,forest}`: `auroc, auprc, brier, log_loss, cal_intercept, cal_slope, mean_pred`, each `{value, ci95}`, out-of-fold on the 466 development survivors. `logistic` is the previous submission.
 - `modelSearch`: the unbiased nested-CV estimate of the model search (the 10x5 CV numbers for `forest` are post-selection). `deltaVsPrevious`: forest vs the previous logistic model, paired.
+- `fairnessMitigation`: the pre-registered attempt to fix NH Black ranking: `variants[{variant, label, nhBlackAuroc, nhBlackAurocCi95, nhBlackOe, overallAuroc, overallLogLoss, vsCurrent, passes}]`, `passCriterion`, `passed[]`, `decision`, `extraSubgroups[]` (Hispanic, pooled not-NH-White), `language{available, note}`, `safeguard`, `whoThisDoesNotServeYet[]`.
+- `alertBudget`: workload of the alert tier: `current` (the alert tier), `cutoffs[]` (top 5/10/15/20/30%, with events found, precision and calls per 100 survivors per week) and `justification`.
 - `display`: plain-language, ready-to-render summary for apps: `headline`, `keyNumbers[{value, label, sub}]`, `howSure[]`, `insight`, `nextQuestion`, `limits[]` (includes flagged fairness groups). `plainFactors[].text`, `tiers.tiers[].text`, `tiers.source`, `fairness[].flag` (`ok | too-small | weak-ranking | under-predicted | over-predicted`) and `fairness[].text` are also plain sentences. Read the final model's metrics as `metrics[finalModel.key]`; `finalModel.name` is a description.
 - `firstEvent`: ranking among survivors with no 2017 ER visit or hospital stay (the proposed prevention target).
 - `deltaVsBaseline`: paired bootstrap differences (auroc, auprc, brier, log_loss) with `ci95` and `p_better`.
@@ -541,7 +547,9 @@ Excerpt:
     "limits": [
       "Associations, not causes: the factors flag who may need help; changing one is not proven to prevent an ER visit.",
       "Built from survey answers only. The synthetic clinical records (Synthea) did not improve it and share no patient key with the survey.",
-      "NH Black: the model ranks risk poorly (AUROC 0.48, n = 47); use clinical judgement"
+      "NH Black: the model ranks risk poorly (AUROC 0.48, n = 47); use clinical judgement",
+      "All survivors other than NH White, pooled: AUROC 0.56 [0.41, 0.71], n = 95: weaker than for NH White survivors.",
+      "Spanish- or Creole-speaking survivors: the survey extract has no language field, so we cannot test them."
     ],
     "redFlagRules": {
       "callTodayIf": [
@@ -693,6 +701,74 @@ Excerpt:
   "clinicalRecords": {
     "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the final survey model (tie within CI)",
     "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02, vs the MEPS model's 0.713 out-of-fold (paired d -0.026 [-0.068, +0.013]): the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.003, +0.012], d Brier -0.0012 [-0.0022, -0.0001]; Synthea prior d AUROC +0.004 [-0.002, +0.010], d Brier -0.0009 [-0.0018, -0.0000]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. (Q3 adds each Synthea score as one feature to the MEPS L2 logistic on 34 domain features, our earlier model; its reference AUROC is 0.663 with a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses a MEPS-only model (the calibrated forest)."
+  },
+  "fairnessMitigation": {
+    "decision": "No variant passes. Keep the current model; NH Black alerts carry a human check before outreach (humanCheck).",
+    "passed": [],
+    "variants": [
+      {
+        "variant": "current",
+        "label": "Current model",
+        "nhBlackAuroc": 0.47979797979797983,
+        "nhBlackAurocCi95": [
+          0.2499662162162162,
+          0.7134826248313089
+        ],
+        "nhBlackOe": 0.7319133949270098,
+        "nhBlackOeCi95": [
+          0.3860087005087557,
+          1.1452860091126271
+        ],
+        "overallAuroc": 0.7127989570221184,
+        "overallLogLoss": 0.5389066734044685
+      },
+      {
+        "variant": "recalibrated",
+        "label": "Group-aware recalibration (cross-fitted)",
+        "nhBlackAuroc": 0.4393939393939394,
+        "nhBlackAurocCi95": [
+          0.22697635135135133,
+          0.6666855203619908
+        ],
+        "nhBlackOe": 0.9958506205498393,
+        "nhBlackOeCi95": [
+          0.523882661484831,
+          1.591535344386848
+        ],
+        "overallAuroc": 0.7103488581190434,
+        "overallLogLoss": 0.5415496267220613,
+        "vsCurrent": {
+          "groupDeltaAuroc": -0.04040404040404044,
+          "groupDeltaAurocCi95": [
+            -0.07857142857142857,
+            -0.010808397683397641
+          ],
+          "deltaAuroc": -0.0024500989030750153,
+          "deltaAurocCi95": [
+            -0.022033109143600706,
+            0.015542512684735851
+          ],
+          "deltaLogLoss": 0.002642953317592789,
+          "deltaLogLossCi95": [
+            -0.00835882254047115,
+            0.015226559256596781
+          ]
+        },
+        "passes": false
+      }
+    ]
+  },
+  "alertBudget": {
+    "current": {
+      "tier": "alert",
+      "riskCutoff": 0.43,
+      "topShare": 0.2,
+      "devFlagged": 92,
+      "devObservedRate": 0.5652173913043478,
+      "shareOfAllEvents": 0.3880597014925373,
+      "heldoutFlagged": 40
+    },
+    "justification": "The alert tier is the top fifth: about 20 survivors per 100 a year, or about 1.9 calls a week for a navigator with 500 survivors. 57% of them had acute care, and it finds 39% of all events (1.8 calls per event found). A tighter top-tenth cut finds only 21% of events at 60% precision. Teams with less capacity can call the alert list in risk order and stop at their weekly budget."
   },
   "heldoutStatusMix": {
     "alert": 40,

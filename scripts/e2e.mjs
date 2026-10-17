@@ -89,8 +89,12 @@ for (const r of list) {
         Array.isArray(rf.fromSurvey) && rf.fromSurvey.every((f) => ["today", "this-week"].includes(f.urgency) && f.text.length <= 120) &&
         rf.careTeamToday === rf.fromSurvey.some((f) => f.urgency === "today") && typeof rf.socialNeeds?.text === "string" && rf.socialNeeds.text.length <= 160)) over.push([r.survivorId, "redFlags"]);
   if (!Array.isArray(b.fairnessFlags) || b.fairnessFlags.some((f) => !f.flag || f.flag === "ok" || !f.text)) over.push([r.survivorId, "fairnessFlags"]);
+  const hc = b.humanCheck;
+  const weakRace = (b.fairnessFlags || []).some((f) => f.attribute === "race_ethnicity" && f.flag === "weak-ranking");
+  if (!(hc && typeof hc.required === "boolean" && hc.required === (weakRace && b.status !== "ok") &&
+        (hc.required ? typeof hc.reason === "string" && hc.reason.length <= 120 : hc.reason === null))) over.push([r.survivorId, "humanCheck"]);
 }
-check("console display fields within agreed lengths (riskWords 60, forEllie 160 with caveat, headline 90, evidence 120) and redFlags well formed", over.length === 0 && Object.keys(panels).length === list.length, { over: over.slice(0, 10) });
+check("console display fields within agreed lengths (riskWords 60, forEllie 160 with caveat, headline 90, evidence 120), redFlags well formed, humanCheck set exactly for weak-ranking groups off the ok tier", over.length === 0 && Object.keys(panels).length === list.length, { over: over.slice(0, 10) });
 check("every survivor panel matches the contract, the submission risk and its tier", ok === list.length, { ok, failures: failures.slice(0, 10) });
 const missing = await get("/api/c1/survivors/c1-nope");
 check("unknown survivor returns 404 JSON", missing.status === 404 && missing.body?.error);
@@ -135,6 +139,17 @@ if (M.metrics) {
   check("display block within agreed lengths (headline 140, KPI value 9 / label 60 / sub 50, lines 200)", D && D.headline.length <= 140 &&
     D.keyNumbers.every((k) => k.value.length <= 9 && k.label.length <= 60 && k.sub.length <= 50) &&
     [...D.howSure, ...D.limits, D.nextQuestion].every((x) => x.length <= 200), D && { headline: D.headline.length, keyNumbers: D.keyNumbers.map((k) => [k.value.length, k.label.length, k.sub.length]) });
+  const FMt = M.fairnessMitigation;
+  check("fairness mitigation: pre-registered variants with CIs, a decision, and the language gap stated", FMt && FMt.variants?.length === 5 &&
+    FMt.variants.every((v) => v.nhBlackAurocCi95?.length === 2 && Number.isFinite(v.overallLogLoss)) &&
+    FMt.variants.filter((v) => v.variant !== "current").every((v) => typeof v.passes === "boolean" && v.vsCurrent?.groupDeltaAurocCi95?.length === 2) &&
+    Array.isArray(FMt.passed) && typeof FMt.decision === "string" && FMt.language?.available === false &&
+    FMt.extraSubgroups?.length === 2 && FMt.whoThisDoesNotServeYet?.length >= 3 && FMt.whoThisDoesNotServeYet.every((x) => x.length <= 200),
+    FMt && { decision: FMt.decision, passed: FMt.passed });
+  const AB = M.alertBudget;
+  check("alert budget: 5 cut-offs, weekly load per 100 survivors, and the alert tier's held-out count matches the roster", AB && AB.cutoffs?.length === 5 &&
+    AB.cutoffs.every((c, i) => c.per100SurvivorsPerWeek > 0 && (i === 0 || c.topShare > AB.cutoffs[i - 1].topShare)) &&
+    AB.current?.heldoutFlagged === mix.alert && typeof AB.justification === "string", AB && { current: AB.current });
   responses.summary = { ...s, nested: S && { auroc: S.auroc, dAuroc: S.vsBaseline.dAuroc, dLogLoss: S.vsBaseline.dLogLoss }, firstEvent: FE && { model: FE.aurocModel, baseline: FE.aurocBaseline } };
 }
 

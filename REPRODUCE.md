@@ -2,7 +2,7 @@
 
 Everything that produced a number in [README.md](README.md) is in this repo: data prep (`analysis/features.py`), training and 10×5 CV
 (`analysis/train.py`), the model search and its nested CV (`analysis/autoresearch.py`), the stratified check (`analysis/stratified.py`),
-Synthea (`analysis/synthea.py`), explanations (`analysis/explain.py`), the API data (`analysis/export.py`), the number check
+Synthea (`analysis/synthea.py`), explanations (`analysis/explain.py`), the fairness mitigation test (`analysis/fairness_mitigation.py`), the API data (`analysis/export.py`), the number check
 (`scripts/check_numbers.py`) and the E2E (`scripts/e2e.mjs`). Seeds are fixed (`SEED = 20261017`; the model search, bootstrap and stratified check use fixed seeds too).
 
 ## Prerequisites
@@ -143,7 +143,33 @@ Only the `"seconds"` fields and the appended sections of `runs/autoresearch/log.
 | Synthea Q3 prior ΔAUROC CI | `analysis/out/synthea.json` → `q3Increment/transfer_prior_logit/delta/auroc/ci95` | [-0.002, +0.010] |
 | Synthea Q3 MEPS-only reference | `analysis/out/synthea.json` → `q3Increment/baseline/auroc/value` | 0.663 |
 | Synthea-prior candidate (round 3) | `runs/autoresearch/round-3.json` → `results[candidate="synthea_prior | 0.692 |
-| Submission (199 rows) | `submission/heldout_predictions.csv` | identical to the committed file (max \|Δ\| < 1e-9) |
+| Mitigation: current NH Black AUROC CI (2,000 draws) | `analysis/out/fairness_mitigation.json` → `variants/current/nhBlack/aurocCi95` | [0.25, 0.71] |
+| Mitigation: current NH Black O/E | `analysis/out/fairness_mitigation.json` → `variants/current/nhBlack/oe` | 0.73 |
+| Mitigation: recalibrated NH Black AUROC | `analysis/out/fairness_mitigation.json` → `variants/recalibrated/nhBlack/auroc` | 0.44 |
+| Mitigation: recalibrated NH Black O/E | `analysis/out/fairness_mitigation.json` → `variants/recalibrated/nhBlack/oe` | 1.00 |
+| Mitigation: recalibrated Δ within group | `analysis/out/fairness_mitigation.json` → `variants/recalibrated/vsCurrent/groupDeltaAuroc` | -0.040 |
+| Mitigation: recalibrated log loss | `analysis/out/fairness_mitigation.json` → `variants/recalibrated/overall/logLoss` | 0.542 |
+| Mitigation: reweighted NH Black AUROC | `analysis/out/fairness_mitigation.json` → `variants/reweighted/nhBlack/auroc` | 0.46 |
+| Mitigation: reweighted Δ CI | `analysis/out/fairness_mitigation.json` → `variants/reweighted/vsCurrent/groupDeltaAurocCi95` | [-0.068, +0.029] |
+| Mitigation: reweighted log loss | `analysis/out/fairness_mitigation.json` → `variants/reweighted/overall/logLoss` | 0.546 |
+| Mitigation: group features NH Black AUROC | `analysis/out/fairness_mitigation.json` → `variants/group_features/nhBlack/auroc` | 0.47 |
+| Mitigation: group features Δ | `analysis/out/fairness_mitigation.json` → `variants/group_features/vsCurrent/groupDeltaAuroc` | -0.008 |
+| Mitigation: both NH Black O/E | `analysis/out/fairness_mitigation.json` → `variants/both/nhBlack/oe` | 0.81 |
+| Mitigation: both log loss | `analysis/out/fairness_mitigation.json` → `variants/both/overall/logLoss` | 0.545 |
+| Mitigation: variants passing | `analysis/out/fairness_mitigation.json` → `len(passed)` | No variant passes |
+| Pooled not-NH-White AUROC | `analysis/out/fairness_mitigation.json` → `extraSubgroups/1/auroc` | 0.56 |
+| Pooled not-NH-White AUROC CI | `analysis/out/fairness_mitigation.json` → `extraSubgroups/1/aurocCi95` | [0.41, 0.71] |
+| Pooled not-NH-White n | `analysis/out/fairness_mitigation.json` → `extraSubgroups/1/n` | 95 |
+| Pooled not-NH-White O/E CI | `analysis/out/fairness_mitigation.json` → `extraSubgroups/1/oeCi95` | [0.46, 1.01] |
+| Hispanic AUROC | `analysis/out/fairness_mitigation.json` → `extraSubgroups/0/auroc` | 0.64 |
+| Hispanic AUROC CI | `analysis/out/fairness_mitigation.json` → `extraSubgroups/0/aurocCi95` | [0.38, 0.86] |
+| NH White AUROC | `src/data/metrics.json` → `fairness[group="NH White"]/auroc` | 0.75 |
+| Held-out survivors with humanCheck | `src/data/survivors.json` → `count(details[].humanCheck.required)` | 4 |
+| Alert calls/week per 500 survivors | `src/data/metrics.json` → `alertBudget/cutoffs[topShare=0.2]/per100SurvivorsPerWeek x 5` | 1.9 |
+| Alert calls per event found | `src/data/metrics.json` → `tiers/tiers/0/observedRate` | 1.8 |
+| Top-tenth share of events | `src/data/metrics.json` → `alertBudget/cutoffs[topShare=0.1]/shareOfAllEvents` | 21% |
+| Top-tenth precision | `src/data/metrics.json` → `alertBudget/cutoffs[topShare=0.1]/devObservedRate` | 60% |
+| Submission CSV | `submission/heldout_predictions.csv` | 199 rows, same IDs and order, max |
 
 Four README strings disagree with the committed outputs in the last digit (they are README typos, not reproduction differences); the check lists them as
 "README differs from the committed output too": the 10×5 Δ log loss CI upper bound (README -0.027, output -0.026), the male AUROC (README 0.71, output 0.70),

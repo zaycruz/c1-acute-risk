@@ -1,0 +1,218 @@
+{
+  "question": "Can a pre-registered mitigation fix the weak ranking for NH Black survivors (n=47, 11 events)?",
+  "design": "Variants, all on train.py's folds (10x5 RepeatedStratifiedKFold, SEED), OOF averaged over repeats:\n  current        the final forest, unchanged (reference; must equal oof.csv p_forest)\n  recalibrated   group-aware recalibration: logit(p) + offset per race/ethnicity group (Hispanic, NH Black, NH White, other),\n                 offsets fit on the current model's OOF predictions by 5-fold cross-fitting x 10 repeats (second stage\n                 never sees the row it predicts). A monotone shift inside a group cannot change that group's AUROC; it\n                 can only fix its calibration (O/E). Included because it is the standard first step.\n  reweighted     refit with NH Black survivors weighted x3 (sample_weight; fixed in advance, not tuned)\n  group_features refit with race/ethnicity indicators (Hispanic, NH Black, NH Asian/other) added to the 16 features\n  both           reweighted + group_features\nPass (stated in advance): NH Black AUROC >= 0.60 AND the paired within-group dAUROC 95% CI above 0 AND overall log loss\nno more than 0.005 worse than current. Paired bootstrap, 2,000 draws, resampled within the group for group metrics.\nIf nothing passes we keep the current model and ship a safeguard instead (export.py: humanCheck on NH Black alerts).",
+  "passCriterion": "NH Black AUROC >= 0.60, paired within-group dAUROC CI above 0, overall log loss no more than 0.005 worse",
+  "weightNhBlack": 3.0,
+  "variants": {
+    "current": {
+      "overall": {
+        "auroc": 0.7127989570221184,
+        "logLoss": 0.5389066734044685
+      },
+      "nhBlack": {
+        "n": 47,
+        "events": 11,
+        "auroc": 0.47979797979797983,
+        "aurocCi95": [
+          0.2499662162162162,
+          0.7134826248313089
+        ],
+        "oe": 0.7319133949270098,
+        "oeCi95": [
+          0.3860087005087557,
+          1.1452860091126271
+        ]
+      }
+    },
+    "recalibrated": {
+      "overall": {
+        "auroc": 0.7103488581190434,
+        "logLoss": 0.5415496267220613
+      },
+      "nhBlack": {
+        "n": 47,
+        "events": 11,
+        "auroc": 0.4393939393939394,
+        "aurocCi95": [
+          0.22697635135135133,
+          0.6666855203619908
+        ],
+        "oe": 0.9958506205498393,
+        "oeCi95": [
+          0.523882661484831,
+          1.591535344386848
+        ]
+      },
+      "vsCurrent": {
+        "groupDeltaAuroc": -0.04040404040404044,
+        "groupDeltaAurocCi95": [
+          -0.07857142857142857,
+          -0.010808397683397641
+        ],
+        "deltaAuroc": -0.0024500989030750153,
+        "deltaAurocCi95": [
+          -0.022033109143600706,
+          0.015542512684735851
+        ],
+        "deltaLogLoss": 0.002642953317592789,
+        "deltaLogLossCi95": [
+          -0.00835882254047115,
+          0.015226559256596781
+        ]
+      },
+      "passes": false
+    },
+    "reweighted": {
+      "overall": {
+        "auroc": 0.708528142420428,
+        "logLoss": 0.5460831094271057
+      },
+      "nhBlack": {
+        "n": 47,
+        "events": 11,
+        "auroc": 0.4621212121212121,
+        "aurocCi95": [
+          0.24432503770739067,
+          0.690045579635363
+        ],
+        "oe": 0.7930312313164227,
+        "oeCi95": [
+          0.41613973144654176,
+          1.2369357989442418
+        ]
+      },
+      "vsCurrent": {
+        "groupDeltaAuroc": -0.017676767676767735,
+        "groupDeltaAurocCi95": [
+          -0.06819098240469224,
+          0.02941176470588236
+        ],
+        "deltaAuroc": -0.00427081460169032,
+        "deltaAurocCi95": [
+          -0.012341104168465886,
+          0.0034293400425656996
+        ],
+        "deltaLogLoss": 0.007176436022637178,
+        "deltaLogLossCi95": [
+          -0.0003346200063811172,
+          0.014732277354679028
+        ]
+      },
+      "passes": false
+    },
+    "group_features": {
+      "overall": {
+        "auroc": 0.7129563028232333,
+        "logLoss": 0.5386049112140473
+      },
+      "nhBlack": {
+        "n": 47,
+        "events": 11,
+        "auroc": 0.47222222222222215,
+        "aurocCi95": [
+          0.24242424242424243,
+          0.70365891053391
+        ],
+        "oe": 0.7365943682758521,
+        "oeCi95": [
+          0.3878786316998559,
+          1.1528869792831857
+        ]
+      },
+      "vsCurrent": {
+        "groupDeltaAuroc": -0.00757575757575768,
+        "groupDeltaAurocCi95": [
+          -0.039313672438672516,
+          0.016025641025640972
+        ],
+        "deltaAuroc": 0.00015734580111492757,
+        "deltaAurocCi95": [
+          -0.0019690852894722445,
+          0.002394141184902
+        ],
+        "deltaLogLoss": -0.00030176219042121755,
+        "deltaLogLossCi95": [
+          -0.0011730656870171912,
+          0.0005391136258060087
+        ]
+      },
+      "passes": false
+    },
+    "both": {
+      "overall": {
+        "auroc": 0.708955223880597,
+        "logLoss": 0.5446061883356464
+      },
+      "nhBlack": {
+        "n": 47,
+        "events": 11,
+        "auroc": 0.45959595959595956,
+        "aurocCi95": [
+          0.24279922779922777,
+          0.6860899189729557
+        ],
+        "oe": 0.8073278187511765,
+        "oeCi95": [
+          0.42315659750574336,
+          1.2609862774245757
+        ]
+      },
+      "vsCurrent": {
+        "groupDeltaAuroc": -0.020202020202020277,
+        "groupDeltaAurocCi95": [
+          -0.07692307692307698,
+          0.02619047619047621
+        ],
+        "deltaAuroc": -0.0038437331415214215,
+        "deltaAurocCi95": [
+          -0.012084931239860906,
+          0.004035384551394296
+        ],
+        "deltaLogLoss": 0.005699514931177929,
+        "deltaLogLossCi95": [
+          -0.0012666828463871599,
+          0.012671711839701442
+        ]
+      },
+      "passes": false
+    }
+  },
+  "passed": [],
+  "decision": "No variant passes. Keep the current model; NH Black alerts carry a human check before outreach (humanCheck).",
+  "extraSubgroups": [
+    {
+      "group": "Hispanic",
+      "n": 28,
+      "events": 7,
+      "auroc": 0.6394557823129251,
+      "aurocCi95": [
+        0.38452380952380955,
+        0.8639455782312925
+      ],
+      "oe": 0.7813657647566226,
+      "oeCi95": [
+        0.3236756420664,
+        1.2984898922812254
+      ]
+    },
+    {
+      "group": "Not NH White (pooled: Hispanic, NH Black, NH Asian, NH other)",
+      "n": 95,
+      "events": 21,
+      "auroc": 0.5604890604890604,
+      "aurocCi95": [
+        0.4082221518987342,
+        0.7094970187755405
+      ],
+      "oe": 0.7217666128184602,
+      "oeCi95": [
+        0.45897448653938483,
+        1.011662852349247
+      ]
+    }
+  ],
+  "language": {
+    "available": false,
+    "note": "The MEPS extract has no interview-language, English-proficiency or birthplace field (only RACETHX and HISPANX), so we cannot test performance by language. Spanish- and Creole-speaking survivors are a main Miami population; this is a known gap, not a pass."
+  }
+}

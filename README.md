@@ -53,7 +53,7 @@ The same 10×5 repeated CV as before scores the final model after selection, whi
 
 | 10×5 CV | Baseline | Previous (logistic) | **Final (forest)** | Forest vs baseline (paired) |
 |---|---|---|---|---|
-| AUROC | 0.659 [0.603, 0.718] | 0.666 | **0.713** [0.662, 0.764] | +0.053 [-0.001, +0.105] |
+| AUROC | 0.659 [0.603, 0.718] | 0.666 | **0.713** [0.662, 0.764] (nested: 0.711 vs 0.672) | +0.053 [-0.001, +0.105], not significant |
 | AUPRC | 0.423 | 0.438 | **0.508** | +0.085 [+0.017, +0.146] |
 | Brier | 0.2008 | 0.1921 | **0.1796** | -0.021 [-0.035, -0.007] |
 | Log loss | 0.606 | 0.570 | **0.539** | -0.067 [-0.107, -0.027] |
@@ -88,8 +88,30 @@ These become the per-survivor recommendations, one per kind of driver.
 **Fairness** (out-of-fold, `/api/c1/metrics` → `fairness`):
 - Similar by sex (AUROC 0.72 F, 0.71 M) and insurance (0.68 private, 0.75 public-only).
 - Age 75+ is no longer clearly under-predicted: observed/expected 1.15 [0.91, 1.37]. With the logistic model it was 1.27 [1.00, 1.53].
-- **Weak ranking for NH Black survivors**: AUROC 0.48 [0.25, 0.70], n = 47, 11 events. This is a flag, not a pass, and the survivor panel warns about it.
+- **Weak ranking for NH Black survivors**: AUROC 0.48 [0.25, 0.70], n = 47, 11 events. This is a flag, not a pass. We tried to fix it (below); nothing worked, so their alerts get a human check.
+- **All survivors other than NH White, pooled:** AUROC 0.56 [0.41, 0.71], n = 95, 21 events, and observed/expected 0.72 [0.46, 1.01]. Ranking is weaker than for NH White survivors (0.75).
+- **Hispanic survivors:** AUROC 0.64 [0.38, 0.86], n = 28, 7 events: too few to judge. **Language:** the MEPS extract has no interview-language or birthplace field, so we cannot test Spanish- or Creole-speaking survivors. That is a gap, not a pass.
 - **Too small to judge** (n < 30 or < 10 events): Hispanic (28), NH Asian (6), NH other (14), uninsured (7), colon (23), lung (20).
+
+**Fairness mitigation: a pre-registered test, and it failed** (`analysis/fairness_mitigation.py`, `/api/c1/metrics` → `fairnessMitigation`).
+We wrote the variants and the pass rule before running. Pass meant NH Black AUROC ≥ 0.60, a paired within-group gain with its CI above 0, and overall log loss no more than 0.005 worse.
+All variants ran on the same 10×5 folds, with paired bootstrap against the current model:
+
+| Variant | NH Black AUROC [95% CI, 2,000 draws] | NH Black observed/expected | Δ within-group AUROC vs current | Overall log loss |
+|---|---|---|---|---|
+| Current forest | 0.48 [0.25, 0.71] | 0.73 | | 0.539 |
+| Group-aware recalibration (cross-fitted) | 0.44 [0.23, 0.67] | 1.00 | -0.040 [-0.079, -0.011] | 0.542 |
+| Refit, NH Black weighted ×3 | 0.46 [0.24, 0.69] | 0.79 | -0.018 [-0.068, +0.029] | 0.546 |
+| Refit, race/ethnicity as features | 0.47 [0.24, 0.70] | 0.74 | -0.008 [-0.039, +0.016] | 0.539 |
+| Both | 0.46 [0.24, 0.69] | 0.81 | -0.020 [-0.077, +0.026] | 0.545 |
+
+No variant passes. Recalibration fixes the over-prediction (observed/expected 0.73 → 1.00) but cannot fix ranking. With 11 events, no refit moves the AUROC outside its ±0.23 noise.
+So we keep the model and add a **safeguard**: an NH Black survivor on the alert or watch list carries `humanCheck.required = true`, and a care-team member reviews the case before outreach.
+This applies to 4 of 199 held-out survivors. The API lists who the model does not serve yet (`fairnessMitigation.whoThisDoesNotServeYet`).
+
+**Alert budget** (`/api/c1/metrics` → `alertBudget`). The model predicts a whole year, so an alert is one outreach call within that year. Same-day needs come from `redFlags`.
+The alert tier (top fifth) is about 20 survivors per 100 a year: about 1.9 calls a week for a navigator with 500 survivors. 57% of them had acute care, and the tier finds 39% of all events (1.8 calls per event found).
+A top-tenth cut would find only 21% of events at 60% precision, so we keep the fifth. A team with less capacity calls the list in risk order and stops at its weekly budget.
 
 ## Do the clinical records add anything? No meaningful gain, but the shared risk pattern transports
 

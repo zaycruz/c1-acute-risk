@@ -239,6 +239,64 @@ def red_flags(x, raw, st):
             "socialNeeds": social, "asOf": "2017 survey answers: they say what to ask about now, not that an emergency is happening"}
 
 
+
+def alert_budget(y, p, held_risk, tiers):
+    """Alert load at several cut-offs, as a weekly count for a care team. y/p: dev OOF; held_risk: held-out predictions."""
+    rows = []
+    for share in (0.05, 0.10, 0.15, 0.20, 0.30):
+        cut = float(np.quantile(p, 1 - share))
+        m = p >= cut
+        rate = float(y[m].mean())
+        rows.append({"topShare": share, "riskCutoff": round(cut, 3), "devFlagged": int(m.sum()), "devObservedRate": rate,
+                     "shareOfAllEvents": float(y[m].sum() / y.sum()), "callsPerEventFound": round(1 / rate, 2),
+                     "heldoutFlagged": int((held_risk >= cut).sum()),
+                     "per100SurvivorsPerYear": round(share * 100, 1), "per100SurvivorsPerWeek": round(share * 100 / 52, 2)})
+    cur = next(r for r in rows if r["topShare"] == 0.20)
+    at = next(t for t in tiers["tiers"] if t["status"] == "alert")
+    ten = next(r for r in rows if r["topShare"] == 0.10)
+    return {
+        "note": "The model predicts a whole year, so an alert is one outreach call spread over that year, not a same-week emergency "
+                "(same-day needs come from redFlags). Counts per 100 survivors on a care team's panel.",
+        "current": {"tier": "alert", "riskCutoff": tiers["alert"], "topShare": 0.20, "devFlagged": at["n"],
+                    "devObservedRate": at["observedRate"], "shareOfAllEvents": at["shareOfAllPositives"],
+                    "heldoutFlagged": int((held_risk >= tiers["alert"]).sum())},
+        "cutoffs": rows,
+        "justification": (f"The alert tier is the top fifth: about {cur['per100SurvivorsPerYear']:.0f} survivors per 100 a year, or about "
+                          f"{cur['per100SurvivorsPerWeek'] * 5:.1f} calls a week for a navigator with 500 survivors. "
+                          f"{at['observedRate'] * 100:.0f}% of them had acute care, and it finds {at['shareOfAllPositives'] * 100:.0f}% of all events "
+                          f"({1 / at['observedRate']:.1f} calls per event found). A tighter top-tenth cut finds only "
+                          f"{ten['shareOfAllEvents'] * 100:.0f}% of events at {ten['devObservedRate'] * 100:.0f}% precision. "
+                          "Teams with less capacity can call the alert list in risk order and stop at their weekly budget."),
+    }
+
+
+def mitigation_summary(FM):
+    """The pre-registered NH Black mitigation test (analysis/fairness_mitigation.py), shaped for the API."""
+    if not FM:
+        return None
+    V = FM["variants"]
+    labels = {"current": "Current model", "recalibrated": "Group-aware recalibration (cross-fitted)",
+              "reweighted": f"Refit with NH Black weighted x{FM['weightNhBlack']:.0f}",
+              "group_features": "Refit with race/ethnicity as features", "both": "Reweighted + race/ethnicity features"}
+    rows = [{"variant": k, "label": labels[k], "nhBlackAuroc": v["nhBlack"]["auroc"], "nhBlackAurocCi95": v["nhBlack"]["aurocCi95"],
+             "nhBlackOe": v["nhBlack"]["oe"], "nhBlackOeCi95": v["nhBlack"]["oeCi95"],
+             "overallAuroc": v["overall"]["auroc"], "overallLogLoss": v["overall"]["logLoss"],
+             **({"vsCurrent": v["vsCurrent"], "passes": v["passes"]} if k != "current" else {})} for k, v in V.items()]
+    return {"question": FM["question"], "design": FM["design"], "passCriterion": FM["passCriterion"], "variants": rows,
+            "passed": FM["passed"], "decision": FM["decision"], "extraSubgroups": FM["extraSubgroups"], "language": FM["language"],
+            "safeguard": "Every NH Black survivor on the alert or watch list carries humanCheck.required = true: a care-team member reviews "
+                         "the case before outreach, because the model ranks this group no better than chance. Their calibrated risk "
+                         "is still shown; it is over-predicted on average (observed/expected about 0.73).",
+            "whoThisDoesNotServeYet": [
+                f"NH Black survivors: ranking at chance (AUROC {V['current']['nhBlack']['auroc']:.2f}, n = {V['current']['nhBlack']['n']}); "
+                "no pre-registered fix helped, so alerts get a human check.",
+                "All survivors other than NH White, pooled: AUROC "
+                f"{FM['extraSubgroups'][1]['auroc']:.2f} [{FM['extraSubgroups'][1]['aurocCi95'][0]:.2f}, {FM['extraSubgroups'][1]['aurocCi95'][1]:.2f}], "
+                f"n = {FM['extraSubgroups'][1]['n']}: weaker than for NH White survivors.",
+                "Spanish- or Creole-speaking survivors: the survey extract has no language field, so we cannot test them.",
+                "Hispanic (n = 28), NH Asian (6), NH other (14) and uninsured (7) survivors: too few to judge.",
+            ]}
+
 def add_display(m):
     """Plain-language, ready-to-render text for apps (Coach Console). Every number here comes from the fields above."""
     P = lambda v: f"{round(v * 100)}%"
@@ -275,7 +333,8 @@ def add_display(m):
                          f"no model finds them much better than the baseline yet (AUROC {FE['aurocModel']:.2f} vs {FE['aurocBaseline']:.2f})."),
         "limits": ["Associations, not causes: the factors flag who may need help; changing one is not proven to prevent an ER visit.",
                    "Built from survey answers only. The synthetic clinical records (Synthea) did not improve it and share no patient key with the survey."]
-                  + flagged,
+                  + flagged
+                  + ((m.get("fairnessMitigation") or {}).get("whoThisDoesNotServeYet") or [])[1:3],
         "redFlagRules": {"callTodayIf": CALL_TODAY, "text": "If a survivor reports any of these, call the care team or go to the ER today, whatever the risk tier.",
                          "perSurvivor": "redFlags on /api/c1/survivors/:id: careTeamToday, banner, fromSurvey[{code, urgency, text}], socialNeeds{needed, reasons, text}"},
         "perSurvivor": "Each survivor's panel has headline, summary, evidence[] (top drivers in plain words, kind = topic), recommendations[] (audience = care-team | coach | survivor) and caveat (always show it with the risk).",
@@ -292,6 +351,9 @@ def main():
     SYN = json.load(open(syn_path)) if os.path.exists(syn_path) else None
     model = pickle.load(open(os.path.join(OUT, "model.pkl"), "rb"))["final"]
     sub = pd.read_csv(os.path.join(ROOT, "submission", "heldout_predictions.csv")).set_index("ID")
+    fm_path = os.path.join(OUT, "fairness_mitigation.json")
+    FM = json.load(open(fm_path)) if os.path.exists(fm_path) else None
+    oof_dev = pd.read_csv(os.path.join(OUT, "oof.csv")).set_index("ID").loc[dev.index]
 
     Xd = domain_features(s17)
     Xf = final_features(s17)
@@ -412,9 +474,13 @@ def main():
         for_ellie = f"Hospital risk {pct}% next year ({ {'alert': 'high', 'watch': 'raised', 'ok': 'low'}[st]}; average {round(base_rate * 100)}%){driver}.{tail}"
         if len(for_ellie) > 160:
             for_ellie = f"Hospital risk {pct}% next year{driver}.{tail}"
+        weak_race = any(f["attribute"] == "race_ethnicity" and f["flag"] == "weak-ranking" for f in flags)
+        human_check = ({"required": True, "reason": f"Check before outreach: the model ranks {g.race_ethnicity} survivors no better than chance."}
+                       if weak_race and st != "ok" else {"required": False, "reason": None})
         d = {"survivorId": f"c1-{sid}", "displayName": display, "status": st, "headline": headline, "summary": summary,
              "risk": round(p, 4), "thresholds": {"alert": T["alert"], "watch": T["watch"]},
              "riskWords": risk_words, "forEllie": for_ellie, "fairnessFlags": flags, "redFlags": red_flags(x, s17.loc[sid], st),
+             "humanCheck": human_check,
              "evidence": evidence, "recommendations": recs, "charts": charts, "profile": profile, "caveat": caveat}
         details[f"c1-{sid}"] = d
         roster.append({"survivorId": d["survivorId"], "displayName": display, "status": st, "headline": headline,
@@ -449,6 +515,8 @@ def main():
         "clinicalRecords": SYN["verdict"] if SYN else {"verdict": "pending", "detail": "Synthea analysis not run yet."},
         "clinicalRecordsDetail": SYN,
         "heldoutStatusMix": {s: sum(r["status"] == s for r in roster) for s in order},
+        "fairnessMitigation": mitigation_summary(FM),
+        "alertBudget": alert_budget(y, oof_dev.p_forest.values, sub.predicted_risk.values, M["tiers"]),
         "caveats": [
             "Associations, not causes. Prior acute care and poor physical function dominate; they mark need, not levers.",
             "Small data: 466 development survivors, 134 with the outcome. The ranking gain over the baseline (nested CV +0.04) is not statistically significant; the gain in probability quality (log loss, Brier) is.",

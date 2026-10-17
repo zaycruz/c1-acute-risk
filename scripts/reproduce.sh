@@ -37,6 +37,7 @@ step "synthea.py (Q1-Q3)" "${PY[@]}" analysis/synthea.py data
 step "autoresearch nested (37 candidates x 10 outer folds)" "${PY[@]}" analysis/autoresearch.py nested
 step "autoresearch nested-interpretable" "${PY[@]}" analysis/autoresearch.py nested-interpretable
 step "stratified.py (within prior-use groups)" "${PY[@]}" analysis/stratified.py data/meps
+step "fairness_mitigation.py (pre-registered NH Black test)" "${PY[@]}" analysis/fairness_mitigation.py data/meps
 step "export.py (API data, tiers, fairness, first event)" "${PY[@]}" analysis/export.py data/meps
 echo "| total | $((SECONDS - T0)) s |" >> runs/reproduce-times.md
 echo "==> check README numbers"

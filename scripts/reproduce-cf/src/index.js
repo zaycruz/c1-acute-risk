@@ -72,6 +72,20 @@ const sh = async (c, cmd) => {
 };
 
 export class Reproducer extends DurableObject {
+  // Every 10 s while the job runs: keep the object awake and save the phases + log tail, which survive a container crash.
+  async alarm() {
+    const c = this.ctx.container;
+    if (!c.running) return;
+    try {
+      const t = await sh(c, "cat /work/phases 2>/dev/null; echo ---; tail -c 3000 /work/log.txt 2>/dev/null; echo ---; free -m | head -2; df -h / | tail -1");
+      await this.ctx.storage.put("lastSeen", { at: new Date().toISOString(), out: t.out });
+      if ((await sh(c, "test -f /work/DONE && echo 1")).out.trim() === "1") return;
+    } catch (e) {
+      await this.ctx.storage.put("lastSeen", { at: new Date().toISOString(), error: String(e) });
+    }
+    await this.ctx.storage.setAlarm(Date.now() + 10000);
+  }
+
   async fetch(req) {
     const c = this.ctx.container;
     const url = new URL(req.url);
@@ -80,7 +94,12 @@ export class Reproducer extends DurableObject {
       if (!/^[0-9a-f]{7,40}$/.test(sha)) return Response.json({ error: "sha must be a commit hash" }, { status: 400 });
       if (!c.running) {
         c.start({ image: "cloudflare/debian-trixie", instance: "standard-4", enableInternet: true, entrypoint: ["sleep", "infinity"] });
+        // Record how the container ended, so a crash is visible in /status instead of a bare running:false.
+        c.monitor().then(() => this.ctx.storage.put("ended", { at: new Date().toISOString(), how: "exited" }))
+          .catch((e) => this.ctx.storage.put("ended", { at: new Date().toISOString(), how: String(e) }));
       }
+      await this.ctx.storage.put("ended", null);
+      await this.ctx.storage.setAlarm(Date.now() + 10000);
       const already = await sh(c, "test -f /work/job.sh && echo yes || echo no");
       if (already.out.trim() === "yes") return Response.json({ started: false, note: "job already started" });
       const r = await c.exec(
@@ -91,7 +110,7 @@ export class Reproducer extends DurableObject {
       return Response.json({ started: true, out: new TextDecoder().decode(o.stdout) });
     }
     if (url.pathname === "/status") {
-      if (!c.running) return Response.json({ running: false });
+      if (!c.running) return Response.json({ running: false, ended: await this.ctx.storage.get("ended"), lastSeen: await this.ctx.storage.get("lastSeen") });
       const read = async (f) => (await sh(c, `cat ${f} 2>/dev/null`)).out;
       const done = (await read("/work/DONE")) !== "" || (await sh(c, "test -f /work/DONE && echo 1")).out.trim() === "1";
       const res = { running: true, done, phases: await read("/work/phases"), exit: (await read("/work/exit")).trim(),

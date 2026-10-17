@@ -24,7 +24,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def load(rel):
-    return json.load(open(os.path.join(ROOT, rel)))
+    p = os.path.join(ROOT, rel)
+    return json.load(open(p)) if os.path.exists(p) else None
 
 
 def load_committed(rel):
@@ -57,6 +58,7 @@ SY = "analysis/out/synthea.json"
 ST = "runs/autoresearch/stratified.json"
 R1 = "runs/autoresearch/round-1.json"
 R3 = "runs/autoresearch/round-3.json"
+FM = "analysis/out/fairness_mitigation.json"
 
 
 def described(desc, fn):
@@ -181,6 +183,34 @@ CLAIMS = [
     ("Synthea Q3 prior ΔAUROC CI", "[-0.003, +0.010]", SY, "q3Increment/transfer_prior_logit/delta/auroc/ci95", sci3, "ΔAUROC +0.004 [-0.003, +0.010]"),
     ("Synthea Q3 MEPS-only reference", "0.663", SY, "q3Increment/baseline/auroc/value", f3, "reference in Q3 is 0.663"),
     ("Synthea-prior candidate (round 3)", "0.692", R3, cand(R3, "synthea_prior|prior_use"), f3, "(AUROC 0.692) and lost to the forest"),
+    # fairness mitigation (pre-registered) and extra subgroups
+    ("Mitigation: current NH Black AUROC CI (2,000 draws)", "[0.25, 0.71]", FM, "variants/current/nhBlack/aurocCi95", ci2, "| Current forest | 0.48 [0.25, 0.71] | 0.73 |"),
+    ("Mitigation: current NH Black O/E", "0.73", FM, "variants/current/nhBlack/oe", f2, "| Current forest | 0.48 [0.25, 0.71] | 0.73 |"),
+    ("Mitigation: recalibrated NH Black AUROC", "0.44", FM, "variants/recalibrated/nhBlack/auroc", f2, "| Group-aware recalibration (cross-fitted) | 0.44 [0.23, 0.67] | 1.00 | -0.040 [-0.079, -0.011] | 0.542 |"),
+    ("Mitigation: recalibrated NH Black O/E", "1.00", FM, "variants/recalibrated/nhBlack/oe", f2, "| Group-aware recalibration (cross-fitted) | 0.44 [0.23, 0.67] | 1.00 |"),
+    ("Mitigation: recalibrated Δ within group", "-0.040", FM, "variants/recalibrated/vsCurrent/groupDeltaAuroc", s3, "| 1.00 | -0.040 [-0.079, -0.011] | 0.542 |"),
+    ("Mitigation: recalibrated log loss", "0.542", FM, "variants/recalibrated/overall/logLoss", f3, "| 1.00 | -0.040 [-0.079, -0.011] | 0.542 |"),
+    ("Mitigation: reweighted NH Black AUROC", "0.46", FM, "variants/reweighted/nhBlack/auroc", f2, "| Refit, NH Black weighted ×3 | 0.46 [0.24, 0.69] | 0.79 | -0.018 [-0.068, +0.029] | 0.546 |"),
+    ("Mitigation: reweighted Δ CI", "[-0.068, +0.029]", FM, "variants/reweighted/vsCurrent/groupDeltaAurocCi95", sci3, "| 0.79 | -0.018 [-0.068, +0.029] | 0.546 |"),
+    ("Mitigation: reweighted log loss", "0.546", FM, "variants/reweighted/overall/logLoss", f3, "| 0.79 | -0.018 [-0.068, +0.029] | 0.546 |"),
+    ("Mitigation: group features NH Black AUROC", "0.47", FM, "variants/group_features/nhBlack/auroc", f2, "| Refit, race/ethnicity as features | 0.47 [0.24, 0.70] | 0.74 | -0.008 [-0.039, +0.016] | 0.539 |"),
+    ("Mitigation: group features Δ", "-0.008", FM, "variants/group_features/vsCurrent/groupDeltaAuroc", s3, "| 0.74 | -0.008 [-0.039, +0.016] | 0.539 |"),
+    ("Mitigation: both NH Black O/E", "0.81", FM, "variants/both/nhBlack/oe", f2, "| Both | 0.46 [0.24, 0.69] | 0.81 | -0.020 [-0.077, +0.026] | 0.545 |"),
+    ("Mitigation: both log loss", "0.545", FM, "variants/both/overall/logLoss", f3, "| Both | 0.46 [0.24, 0.69] | 0.81 | -0.020 [-0.077, +0.026] | 0.545 |"),
+    ("Mitigation: variants passing", "No variant passes", FM, described("len(passed)", lambda J: len(J["passed"])), lambda v: "No variant passes" if v == 0 else f"{v} pass", "No variant passes."),
+    ("Pooled not-NH-White AUROC", "0.56", FM, "extraSubgroups/1/auroc", f2, "AUROC 0.56 [0.41, 0.71], n = 95, 21 events"),
+    ("Pooled not-NH-White AUROC CI", "[0.41, 0.71]", FM, "extraSubgroups/1/aurocCi95", ci2, "AUROC 0.56 [0.41, 0.71], n = 95, 21 events"),
+    ("Pooled not-NH-White n", "95", FM, "extraSubgroups/1/n", num, "AUROC 0.56 [0.41, 0.71], n = 95, 21 events"),
+    ("Pooled not-NH-White O/E CI", "[0.46, 1.01]", FM, "extraSubgroups/1/oeCi95", ci2, "observed/expected 0.72 [0.46, 1.01]"),
+    ("Hispanic AUROC", "0.64", FM, "extraSubgroups/0/auroc", f2, "AUROC 0.64 [0.38, 0.86], n = 28, 7 events"),
+    ("Hispanic AUROC CI", "[0.38, 0.86]", FM, "extraSubgroups/0/aurocCi95", ci2, "AUROC 0.64 [0.38, 0.86], n = 28, 7 events"),
+    ("NH White AUROC", "0.75", EX, fair("NH White", "auroc"), f2, "than for NH White survivors (0.75)"),
+    ("Held-out survivors with humanCheck", "4", "src/data/survivors.json", described("count(details[].humanCheck.required)", lambda J: sum(d["humanCheck"]["required"] for d in J["details"].values())), num, "This applies to 4 of 199 held-out survivors."),
+    # alert budget
+    ("Alert calls/week per 500 survivors", "1.9", EX, described("alertBudget/cutoffs[topShare=0.2]/per100SurvivorsPerWeek x 5", lambda J: next(r for r in J["alertBudget"]["cutoffs"] if r["topShare"] == 0.2)["per100SurvivorsPerWeek"] * 5), lambda v: f"{v:.1f}", "about 1.9 calls a week for a navigator with 500 survivors"),
+    ("Alert calls per event found", "1.8", EX, tier(0, "observedRate"), lambda v: f"{1 / v:.1f}", "(1.8 calls per event found)"),
+    ("Top-tenth share of events", "21%", EX, described("alertBudget/cutoffs[topShare=0.1]/shareOfAllEvents", lambda J: next(r for r in J["alertBudget"]["cutoffs"] if r["topShare"] == 0.1)["shareOfAllEvents"]), pct, "only 21% of events at 60% precision"),
+    ("Top-tenth precision", "60%", EX, described("alertBudget/cutoffs[topShare=0.1]/devObservedRate", lambda J: next(r for r in J["alertBudget"]["cutoffs"] if r["topShare"] == 0.1)["devObservedRate"]), pct, "only 21% of events at 60% precision"),
 ]
 
 
@@ -217,12 +247,13 @@ def main():
         in_readme = text in readme and exp in text
         ok = got == exp and in_readme
         bad += not ok
-        rerun_diff += was != "n/a" and got != was
+        new = was == "n/a" or was.startswith("error:")  # claim added after the last commit: nothing to compare yet
+        rerun_diff += not new and got != was
         if ok:
             res = "match"
         elif not in_readme:
             res = "NOT IN README"
-        elif got == was or was == "n/a":
+        elif got == was or new:
             res = "MISMATCH: README differs from the committed output too (README rounding/typo, not the rerun)"
         else:
             res = "MISMATCH: rerun differs from the committed output"
