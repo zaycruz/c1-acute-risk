@@ -1,7 +1,7 @@
 # C1 Care Team Risk: API contract
 
 Base URL (deployed): `https://c1-acute-risk.zay-259.workers.dev`. All responses are JSON with `access-control-allow-origin: *`; only `GET` (and `OPTIONS`) are accepted, anything else is `405`.
-The examples below are real responses, captured by `npm run e2e` on 2026-10-17T15:53:01.286Z (31/31 checks passed) and turned into this file by `npm run contract`.
+The examples below are real responses, captured by `npm run e2e` on 2026-10-17T16:08:53.677Z (32/32 checks passed) and turned into this file by `npm run contract`.
 
 Predictions are for the **199 held-out MEPS survivors** (`meps/heldout_ids.csv`): real people, forward predictions, outcome unknown to us.
 `survivorId` = `c1-` + the challenge's MEPS `ID`. `updatedAt` is the as-of date of the data (end of 2017), not the build time.
@@ -174,11 +174,12 @@ Unknown id: `404 {"error":"survivor not found"}`.
 
 ## `GET /api/c1/metrics`: model card
 
-Top-level keys: `asOf`, `outcome`, `data`, `validation`, `finalModel`, `metrics`, `deltaVsBaseline`, `deltaVsPrevious`, `modelSearch`, `firstEvent`, `calibrationCurve`, `tiers`, `fairness`, `fairnessBaseline`, `factors`, `plainFactors`, `clinicalRecords`, `clinicalRecordsDetail`, `heldoutStatusMix`, `caveats`.
+Top-level keys: `asOf`, `outcome`, `data`, `validation`, `finalModel`, `metrics`, `deltaVsBaseline`, `deltaVsPrevious`, `modelSearch`, `firstEvent`, `calibrationCurve`, `tiers`, `fairness`, `fairnessBaseline`, `factors`, `plainFactors`, `clinicalRecords`, `clinicalRecordsDetail`, `heldoutStatusMix`, `caveats`, `display`.
 
 - `finalModel`: `{key, name, chosenBy, explanations, previous}`. `finalModel.key` (`forest`) names the final model in `metrics`, `deltaVsBaseline` and `calibrationCurve`.
 - `metrics.{baseline,logistic,gbm_calibrated,forest}`: `auroc, auprc, brier, log_loss, cal_intercept, cal_slope, mean_pred`, each `{value, ci95}`, out-of-fold on the 466 development survivors. `logistic` is the previous submission.
 - `modelSearch`: the unbiased nested-CV estimate of the model search (the 10x5 CV numbers for `forest` are post-selection). `deltaVsPrevious`: forest vs the previous logistic model, paired.
+- `display`: plain-language, ready-to-render summary for apps: `headline`, `keyNumbers[{value, label, sub}]`, `howSure[]`, `insight`, `nextQuestion`, `limits[]` (includes flagged fairness groups). `plainFactors[].text`, `tiers.tiers[].text`, `tiers.source`, `fairness[].flag` (`ok | too-small | weak-ranking | under-predicted | over-predicted`) and `fairness[].text` are also plain sentences. Read the final model's metrics as `metrics[finalModel.key]`; `finalModel.name` is a description.
 - `firstEvent`: ranking among survivors with no 2017 ER visit or hospital stay (the proposed prevention target).
 - `deltaVsBaseline`: paired bootstrap differences (auroc, auprc, brier, log_loss) with `ci95` and `p_better`.
 - `calibrationCurve`: 5 equal-size bins per model, with Wilson 95% CIs on the observed rate.
@@ -475,6 +476,45 @@ Excerpt:
     "pBetter": 0.66,
     "why": "Prior acute care explains most of the ranking on the full target (the 2017 repeat users are easy to find). Finding the first event is the harder, more useful job for prevention."
   },
+  "display": {
+    "note": "Plain-language summary for apps. Show headline, keyNumbers and howSure; put limits next to any risk number.",
+    "headline": "Flags who may need the ER or hospital next year. Of the people it puts on alert, about 57% did; the average is 29%.",
+    "keyNumbers": [
+      {
+        "value": "57%",
+        "label": "of alert-tier survivors had an ER visit or hospital stay",
+        "sub": "average survivor 29%"
+      },
+      {
+        "value": "52 of 134",
+        "label": "events caught by calling the top fifth",
+        "sub": "the organisers' baseline catches 45"
+      },
+      {
+        "value": "67%",
+        "label": "of 50%+ risk calls came true",
+        "sub": "baseline 49%"
+      },
+      {
+        "value": "0.71",
+        "label": "ranking quality (AUROC; 0.5 = coin flip, 1 = perfect)",
+        "sub": "baseline 0.67; difference not statistically significant"
+      }
+    ],
+    "howSure": [
+      "The risk numbers are well calibrated: when it says 30%, about 30% of those people had an ER visit or hospital stay.",
+      "It ranks people somewhat better than the organisers' baseline (AUROC 0.71 vs 0.67), but with 466 survivors that gap could be chance.",
+      "All numbers are scored on people the model never saw (nested cross-validation)."
+    ],
+    "insight": "Heavy care use last year (ER visits, hospital nights, many prescriptions and visits) is the strongest sign of acute care next year. It marks need; it is not something to change directly.",
+    "nextQuestion": "Harder and more useful: who will have a FIRST ER visit or hospital stay? Among the 326 survivors with none in 2017, 70 had one in 2018, and no model finds them much better than the baseline yet (AUROC 0.65 vs 0.63).",
+    "limits": [
+      "Associations, not causes: the factors flag who may need help; changing one is not proven to prevent an ER visit.",
+      "Built from survey answers only. The synthetic clinical records (Synthea) did not improve it and share no patient key with the survey.",
+      "NH Black: the model ranks risk poorly (AUROC 0.48, n = 47); use clinical judgement"
+    ],
+    "perSurvivor": "Each survivor's panel has headline, summary, evidence[] (top drivers in plain words, kind = topic), recommendations[] (audience = care-team | coach | survivor) and caveat (always show it with the risk)."
+  },
   "factors": [
     {
       "feature": "spending_17",
@@ -509,7 +549,8 @@ Excerpt:
         "n": 92,
         "positives": 52,
         "observedRate": 0.5652173913043478,
-        "shareOfAllPositives": 0.3880597014925373
+        "shareOfAllPositives": 0.3880597014925373,
+        "text": "Alert (43%+ risk): 57% of 92 development survivors had an ER visit or hospital stay"
       },
       {
         "status": "watch",
@@ -518,7 +559,8 @@ Excerpt:
         "n": 97,
         "positives": 29,
         "observedRate": 0.29896907216494845,
-        "shareOfAllPositives": 0.21641791044776118
+        "shareOfAllPositives": 0.21641791044776118,
+        "text": "Watch (29%-43%): 30% of 97 had one"
       },
       {
         "status": "ok",
@@ -527,9 +569,11 @@ Excerpt:
         "n": 277,
         "positives": 53,
         "observedRate": 0.19133574007220217,
-        "shareOfAllPositives": 0.39552238805970147
+        "shareOfAllPositives": 0.39552238805970147,
+        "text": "On track (under 29%): 19% of 277 had one"
       }
-    ]
+    ],
+    "source": "development survivors (466), out-of-fold: each person scored by a model that never saw them"
   },
   "fairness": [
     {
@@ -550,7 +594,9 @@ Excerpt:
         0.5108949387892121,
         1.4927868315864754
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "18-49: works about as well as overall (AUROC 0.72)"
     },
     {
       "attribute": "age",
@@ -570,7 +616,9 @@ Excerpt:
         0.660755964602052,
         1.146010047658142
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "50-64: works about as well as overall (AUROC 0.66)"
     }
   ],
   "plainFactors": [
@@ -584,7 +632,8 @@ Excerpt:
         "n": 326,
         "rate": 0.2147239263803681
       },
-      "rateRatio": 2.1289795918367345
+      "rateRatio": 2.1289795918367345,
+      "text": "ER visit or hospital stay in 2017: 46% had an ER visit or hospital stay in 2018, vs 21% without it (2.1x)"
     },
     {
       "factor": "Age 75 or older",
@@ -596,7 +645,8 @@ Excerpt:
         "n": 347,
         "rate": 0.23631123919308358
       },
-      "rateRatio": 1.8491494158639066
+      "rateRatio": 1.8491494158639066,
+      "text": "Age 75 or older: 44% had an ER visit or hospital stay in 2018, vs 24% without it (1.8x)"
     }
   ],
   "clinicalRecords": {

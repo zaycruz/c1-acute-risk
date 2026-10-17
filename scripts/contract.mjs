@@ -46,6 +46,7 @@ Top-level keys: ${Object.keys(M).map((k) => "`" + k + "`").join(", ")}.
 - \`finalModel\`: \`{key, name, chosenBy, explanations, previous}\`. \`finalModel.key\` (\`forest\`) names the final model in \`metrics\`, \`deltaVsBaseline\` and \`calibrationCurve\`.
 - \`metrics.{baseline,logistic,gbm_calibrated,forest}\`: \`auroc, auprc, brier, log_loss, cal_intercept, cal_slope, mean_pred\`, each \`{value, ci95}\`, out-of-fold on the 466 development survivors. \`logistic\` is the previous submission.
 - \`modelSearch\`: the unbiased nested-CV estimate of the model search (the 10x5 CV numbers for \`forest\` are post-selection). \`deltaVsPrevious\`: forest vs the previous logistic model, paired.
+- \`display\`: plain-language, ready-to-render summary for apps: \`headline\`, \`keyNumbers[{value, label, sub}]\`, \`howSure[]\`, \`insight\`, \`nextQuestion\`, \`limits[]\` (includes flagged fairness groups). \`plainFactors[].text\`, \`tiers.tiers[].text\`, \`tiers.source\`, \`fairness[].flag\` (\`ok | too-small | weak-ranking | under-predicted | over-predicted\`) and \`fairness[].text\` are also plain sentences. Read the final model's metrics as \`metrics[finalModel.key]\`; \`finalModel.name\` is a description.
 - \`firstEvent\`: ranking among survivors with no 2017 ER visit or hospital stay (the proposed prevention target).
 - \`deltaVsBaseline\`: paired bootstrap differences (auroc, auprc, brier, log_loss) with \`ci95\` and \`p_better\`.
 - \`calibrationCurve\`: 5 equal-size bins per model, with Wilson 95% CIs on the observed rate.
@@ -55,7 +56,7 @@ Top-level keys: ${Object.keys(M).map((k) => "`" + k + "`").join(", ")}.
 
 Excerpt:
 
-${j({ ...pick(M, ["asOf", "outcome", "data", "validation", "finalModel"]), metrics: { [M.finalModel.key]: M.metrics[M.finalModel.key], baseline: M.metrics.baseline }, deltaVsBaseline: { [M.finalModel.key]: M.deltaVsBaseline[M.finalModel.key] }, deltaVsPrevious: M.deltaVsPrevious, modelSearch: M.modelSearch, firstEvent: M.firstEvent, factors: M.factors.slice(0, 3), tiers: M.tiers, fairness: M.fairness.slice(0, 2), plainFactors: M.plainFactors.slice(0, 2), clinicalRecords: M.clinicalRecords, heldoutStatusMix: M.heldoutStatusMix })}
+${j({ ...pick(M, ["asOf", "outcome", "data", "validation", "finalModel"]), metrics: { [M.finalModel.key]: M.metrics[M.finalModel.key], baseline: M.metrics.baseline }, deltaVsBaseline: { [M.finalModel.key]: M.deltaVsBaseline[M.finalModel.key] }, deltaVsPrevious: M.deltaVsPrevious, modelSearch: M.modelSearch, firstEvent: M.firstEvent, display: M.display, factors: M.factors.slice(0, 3), tiers: M.tiers, fairness: M.fairness.slice(0, 2), plainFactors: M.plainFactors.slice(0, 2), clinicalRecords: M.clinicalRecords, heldoutStatusMix: M.heldoutStatusMix })}
 
 ## \`GET /\`
 

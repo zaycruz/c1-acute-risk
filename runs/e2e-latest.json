@@ -1,8 +1,8 @@
 {
- "at": "2026-10-17T15:53:01.286Z",
+ "at": "2026-10-17T16:08:53.677Z",
  "base": "https://c1-acute-risk.zay-259.workers.dev",
- "passed": 31,
- "total": 31,
+ "passed": 32,
+ "total": 32,
  "checks": [
   {
    "name": "submission header is exactly ID,predicted_risk",
@@ -261,30 +261,59 @@
   {
    "name": "SHAP factors have impact and direction",
    "ok": true
+  },
+  {
+   "name": "display block is ready to render (plain text, no raw objects)",
+   "ok": true,
+   "info": {
+    "headline": "Flags who may need the ER or hospital next year. Of the people it puts on alert, about 57% did; the average is 29%.",
+    "keyNumbers": [
+     {
+      "value": "57%",
+      "label": "of alert-tier survivors had an ER visit or hospital stay",
+      "sub": "average survivor 29%"
+     },
+     {
+      "value": "52 of 134",
+      "label": "events caught by calling the top fifth",
+      "sub": "the organisers' baseline catches 45"
+     },
+     {
+      "value": "67%",
+      "label": "of 50%+ risk calls came true",
+      "sub": "baseline 49%"
+     },
+     {
+      "value": "0.71",
+      "label": "ranking quality (AUROC; 0.5 = coin flip, 1 = perfect)",
+      "sub": "baseline 0.67; difference not statistically significant"
+     }
+    ]
+   }
   }
  ],
  "responses": {
   "/": {
    "status": 200,
-   "ms": 450,
-   "bytes": 13404
+   "ms": 584,
+   "bytes": 13496
   },
   "/api/c1/survivors": {
    "status": 200,
-   "ms": 239,
+   "ms": 434,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c07816bda8a4e8-MIA",
+    "cf-ray": "a4c08fef8ff349bb-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 15:52:12 GMT",
+    "date": "Sat, 17 Oct 2026 16:08:29 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=dv2fCInF9y9ymRhqmPHUYCgyYQwZCyCe2xRFy9295ItTYKZjTUa7rEYmt2hVoWf6oR6rUaf%2FPEHI%2FGJybqfrHSNaV%2FfMkA5G7lG%2F7SH3Mvg%2Bn5567%2FQnUkoWMj%2Fbz0Igm8V%2BljPNAsEsfX8vFwyk%2B6ohlJk%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=7RUq0uliIsDelb4rg0x7ocEJckBgsWlW%2BsfjqMMxtwG7dtlavstCi%2F9UqntANYK5bWj0IM5T8tA%2BrNSEfUjvMeKqGHjz2YTRKJuCjOcRL%2FXzTo3G6LJw6m%2BCPiHhuRddjf13G3pCOodN1q%2FmzkxWLVZvTMk%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -1686,20 +1715,20 @@
   },
   "/api/c1/survivors/c1-S71188550": {
    "status": 200,
-   "ms": 205,
+   "ms": 218,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c078183f16a4e8-MIA",
+    "cf-ray": "a4c08ff248d049bb-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 15:52:12 GMT",
+    "date": "Sat, 17 Oct 2026 16:08:29 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=BnCavMjYS%2BiRK7De%2F1Yhbutq7YMnUmZ7YFE58wT55UpcQ%2BdyZ1fykWVlDmSBseGuHy6efJZdgItIDr8pqd5DuScqXJr5%2B0H6ldGleZ4NxaLf2zCtRj1Q3XEOniTTthmcmpGQ1UxAZSLHsRAgUur1qQfShDc%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=voMlV%2F1h371k%2FnRbEe2Xnd2WtBbvFld1rSt1CEEEqeRp7SB451%2FoO0YUO59yWIgH8f9P1YbRC8M%2Bdb9LK5I1v8LlHMTONsdLGjjtuu4s9ljqce%2Bbb3n6B4abMAMxLZ%2Bvgah4Jx8omV6coPWx4TsUe9qeAu4%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -1825,20 +1854,20 @@
   },
   "/api/c1/survivors/c1-nope": {
    "status": 404,
-   "ms": 71,
+   "ms": 38,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c0794349cea4e8-MIA",
+    "cf-ray": "a4c0908528c849bb-MIA",
     "connection": "keep-alive",
     "content-length": "30",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 15:53:00 GMT",
+    "date": "Sat, 17 Oct 2026 16:08:53 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=VLQSNbXvQhv%2Bz86p5sn5UYwV7pC3se6DX6%2FGs3OAr0EpssRzHB291SHpko0Den%2Fdm%2BUnQMnd7Fs2gywJQjhJ9%2B8v%2BPd8Opfo1HgR2wZ%2FM0kuteHwJJ%2F6PkMaPn6Ug03tXn%2BDwfqwOxLVRK%2FFQ6ftBOn0kLc%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=vO049z%2FBsg22shaS%2BRMvq%2F6OUtDQXdhkFW1fh2L8z5kzDtJUk7RrETWU8uveMhuxZAuYOVcQEK4wH74FvACrC6S8ZfC%2F0rmB71efei8N%2F87b5pivbEVlg511tw1tlPs%2FZNSSvcuIRkgtsmBgNpU%2F%2FnCuh%2Bg%3D\"}]}",
     "server": "cloudflare"
    },
    "body": {
@@ -1847,20 +1876,20 @@
   },
   "/api/c1/metrics": {
    "status": 200,
-   "ms": 80,
+   "ms": 65,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c079469d63a4e8-MIA",
+    "cf-ray": "a4c090872f0649bb-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 15:53:01 GMT",
+    "date": "Sat, 17 Oct 2026 16:08:53 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=n4D4rec3IHxPIV1XtYDuahLk2cbCdK4Tk%2B68eup0fWnEM9o8Tt6ST6a%2FDhd%2Fwxxpz%2FvaF4bZBk0T7Do9k8hs7Q3Ts0h%2FKovO%2BWhsFB7ix7sUL5gWhoLUC7rFg7SJOkK563GjWZaSrC0KvKO15ZcVUlU%2BHyk%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=6bjUmPRM4TZq6EMjNipynf4nSx2mFNb0lAC4nYgW7vKNFx%2FSLsbdxkY0MAmMMgTY9AQ%2B3Ehih3G2EMZx%2B%2FHVi0FGCs7K1KWdW3hqh87fRxGVlHI7SR8fnpQcxcprWtUQZJ4vKC7aMeUH%2F2DLKFKmh9lANI0%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -2549,7 +2578,8 @@
        "n": 92,
        "positives": 52,
        "observedRate": 0.5652173913043478,
-       "shareOfAllPositives": 0.3880597014925373
+       "shareOfAllPositives": 0.3880597014925373,
+       "text": "Alert (43%+ risk): 57% of 92 development survivors had an ER visit or hospital stay"
       },
       {
        "status": "watch",
@@ -2558,7 +2588,8 @@
        "n": 97,
        "positives": 29,
        "observedRate": 0.29896907216494845,
-       "shareOfAllPositives": 0.21641791044776118
+       "shareOfAllPositives": 0.21641791044776118,
+       "text": "Watch (29%-43%): 30% of 97 had one"
       },
       {
        "status": "ok",
@@ -2567,9 +2598,11 @@
        "n": 277,
        "positives": 53,
        "observedRate": 0.19133574007220217,
-       "shareOfAllPositives": 0.39552238805970147
+       "shareOfAllPositives": 0.39552238805970147,
+       "text": "On track (under 29%): 19% of 277 had one"
       }
-     ]
+     ],
+     "source": "development survivors (466), out-of-fold: each person scored by a model that never saw them"
     },
     "fairness": [
      {
@@ -2590,7 +2623,9 @@
        0.5108949387892121,
        1.4927868315864754
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "18-49: works about as well as overall (AUROC 0.72)"
      },
      {
       "attribute": "age",
@@ -2610,7 +2645,9 @@
        0.660755964602052,
        1.146010047658142
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "50-64: works about as well as overall (AUROC 0.66)"
      },
      {
       "attribute": "age",
@@ -2630,7 +2667,9 @@
        0.654402179662326,
        1.152093652142856
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "65-74: works about as well as overall (AUROC 0.74)"
      },
      {
       "attribute": "age",
@@ -2650,7 +2689,9 @@
        0.9132886288508137,
        1.3691212859036845
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "75+ (85 = top-coded): works about as well as overall (AUROC 0.67)"
      },
      {
       "attribute": "sex",
@@ -2670,7 +2711,9 @@
        0.7446762770448404,
        1.0959837028694306
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "Female: works about as well as overall (AUROC 0.72)"
      },
      {
       "attribute": "sex",
@@ -2690,7 +2733,9 @@
        0.8816750570866915,
        1.2789612149398197
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "Male: works about as well as overall (AUROC 0.70)"
      },
      {
       "attribute": "race_ethnicity",
@@ -2710,7 +2755,9 @@
        0.32574717732754593,
        1.2655570913771828
       ],
-      "tooSmall": true
+      "tooSmall": true,
+      "flag": "too-small",
+      "text": "Hispanic: only 28 people (7 events), too few to judge"
      },
      {
       "attribute": "race_ethnicity",
@@ -2730,7 +2777,9 @@
        0,
        1.4259250339098344
       ],
-      "tooSmall": true
+      "tooSmall": true,
+      "flag": "too-small",
+      "text": "NH Asian: only 6 people (1 events), too few to judge"
      },
      {
       "attribute": "race_ethnicity",
@@ -2750,7 +2799,9 @@
        0.3944489555785335,
        1.1837568379376395
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "weak-ranking",
+      "text": "NH Black: the model ranks risk poorly (AUROC 0.48, n = 47); use clinical judgement"
      },
      {
       "attribute": "race_ethnicity",
@@ -2770,7 +2821,9 @@
        0.9240810326960763,
        1.2013816631539547
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "NH White: works about as well as overall (AUROC 0.75)"
      },
      {
       "attribute": "race_ethnicity",
@@ -2790,7 +2843,9 @@
        0,
        1.4393533246326269
       ],
-      "tooSmall": true
+      "tooSmall": true,
+      "flag": "too-small",
+      "text": "NH other/multiple: only 14 people (2 events), too few to judge"
      },
      {
       "attribute": "insurance",
@@ -2810,7 +2865,9 @@
        0.8155221777525226,
        1.183942071427833
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "Any private: works about as well as overall (AUROC 0.68)"
      },
      {
       "attribute": "insurance",
@@ -2830,7 +2887,9 @@
        0.7666697496394974,
        1.2112082912156303
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "Public only: works about as well as overall (AUROC 0.75)"
      },
      {
       "attribute": "insurance",
@@ -2850,7 +2909,9 @@
        0,
        2.5151497580550832
       ],
-      "tooSmall": true
+      "tooSmall": true,
+      "flag": "too-small",
+      "text": "Uninsured: only 7 people (2 events), too few to judge"
      },
      {
       "attribute": "cancer_type",
@@ -2870,7 +2931,9 @@
        0.6324409778923157,
        1.2680633337488194
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "breast: works about as well as overall (AUROC 0.66)"
      },
      {
       "attribute": "cancer_type",
@@ -2890,7 +2953,9 @@
        0.4487130865385236,
        1.6143516898257442
       ],
-      "tooSmall": true
+      "tooSmall": true,
+      "flag": "too-small",
+      "text": "colon: only 23 people (7 events), too few to judge"
      },
      {
       "attribute": "cancer_type",
@@ -2910,7 +2975,9 @@
        0.45792111211602543,
        1.5472046082923596
       ],
-      "tooSmall": true
+      "tooSmall": true,
+      "flag": "too-small",
+      "text": "lung: only 20 people (7 events), too few to judge"
      },
      {
       "attribute": "cancer_type",
@@ -2930,7 +2997,9 @@
        0.8244667326148004,
        1.18115551550593
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "other only: works about as well as overall (AUROC 0.73)"
      },
      {
       "attribute": "cancer_type",
@@ -2950,7 +3019,9 @@
        0.7060585996411031,
        1.4452964512920707
       ],
-      "tooSmall": false
+      "tooSmall": false,
+      "flag": "ok",
+      "text": "prostate: works about as well as overall (AUROC 0.68)"
      }
     ],
     "fairnessBaseline": [
@@ -3460,7 +3531,8 @@
        "n": 326,
        "rate": 0.2147239263803681
       },
-      "rateRatio": 2.1289795918367345
+      "rateRatio": 2.1289795918367345,
+      "text": "ER visit or hospital stay in 2017: 46% had an ER visit or hospital stay in 2018, vs 21% without it (2.1x)"
      },
      {
       "factor": "Age 75 or older",
@@ -3472,7 +3544,8 @@
        "n": 347,
        "rate": 0.23631123919308358
       },
-      "rateRatio": 1.8491494158639066
+      "rateRatio": 1.8491494158639066,
+      "text": "Age 75 or older: 44% had an ER visit or hospital stay in 2018, vs 24% without it (1.8x)"
      },
      {
       "factor": "Positive depression screen (PHQ-2 3+)",
@@ -3484,7 +3557,8 @@
        "n": 415,
        "rate": 0.26506024096385544
       },
-      "rateRatio": 1.7754010695187163
+      "rateRatio": 1.7754010695187163,
+      "text": "Positive depression screen (PHQ-2 3+): 47% had an ER visit or hospital stay in 2018, vs 27% without it (1.8x)"
      },
      {
       "factor": "Physical health score under 40",
@@ -3496,7 +3570,8 @@
        "n": 315,
        "rate": 0.23492063492063492
       },
-      "rateRatio": 1.6914265258636119
+      "rateRatio": 1.6914265258636119,
+      "text": "Physical health score under 40: 40% had an ER visit or hospital stay in 2018, vs 23% without it (1.7x)"
      },
      {
       "factor": "20+ prescription fills in 2017",
@@ -3508,7 +3583,8 @@
        "n": 262,
        "rate": 0.22137404580152673
       },
-      "rateRatio": 1.68289384719405
+      "rateRatio": 1.68289384719405,
+      "text": "20+ prescription fills in 2017: 37% had an ER visit or hospital stay in 2018, vs 22% without it (1.7x)"
      },
      {
       "factor": "Fair or poor self-rated physical health",
@@ -3520,7 +3596,8 @@
        "n": 386,
        "rate": 0.25906735751295334
       },
-      "rateRatio": 1.6405
+      "rateRatio": 1.6405,
+      "text": "Fair or poor self-rated physical health: 42% had an ER visit or hospital stay in 2018, vs 26% without it (1.6x)"
      },
      {
       "factor": "Distress K6 5 or more",
@@ -3532,7 +3609,8 @@
        "n": 375,
        "rate": 0.2693333333333333
       },
-      "rateRatio": 1.3464258513763465
+      "rateRatio": 1.3464258513763465,
+      "text": "Distress K6 5 or more: 36% had an ER visit or hospital stay in 2018, vs 27% without it (1.3x)"
      },
      {
       "factor": "Public insurance only",
@@ -3544,7 +3622,8 @@
        "n": 304,
        "rate": 0.26973684210526316
       },
-      "rateRatio": 1.1900030111412225
+      "rateRatio": 1.1900030111412225,
+      "text": "Public insurance only: 32% had an ER visit or hospital stay in 2018, vs 27% without it (1.2x)"
      },
      {
       "factor": "Moderate+ fatigue",
@@ -3556,7 +3635,8 @@
        "n": 338,
        "rate": 0.2781065088757396
       },
-      "rateRatio": 1.1236702127659575
+      "rateRatio": 1.1236702127659575,
+      "text": "Moderate+ fatigue: 31% had an ER visit or hospital stay in 2018, vs 28% without it (no real difference)"
      },
      {
       "factor": "Pain 5 or more of 10",
@@ -3568,7 +3648,8 @@
        "n": 380,
        "rate": 0.28157894736842104
       },
-      "rateRatio": 1.1149750054336014
+      "rateRatio": 1.1149750054336014,
+      "text": "Pain 5 or more of 10: 31% had an ER visit or hospital stay in 2018, vs 28% without it (no real difference)"
      },
      {
       "factor": "Delayed care because of cost",
@@ -3580,7 +3661,8 @@
        "n": 334,
        "rate": 0.2874251497005988
       },
-      "rateRatio": 1.0015782828282829
+      "rateRatio": 1.0015782828282829,
+      "text": "Delayed care because of cost: 29% had an ER visit or hospital stay in 2018, vs 29% without it (no real difference)"
      },
      {
       "factor": "2+ financial hardship items",
@@ -3592,7 +3674,8 @@
        "n": 336,
        "rate": 0.2916666666666667
       },
-      "rateRatio": 0.9494505494505494
+      "rateRatio": 0.9494505494505494,
+      "text": "2+ financial hardship items: 28% had an ER visit or hospital stay in 2018, vs 29% without it (no real difference)"
      },
      {
       "factor": "Currently in cancer treatment",
@@ -3604,7 +3687,8 @@
        "n": 389,
        "rate": 0.29048843187660667
       },
-      "rateRatio": 0.9388576025744167
+      "rateRatio": 0.9388576025744167,
+      "text": "Currently in cancer treatment: 27% had an ER visit or hospital stay in 2018, vs 29% without it (no real difference)"
      }
     ],
     "clinicalRecords": {
@@ -4027,7 +4111,46 @@
      "Small data: 466 development survivors, 134 with the outcome. The ranking gain over the baseline (nested CV +0.04) is not statistically significant; the gain in probability quality (log loss, Brier) is.",
      "Subgroups with n < 30 or < 10 events (Hispanic, NH Asian, NH other, uninsured, colon, lung) are too small to judge.",
      "MEPS is a US national sample; the Synthea clinical records are synthetic and resemble South Florida. Nothing from Synthea is evidence about real patients."
-    ]
+    ],
+    "display": {
+     "note": "Plain-language summary for apps. Show headline, keyNumbers and howSure; put limits next to any risk number.",
+     "headline": "Flags who may need the ER or hospital next year. Of the people it puts on alert, about 57% did; the average is 29%.",
+     "keyNumbers": [
+      {
+       "value": "57%",
+       "label": "of alert-tier survivors had an ER visit or hospital stay",
+       "sub": "average survivor 29%"
+      },
+      {
+       "value": "52 of 134",
+       "label": "events caught by calling the top fifth",
+       "sub": "the organisers' baseline catches 45"
+      },
+      {
+       "value": "67%",
+       "label": "of 50%+ risk calls came true",
+       "sub": "baseline 49%"
+      },
+      {
+       "value": "0.71",
+       "label": "ranking quality (AUROC; 0.5 = coin flip, 1 = perfect)",
+       "sub": "baseline 0.67; difference not statistically significant"
+      }
+     ],
+     "howSure": [
+      "The risk numbers are well calibrated: when it says 30%, about 30% of those people had an ER visit or hospital stay.",
+      "It ranks people somewhat better than the organisers' baseline (AUROC 0.71 vs 0.67), but with 466 survivors that gap could be chance.",
+      "All numbers are scored on people the model never saw (nested cross-validation)."
+     ],
+     "insight": "Heavy care use last year (ER visits, hospital nights, many prescriptions and visits) is the strongest sign of acute care next year. It marks need; it is not something to change directly.",
+     "nextQuestion": "Harder and more useful: who will have a FIRST ER visit or hospital stay? Among the 326 survivors with none in 2017, 70 had one in 2018, and no model finds them much better than the baseline yet (AUROC 0.65 vs 0.63).",
+     "limits": [
+      "Associations, not causes: the factors flag who may need help; changing one is not proven to prevent an ER visit.",
+      "Built from survey answers only. The synthetic clinical records (Synthea) did not improve it and share no patient key with the survey.",
+      "NH Black: the model ranks risk poorly (AUROC 0.48, n = 47); use clinical judgement"
+     ],
+     "perSurvivor": "Each survivor's panel has headline, summary, evidence[] (top drivers in plain words, kind = topic), recommendations[] (audience = care-team | coach | survivor) and caveat (always show it with the risk)."
+    }
    }
   },
   "summary": {

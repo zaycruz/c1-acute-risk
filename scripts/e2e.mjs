@@ -110,6 +110,10 @@ if (M.metrics) {
   check("final model is not worse than the previous submission on log loss (paired CI)", M.deltaVsPrevious?.log_loss?.ci95?.[1] < 0, M.deltaVsPrevious?.log_loss);
   check("first-event analysis covers the survivors without 2017 acute care", FE?.n > 0 && FE.n < M.data.devSurvivors && FE.events > 0 && Array.isArray(FE.deltaCi95), FE && { n: FE.n, events: FE.events, model: FE.aurocModel, baseline: FE.aurocBaseline });
   check("SHAP factors have impact and direction", (M.factors || []).length >= 10 && M.factors.every((f) => f.meanAbsLogit >= 0 && ["raises", "lowers"].includes(f.direction)));
+  const D = M.display;
+  check("display block is ready to render (plain text, no raw objects)", D && typeof D.headline === "string" && D.keyNumbers?.length >= 3 && D.keyNumbers.every((k) => typeof k.value === "string" && typeof k.label === "string") &&
+    D.howSure?.length && D.limits?.length && M.plainFactors.every((r) => typeof r.text === "string") && M.tiers.tiers.every((t) => typeof t.text === "string") &&
+    M.fairness.every((g) => typeof g.text === "string" && ["ok", "too-small", "weak-ranking", "under-predicted", "over-predicted"].includes(g.flag)), D && { headline: D.headline, keyNumbers: D.keyNumbers });
   responses.summary = { ...s, nested: S && { auroc: S.auroc, dAuroc: S.vsBaseline.dAuroc, dLogLoss: S.vsBaseline.dLogLoss }, firstEvent: FE && { model: FE.aurocModel, baseline: FE.aurocBaseline } };
 }
 

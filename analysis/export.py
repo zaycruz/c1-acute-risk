@@ -183,6 +183,55 @@ def first_event(Xd, y):  # y in dev order
                    "Finding the first event is the harder, more useful job for prevention."}
 
 
+def add_display(m):
+    """Plain-language, ready-to-render text for apps (Coach Console). Every number here comes from the fields above."""
+    P = lambda v: f"{round(v * 100)}%"
+    for r in m["plainFactors"]:
+        r["text"] = (f"{r['factor']}: {P(r['withFactor']['rate'])} had an ER visit or hospital stay in 2018, vs {P(r['without']['rate'])} without it"
+                     + (f" ({r['rateRatio']:.1f}x)" if r["rateRatio"] and abs(r["rateRatio"] - 1) >= 0.15 else " (no real difference)"))
+    m["tiers"]["source"] = "development survivors (466), out-of-fold: each person scored by a model that never saw them"
+    word = {"alert": "Alert", "watch": "Watch", "ok": "On track"}
+    for t in m["tiers"]["tiers"]:
+        t["text"] = (f"{word[t['status']]} ({P(t['riskFrom'])}+ risk): {P(t['observedRate'])} of {t['n']} development survivors had an ER visit or hospital stay"
+                     if t["status"] == "alert" else
+                     f"{word[t['status']]} ({P(t['riskFrom'])}-{P(t['riskTo'])}): {P(t['observedRate'])} of {t['n']} had one" if t["status"] == "watch" else
+                     f"{word[t['status']]} (under {P(t['riskTo'])}): {P(t['observedRate'])} of {t['n']} had one")
+    for g in m["fairness"]:
+        g["flag"] = ("too-small" if g["tooSmall"] else
+                     "weak-ranking" if g["auroc"] is not None and g["auroc"] < 0.6 else
+                     "under-predicted" if g["oeCi95"][0] > 1 else "over-predicted" if g["oeCi95"][1] < 1 else "ok")
+        g["text"] = {"too-small": f"{g['group']}: only {g['n']} people ({g['positives']} events), too few to judge",
+                     "weak-ranking": f"{g['group']}: the model ranks risk poorly (AUROC {g['auroc']:.2f}, n = {g['n']}); use clinical judgement",
+                     "under-predicted": f"{g['group']}: real risk ran higher than predicted ({g['oe']:.2f}x)",
+                     "over-predicted": f"{g['group']}: real risk ran lower than predicted ({g['oe']:.2f}x)",
+                     "ok": f"{g['group']}: works about as well as overall (AUROC {g['auroc']:.2f})"}[g["flag"]]
+    S, FE, F = m["modelSearch"], m["firstEvent"], m["finalModel"]["key"]
+    top = next(t for t in m["tiers"]["tiers"] if t["status"] == "alert")
+    flagged = [g["text"] for g in m["fairness"] if g["flag"] in ("weak-ranking", "under-predicted", "over-predicted")]
+    m["display"] = {
+        "note": "Plain-language summary for apps. Show headline, keyNumbers and howSure; put limits next to any risk number.",
+        "headline": f"Flags who may need the ER or hospital next year. Of the people it puts on alert, about {P(top['observedRate'])} did; the average is {P(m['data']['devPositives'] / m['data']['devSurvivors'])}.",
+        "keyNumbers": [
+            {"value": P(top["observedRate"]), "label": "of alert-tier survivors had an ER visit or hospital stay", "sub": f"average survivor {P(m['data']['devPositives'] / m['data']['devSurvivors'])}"},
+            {"value": f"{S['top20Events']['procedure']} of {S['top20Events']['of']}", "label": "events caught by calling the top fifth", "sub": f"the organisers' baseline catches {S['top20Events']['baseline']}"},
+            {"value": P(S["callsAt50"]["procedure"]["cameTrue"]), "label": "of 50%+ risk calls came true", "sub": f"baseline {P(S['callsAt50']['baseline']['cameTrue'])}"},
+            {"value": f"{S['auroc']['search']:.2f}", "label": "ranking quality (AUROC; 0.5 = coin flip, 1 = perfect)", "sub": f"baseline {S['auroc']['baseline']:.2f}; difference not statistically significant"},
+        ],
+        "howSure": [
+            "The risk numbers are well calibrated: when it says 30%, about 30% of those people had an ER visit or hospital stay.",
+            f"It ranks people somewhat better than the organisers' baseline (AUROC {S['auroc']['search']:.2f} vs {S['auroc']['baseline']:.2f}), but with 466 survivors that gap could be chance.",
+            "All numbers are scored on people the model never saw (nested cross-validation).",
+        ],
+        "insight": "Heavy care use last year (ER visits, hospital nights, many prescriptions and visits) is the strongest sign of acute care next year. It marks need; it is not something to change directly.",
+        "nextQuestion": (f"Harder and more useful: who will have a FIRST ER visit or hospital stay? Among the {FE['n']} survivors with none in 2017, "
+                         f"{FE['events']} had one in 2018, and no model finds them much better than the baseline yet (AUROC {FE['aurocModel']:.2f} vs {FE['aurocBaseline']:.2f})."),
+        "limits": ["Associations, not causes: the factors flag who may need help; changing one is not proven to prevent an ER visit.",
+                   "Built from survey answers only. The synthetic clinical records (Synthea) did not improve it and share no patient key with the survey."]
+                  + flagged,
+        "perSurvivor": "Each survivor's panel has headline, summary, evidence[] (top drivers in plain words, kind = topic), recommendations[] (audience = care-team | coach | survivor) and caveat (always show it with the risk).",
+    }
+
+
 def main():
     meps = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "data", "meps")
     s17 = pd.read_csv(os.path.join(meps, "meps2017_survivors.csv")).set_index("ID")
@@ -339,6 +388,7 @@ def main():
             "MEPS is a US national sample; the Synthea clinical records are synthetic and resemble South Florida. Nothing from Synthea is evidence about real patients.",
         ],
     }
+    add_display(metrics)
     os.makedirs(os.path.join(ROOT, "src", "data"), exist_ok=True)
     json.dump({"asOf": AS_OF, "roster": roster, "details": details}, open(os.path.join(ROOT, "src", "data", "survivors.json"), "w"))
     json.dump(metrics, open(os.path.join(ROOT, "src", "data", "metrics.json"), "w"))
