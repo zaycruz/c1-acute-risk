@@ -90,7 +90,7 @@ for (const r of list) {
   if (!b) continue;
   if (!(typeof b.riskWords === "string" && b.riskWords.length <= LIM.riskWords)) over.push([r.survivorId, "riskWords"]);
   if (!(typeof b.forAssistant === "string" && b.forAssistant.length <= LIM.forAssistant && /not cause/i.test(b.forAssistant))) over.push([r.survivorId, "forAssistant"]);
-  if ("forEllie" in b && b.forEllie !== b.forAssistant) over.push([r.survivorId, "forEllie alias differs from forAssistant"]);
+  if (/ellie/i.test(JSON.stringify(b))) over.push([r.survivorId, "names Ellie (the assistant is unnamed)"]);
   if (b.headline.length > LIM.headline) over.push([r.survivorId, "headline"]);
   if (b.evidence.some((e) => e.text.length > LIM.evidence)) over.push([r.survivorId, "evidence"]);
   const rf = b.redFlags;
@@ -109,7 +109,7 @@ check("roster fairness fields agree with each survivor panel (flags, humanCheck,
     r.humanCheck === b.humanCheck?.required && Array.isArray(r.tags) && r.tags.length === r.fairnessFlags.length + (r.humanCheck ? 1 : 0) &&
     r.tags.every((t) => typeof t.label === "string" && t.label.length <= 40 && typeof t.kind === "string");
 }), { humanCheck: list.filter((r) => r.humanCheck).length, flagged: list.filter((r) => r.fairnessFlags?.length).length });
-check("console display fields within agreed lengths (riskWords 60, forAssistant 160 with caveat, headline 90, evidence 120), redFlags well formed, humanCheck set exactly for weak-ranking groups off the ok tier", over.length === 0 && Object.keys(panels).length === list.length, { over: over.slice(0, 10) });
+check("console display fields within agreed lengths (riskWords 60, forAssistant 160 with caveat, headline 90, evidence 120), no Ellie, redFlags well formed, humanCheck set exactly for weak-ranking groups off the ok tier", over.length === 0 && Object.keys(panels).length === list.length, { over: over.slice(0, 10) });
 check("every survivor panel matches the contract, the submission risk and its tier", ok === list.length, { ok, failures: failures.slice(0, 10) });
 const missing = await get("/api/c1/survivors/c1-nope");
 check("unknown survivor returns 404 JSON", missing.status === 404 && missing.body?.error);
@@ -169,6 +169,7 @@ if (M.metrics) {
     /^[0-9a-f]{40}$/.test(served) && sameCode && responses["/api/c1/metrics"].headers["x-c1-commit"] === served &&
     responses["/api/c1/metrics"].headers["x-c1-artifact"] === `sha256:${csvSha}` && M.build.submissionSha256 === csvSha,
     { served });
+  check("no API response names Ellie (metrics and roster; panels are checked above)", !/ellie/i.test(JSON.stringify(M)) && !/ellie/i.test(JSON.stringify(list)));
   const SG = M.subgroupAt50;
   check("subgroup sensitivity and PPV at the 50% cut: every row has counts, CIs unless too small, and the all-survivors row matches servedModel", SG && SG.cut === 0.5 &&
     SG.rows?.length >= 10 && SG.rows.every((r) => r.n > 0 && r.flagged <= r.n && (r.tooSmall || (r.sensitivityCi95?.length === 2 && (r.ppv === null || r.ppvCi95?.length === 2)))) &&

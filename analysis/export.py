@@ -545,7 +545,6 @@ def main():
         d = {"survivorId": f"c1-{sid}", "displayName": display, "status": st, "headline": headline, "summary": summary,
              "risk": round(p, 4), "thresholds": {"alert": T["alert"], "watch": T["watch"]},
              "riskWords": risk_words, "forAssistant": for_assistant,
-             "forEllie": for_assistant,  # deprecated alias of forAssistant, removed once Patient 360 reads forAssistant
              "fairnessFlags": flags, "redFlags": red_flags(x, s17.loc[sid], st),
              "humanCheck": human_check,
              "evidence": evidence, "recommendations": recs, "charts": charts, "profile": profile, "caveat": caveat}
