@@ -11,6 +11,8 @@ That is 59 and 69 calls among 466 development survivors, out of fold. For a care
 
 On the 199 held-out survivors (about 57 events), expect an AUROC anywhere from 0.63 to 0.79 from chance alone (resampling the development set). Served-model numbers: `/api/c1/metrics` → `servedModel`; nested-search numbers: `modelSearch` (for example `modelSearch.callsAt50.procedure.cameTrue` = 0.673 of 55 calls).
 
+Three percentages answer three questions. 59% is how often the served model's 50%+ calls came true. 67% is the same cut for the nested model search. 57% is the acute-care rate in the alert tier (risk 43% or more, the top fifth).
+
 **Reproduce in 3 commands** (needs [uv](https://docs.astral.sh/uv/) and the challenge zips; see [REPRODUCE.md](REPRODUCE.md)):
 
 ```bash
@@ -58,7 +60,7 @@ The same 10×5 repeated CV as before scores the final model after selection, whi
 | AUROC | 0.659 [0.603, 0.718] | 0.666 | **0.713** [0.662, 0.764] (nested: 0.711 vs 0.672) | +0.053 [-0.001, +0.105], not significant |
 | AUPRC | 0.423 | 0.438 | **0.508** | +0.085 [+0.017, +0.146] |
 | Brier | 0.2008 | 0.1921 | **0.1796** | -0.021 [-0.035, -0.007] |
-| Log loss | 0.606 | 0.570 | **0.539** | -0.067 [-0.107, -0.026] |
+| Log loss | 0.606 | 0.570 | **0.539** | -0.067 [-0.107, -0.026] (nested: [-0.115, -0.020]) |
 | Calibration slope (1 = ideal) | 0.45 [0.25, 0.69] | 1.09 | **1.10** [0.82, 1.44] | |
 
 Why the ranking gain is not significant: at n = 466 with 134 events an AUROC gain must be about +0.056 to clear a 95% CI.
