@@ -12,7 +12,7 @@ for (const [name, w, h] of [["desktop", 1280, 900], ["phone", 390, 844]]) {
   const errors = [];
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
   page.on("pageerror", (e) => errors.push(String(e)));
-  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  await page.goto(BASE + "/demo.html", { waitUntil: "networkidle" });
   await page.waitForSelector(".kpi");
   await page.waitForSelector("#panelBody .ev");
   const hscroll = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
