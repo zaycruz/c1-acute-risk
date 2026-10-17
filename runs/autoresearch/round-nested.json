@@ -1,0 +1,106 @@
+{
+ "round": "nested",
+ "seconds": 87,
+ "candidatePool": [
+  "baseline|baseline",
+  "lr_l2|domain",
+  "lr_l2|baseline",
+  "lr_l2|domain_raw",
+  "lr_l2|compact",
+  "lr_l2|prior_use",
+  "lr_l1|domain",
+  "lr_l1|domain_raw",
+  "lr_enet|domain_raw",
+  "spline_lr|compact",
+  "spline_lr|domain",
+  "gbm_d2|domain",
+  "gbm_d2|domain_raw",
+  "gbm_d3|domain",
+  "gbm_d1|domain",
+  "rf|domain",
+  "rf|domain_raw",
+  "et|domain",
+  "poisson_glm|domain",
+  "poisson_glm|compact",
+  "poisson_gbm|domain",
+  "avg(lr_l2,gbm_d2)|domain",
+  "avg(lr_l2,rf)|domain",
+  "avg(lr_l2,poisson_glm)|domain",
+  "lr_l2|compact_sym",
+  "lr_l2|compact_ctx",
+  "lr_l2|prior_phys",
+  "lr_l2|compact_raw_use",
+  "lr_l2_wide|compact",
+  "spline_lr|prior_use",
+  "spline_lr|prior_phys",
+  "spline_lr|compact_sym",
+  "rf|compact",
+  "rf|compact_raw_use",
+  "poisson_glm|prior_use",
+  "avg(spline_lr,rf_raw)",
+  "avg(lr_l2,spline_lr)|compact"
+ ],
+ "outerFolds": 10,
+ "picks": {
+  "rf|compact_raw_use": 6,
+  "spline_lr|prior_use": 3,
+  "poisson_glm|compact": 1
+ },
+ "procedure": {
+  "auroc": 0.7107309836360366,
+  "logLoss": 0.5386771694669781,
+  "brier": 0.17949564372744875
+ },
+ "baseline": {
+  "auroc": 0.6720014385901817,
+  "logLoss": 0.6057688558831227,
+  "brier": 0.19761799419765388
+ },
+ "submittedModel": {
+  "auroc": 0.6768342024815681,
+  "logLoss": 0.5654719445416405,
+  "brier": 0.19063882002191435
+ },
+ "procedureVsBaseline": {
+  "dAuroc": 0.03872954504585491,
+  "dAurocCi95": [
+   -0.014892280050238701,
+   0.09117944028303074
+  ],
+  "pAurocBetter": 0.9305,
+  "dLogLoss": -0.0670916864161446,
+  "dLogLossCi95": [
+   -0.11475191094922225,
+   -0.019910800615196244
+  ],
+  "pLogLossBetter": 0.9985
+ },
+ "procedureVsSubmitted": {
+  "dAuroc": 0.03389678115446848,
+  "dAurocCi95": [
+   -0.0008339056776556769,
+   0.06637186941818159
+  ],
+  "pAurocBetter": 0.972,
+  "dLogLoss": -0.026794775074662436,
+  "dLogLossCi95": [
+   -0.04330429151725538,
+   -0.009189825416749932
+  ],
+  "pLogLossBetter": 0.9975
+ },
+ "submittedVsBaseline": {
+  "dAuroc": 0.004832763891386427,
+  "dAurocCi95": [
+   -0.03922359837369422,
+   0.047558350501914676
+  ],
+  "pAurocBetter": 0.574,
+  "dLogLoss": -0.04029691134148217,
+  "dLogLossCi95": [
+   -0.08186170963298003,
+   5.914957823604928e-05
+  ],
+  "pLogLossBetter": 0.9745
+ }
+}

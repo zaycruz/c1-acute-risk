@@ -1,0 +1,93 @@
+{
+ "round": "nested",
+ "seconds": 51,
+ "candidatePool": [
+  "baseline|baseline",
+  "lr_l2|domain",
+  "lr_l2|baseline",
+  "lr_l2|domain_raw",
+  "lr_l2|compact",
+  "lr_l2|prior_use",
+  "lr_l1|domain",
+  "lr_l1|domain_raw",
+  "lr_enet|domain_raw",
+  "spline_lr|compact",
+  "spline_lr|domain",
+  "poisson_glm|domain",
+  "poisson_glm|compact",
+  "lr_l2|compact_sym",
+  "lr_l2|compact_ctx",
+  "lr_l2|prior_phys",
+  "lr_l2|compact_raw_use",
+  "lr_l2_wide|compact",
+  "spline_lr|prior_use",
+  "spline_lr|prior_phys",
+  "spline_lr|compact_sym",
+  "poisson_glm|prior_use"
+ ],
+ "outerFolds": 10,
+ "picks": {
+  "spline_lr|prior_use": 4,
+  "poisson_glm|prior_use": 3,
+  "poisson_glm|compact": 1,
+  "lr_l2_wide|compact": 1,
+  "spline_lr|compact": 1
+ },
+ "procedure": {
+  "auroc": 0.6915797518431936,
+  "logLoss": 0.5534586472507658,
+  "brier": 0.1847515761576421
+ },
+ "baseline": {
+  "auroc": 0.6720014385901817,
+  "logLoss": 0.6057688558831227,
+  "brier": 0.19761799419765388
+ },
+ "submittedModel": {
+  "auroc": 0.6768342024815681,
+  "logLoss": 0.5654719445416405,
+  "brier": 0.19063882002191435
+ },
+ "procedureVsBaseline": {
+  "dAuroc": 0.01957831325301196,
+  "dAurocCi95": [
+   -0.030308777690943037,
+   0.06977464149630584
+  ],
+  "pAurocBetter": 0.7685,
+  "dLogLoss": -0.052310208632356914,
+  "dLogLossCi95": [
+   -0.09746859202147302,
+   -0.005184065520284019
+  ],
+  "pLogLossBetter": 0.9865
+ },
+ "procedureVsSubmitted": {
+  "dAuroc": 0.014745549361625532,
+  "dAurocCi95": [
+   -0.015027963949681799,
+   0.04421950556508642
+  ],
+  "pAurocBetter": 0.823,
+  "dLogLoss": -0.012013297290874747,
+  "dLogLossCi95": [
+   -0.028028717881214072,
+   0.0059684991093099165
+  ],
+  "pLogLossBetter": 0.913
+ },
+ "submittedVsBaseline": {
+  "dAuroc": 0.004832763891386427,
+  "dAurocCi95": [
+   -0.03922359837369422,
+   0.047558350501914676
+  ],
+  "pAurocBetter": 0.574,
+  "dLogLoss": -0.04029691134148217,
+  "dLogLossCi95": [
+   -0.08186170963298003,
+   5.914957823604928e-05
+  ],
+  "pLogLossBetter": 0.9745
+ }
+}
