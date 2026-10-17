@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Care Team Risk</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1d1d1b;--muted:#6b6b66;--line:#e3e2dc;--alert:#b3261e;--watch:#9a6700;--ok:#2e7d32;--accent:#2f5bd3;--bar:#c9d6f5;--bar2:#f2c4c0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151514;--card:#1f1f1d;--ink:#ecebe6;--muted:#a3a29b;--line:#34332f;--alert:#ff8a80;--watch:#f2c14e;--ok:#81c784;--accent:#8fb0ff;--bar:#3a4a78;--bar2:#7a3a36}}
+:root[data-theme="dark"]{--bg:#151514;--card:#1f1f1d;--ink:#ecebe6;--muted:#a3a29b;--line:#34332f;--alert:#ff8a80;--watch:#f2c14e;--ok:#81c784;--accent:#8fb0ff;--bar:#3a4a78;--bar2:#7a3a36}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:20px 16px 8px;max-width:1200px;margin:0 auto}h1{margin:0;font-size:22px}header p{margin:4px 0 0;color:var(--muted)}
+main{max-width:1200px;margin:0 auto;padding:8px 16px 40px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){main{grid-template-columns:340px minmax(0,1fr)}#card{grid-column:1/-1}}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+h2{font-size:16px;margin:0 0 10px}h3{font-size:14px;margin:14px 0 6px;color:var(--muted);font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.kpi{border:1px solid var(--line);border-radius:8px;padding:10px}
+.kpi b{display:block;font-size:20px}.kpi small{color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:4px 6px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted);font-weight:600}
+.tbl{overflow-x:auto}.small{color:var(--muted);font-size:13px}
+.roster{max-height:640px;overflow:auto;margin:0;padding:0;list-style:none}.roster li{padding:8px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:6px}
+.roster li:hover,.roster li.sel{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.st{font-weight:700;font-size:12px;white-space:nowrap}.st.alert{color:var(--alert)}.st.watch{color:var(--watch)}.st.ok{color:var(--ok)}
+.bar{height:10px;border-radius:5px;background:var(--bar)}.bar.neg{background:var(--bar2)}
+.ev{margin:0;padding-left:18px}.ev li{margin:4px 0}.tag{font-size:11px;border:1px solid var(--line);border-radius:4px;padding:0 4px;color:var(--muted);margin-right:4px}
+.verdict{border-left:4px solid var(--accent);padding:8px 12px;background:color-mix(in srgb,var(--accent) 8%,transparent);border-radius:4px}
+svg text{fill:var(--muted);font-size:11px}
+</style>
+</head>
+<body>
+<header>
+<h1>Care Team Risk <span class="small">· C1 · Coach Console</span></h1>
+<p>Which cancer survivors may need an ER visit or hospital stay in 2018, from their 2017 survey answers. Associations, not causes.</p>
+</header>
+<main>
+<section id="card"><h2>Model card</h2><div id="cardBody" class="small">Loading…</div></section>
+<section><h2>Held-out survivors <span id="mix" class="small"></span></h2><ul class="roster" id="roster"></ul></section>
+<section id="panel"><h2>Survivor</h2><div id="panelBody" class="small">Pick a survivor.</div></section>
+</main>
+<script>
+const $=s=>document.querySelector(s);const pc=v=>v==null?'–':Math.round(v*100)+'%';const f3=v=>v==null?'–':v.toFixed(3);const sg=v=>(v>=0?'+':'')+v.toFixed(3);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const GLYPH={alert:'▲ Alert',watch:'! Watch',ok:'✓ On track'};
+function ci(m){return `${f3(m.value)} <span class="small">[${f3(m.ci95[0])}, ${f3(m.ci95[1])}]</span>`}
+function calSvg(curves,F){const W=280,H=200,p=30;const sx=v=>p+v*(W-2*p)/0.7,sy=v=>H-p-v*(H-2*p)/0.7;
+ let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:320px" role="img" aria-label="Calibration curve"><line x1="${sx(0)}" y1="${sy(0)}" x2="${sx(.7)}" y2="${sy(.7)}" stroke="currentColor" opacity=".25" stroke-dasharray="3 3"/>`;
+ [0,.2,.4,.6].forEach(t=>{s+=`<text x="${sx(t)}" y="${H-12}" text-anchor="middle">${t*100}%</text><text x="4" y="${sy(t)+3}">${t*100}%</text>`});
+ const col={[F]:'var(--accent)',baseline:'var(--alert)'};
+ for(const k of ['baseline',F]){const pts=curves[k];s+=`<polyline fill="none" stroke="${col[k]}" stroke-width="2" points="${pts.map(b=>sx(b.meanPredicted)+','+sy(b.observed)).join(' ')}"/>`;
+  pts.forEach(b=>{s+=`<line x1="${sx(b.meanPredicted)}" x2="${sx(b.meanPredicted)}" y1="${sy(b.observedCi95[0])}" y2="${sy(b.observedCi95[1])}" stroke="${col[k]}" opacity=".4"/><circle cx="${sx(b.meanPredicted)}" cy="${sy(b.observed)}" r="3" fill="${col[k]}"/>`})}
+ return s+`<text x="${W-p}" y="${p}" text-anchor="end" style="fill:var(--accent)">our model</text><text x="${W-p}" y="${p+14}" text-anchor="end" style="fill:var(--alert)">baseline</text></svg><div class="small">x = predicted, y = observed (5 equal-size bins, 95% CI)</div>`}
+async function card(){const M=await (await fetch('/api/c1/metrics')).json();const F=M.finalModel.key,m=M.metrics,d=M.deltaVsBaseline[F],cr=M.clinicalRecords,S=M.modelSearch,FE=M.firstEvent;
+ const tiers=M.tiers.tiers.map(t=>`<tr><td class="st ${t.status}">${GLYPH[t.status]}</td><td>${pc(t.riskFrom)}–${pc(t.riskTo)}</td><td>${t.n}</td><td>${pc(t.observedRate)}</td><td>${pc(t.shareOfAllPositives)}</td></tr>`).join('');
+ const fair=M.fairness.map(r=>`<tr${r.tooSmall?' style="opacity:.55"':''}><td>${esc(r.attribute)}</td><td>${esc(r.group)}</td><td>${r.n}</td><td>${r.positives}</td><td>${f3(r.auroc)}${r.aurocCi95?` <span class="small">[${r.aurocCi95[0].toFixed(2)}, ${r.aurocCi95[1].toFixed(2)}]</span>`:''}</td><td>${r.oe==null?'–':r.oe.toFixed(2)} <span class="small">[${r.oeCi95[0].toFixed(2)}, ${r.oeCi95[1].toFixed(2)}]</span></td><td>${r.tooSmall?'too small':''}</td></tr>`).join('');
+ const plain=M.plainFactors.map(r=>`<tr><td>${esc(r.factor)}</td><td>${pc(r.withFactor.rate)} <span class="small">(n=${r.withFactor.n})</span></td><td>${pc(r.without.rate)}</td><td>${r.rateRatio.toFixed(2)}×</td></tr>`).join('');
+ $('#cardBody').className='';$('#cardBody').innerHTML=`
+ <div class="kpis">
+  <div class="kpi"><small>AUROC (ours vs baseline; after selection, see nested CV below)</small><b>${f3(m[F].auroc.value)}</b><small>baseline ${f3(m.baseline.auroc.value)} · Δ ${d.auroc.value>=0?'+':''}${d.auroc.value.toFixed(3)} [${f3(d.auroc.ci95[0])}, ${f3(d.auroc.ci95[1])}]</small></div>
+  <div class="kpi"><small>Brier (lower = better)</small><b>${m[F].brier.value.toFixed(4)}</b><small>baseline ${m.baseline.brier.value.toFixed(4)} · P(better) ${pc(d.brier.p_better)}</small></div>
+  <div class="kpi"><small>Calibration slope (1 = ideal)</small><b>${m[F].cal_slope.value.toFixed(2)}</b><small>[${m[F].cal_slope.ci95[0].toFixed(2)}, ${m[F].cal_slope.ci95[1].toFixed(2)}] · baseline ${m.baseline.cal_slope.value.toFixed(2)} [${m.baseline.cal_slope.ci95[0].toFixed(2)}, ${m.baseline.cal_slope.ci95[1].toFixed(2)}]</small></div>
+  <div class="kpi"><small>AUPRC</small><b>${f3(m[F].auprc.value)}</b><small>baseline ${f3(m.baseline.auprc.value)} · outcome rate ${pc(M.data.devPositives/M.data.devSurvivors)}</small></div>
+ </div>
+ <p class="small">${esc(M.validation)} n = ${M.data.devSurvivors} development survivors (${M.data.devPositives} with the outcome).</p>
+ <div class="verdict"><b>Same-or-better ranking, significantly better probabilities.</b><br><span class="small">${esc(M.finalModel.name)}. Chosen by ${esc(M.finalModel.chosenBy)}.
+  Unbiased estimate (nested CV, the search never saw its test fold): AUROC ${f3(S.auroc.search)} vs baseline ${f3(S.auroc.baseline)}, Δ ${sg(S.vsBaseline.dAuroc)} [${sg(S.vsBaseline.dAurocCi95[0])}, ${sg(S.vsBaseline.dAurocCi95[1])}] (not significant);
+  log loss ${S.logLoss.search.toFixed(3)} vs ${S.logLoss.baseline.toFixed(3)}, Δ ${sg(S.vsBaseline.dLogLoss)} [${sg(S.vsBaseline.dLogLossCi95[0])}, ${sg(S.vsBaseline.dLogLossCi95[1])}] (significant).
+  In practice: of the top fifth flagged, ${S.top20Events.procedure} of ${S.top20Events.of} events are caught vs ${S.top20Events.baseline} for the baseline;
+  when it says 50%+ it is right ${pc(S.callsAt50.procedure.cameTrue)} of the time (${S.callsAt50.procedure.n} calls) vs ${pc(S.callsAt50.baseline.cameTrue)} for the baseline (${S.callsAt50.baseline.n} calls). ${esc(S.powerNote)}</span></div>
+ <h3>The harder question: who has a <i>first</i> acute event?</h3><div class="verdict"><span class="small">Prior acute care is the strongest signal, so much of any model's ranking is finding last year's repeat users.
+  Among the ${FE.n} survivors with no ER visit or hospital stay in 2017 (${FE.events} had a first one in 2018), the nested-CV search ranks at AUROC ${f3(FE.aurocModel)} vs baseline ${f3(FE.aurocBaseline)}
+  (Δ ${sg(FE.deltaAuroc)} [${sg(FE.deltaCi95[0])}, ${sg(FE.deltaCi95[1])}]): no model finds first events much better than the baseline yet. We propose this as the target for the next round of prevention work.</span></div>
+ <h3>Do the clinical records (Synthea) add anything?</h3><div class="verdict"><b>${esc(cr.verdict)}</b><br><span class="small">${esc(cr.detail)}</span></div>
+ <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));margin-top:8px">
+  <div><h3>Calibration</h3>${calSvg(M.calibrationCurve,F)}</div>
+  <div><h3>Risk tiers (development survivors, out-of-fold)</h3><div class="tbl"><table><tr><th>Tier</th><th>Risk</th><th>n</th><th>Had acute care</th><th>Share of all events</th></tr>${tiers}</table></div></div>
+ </div>
+ <h3>What drives the model (TreeSHAP, mean |log-odds| per survivor)</h3><div class="tbl"><table><tr><th>Feature (2017)</th><th>Mean impact</th><th>Higher value</th></tr>${M.factors.map(f=>`<tr><td>${esc(f.label)}</td><td>${f.meanAbsLogit.toFixed(3)}</td><td>${f.direction} risk</td></tr>`).join('')}</table></div>
+ <h3>Plain-language factors (observed 2018 acute care, development set)</h3><div class="tbl"><table><tr><th>Factor in 2017</th><th>With</th><th>Without</th><th>Ratio</th></tr>${plain}</table></div>
+ <h3>Fairness (out-of-fold, faded = too small to judge)</h3><div class="tbl"><table><tr><th>Attribute</th><th>Group</th><th>n</th><th>Events</th><th>AUROC [95% CI]</th><th>Obs/Exp [95% CI]</th><th></th></tr>${fair}</table></div>
+ <h3>Caveats</h3><ul class="small">${M.caveats.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>`}
+async function roster(){const R=await (await fetch('/api/c1/survivors')).json();const mix={};R.forEach(r=>mix[r.status]=(mix[r.status]||0)+1);
+ $('#mix').textContent=`· ${R.length} · ${mix.alert||0} alert · ${mix.watch||0} watch · ${mix.ok||0} ok`;
+ $('#roster').innerHTML=R.map(r=>`<li data-id="${esc(r.survivorId)}"><span class="st ${r.status}">${GLYPH[r.status]}</span> <b>${esc(r.displayName)}</b><br><span class="small">${esc(r.headline)}</span></li>`).join('');
+ $('#roster').onclick=e=>{const li=e.target.closest('li');if(li)show(li.dataset.id)};show(R[0].survivorId)}
+async function show(id){document.querySelectorAll('.roster li').forEach(li=>li.classList.toggle('sel',li.dataset.id===id));
+ const d=await (await fetch('/api/c1/survivors/'+encodeURIComponent(id))).json();const c=d.charts,mx=Math.max(.01,...c.drivers.map(x=>Math.abs(x.logitContribution)));
+ const drv=c.drivers.map(x=>`<tr><td>${esc(x.label)}</td><td style="width:50%"><div class="bar${x.logitContribution<0?' neg':''}" style="width:${Math.abs(x.logitContribution)/mx*100}%"></div></td><td class="small">${x.logitContribution>0?'raises':'lowers'}</td></tr>`).join('');
+ const sc=Object.entries(c.scores).map(([k,v])=>`<tr><td>${esc(k.replace(/_/g,' '))}</td><td>${v??'–'}</td></tr>`).join('');
+ $('#panelBody').className='';$('#panelBody').innerHTML=`<div><span class="st ${d.status}">${GLYPH[d.status]}</span> <b>${esc(d.displayName)}</b></div>
+ <p><b>${esc(d.headline)}</b></p><p>${esc(d.summary)}</p>
+ <div style="position:relative;height:16px;background:var(--line);border-radius:8px;margin:8px 0 18px"><div style="position:absolute;left:0;top:0;bottom:0;width:${c.risk.value*100}%;background:var(--${d.status});border-radius:8px"></div>
+ <div title="average" style="position:absolute;left:${c.risk.baseRate*100}%;top:-4px;bottom:-4px;border-left:2px dashed var(--ink)"></div><span class="small" style="position:absolute;left:${c.risk.baseRate*100}%;top:18px">average ${pc(c.risk.baseRate)}</span></div>
+ <h3>Evidence</h3><ul class="ev">${d.evidence.map(e=>`<li><span class="tag">${esc(e.kind)}</span>${esc(e.text)}</li>`).join('')}</ul>
+ <h3>Recommendations</h3><ul class="ev">${d.recommendations.map(r=>`<li><span class="tag">${esc(r.audience)}</span>${esc(r.text)}</li>`).join('')}</ul>
+ <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))"><div><h3>What moved the estimate</h3><table>${drv}</table></div><div><h3>2017 survey scores</h3><table>${sc}</table></div></div>
+ <h3>Profile</h3><p class="small">${esc(d.profile.age)} · ${esc(d.profile.sex)} · ${esc(d.profile.raceEthnicity)} · ${esc(d.profile.insurance2017)} · ${esc(d.profile.cancerTypes.join(', '))} · in treatment: ${esc(d.profile.currentTreatment)} · ${esc(d.profile.region)}</p>
+ ${d.caveat?`<p class="small"><i>${esc(d.caveat)}</i></p>`:''}`}
+card().catch(e=>$('#cardBody').textContent='Could not load metrics: '+e);roster().catch(e=>$('#roster').textContent='Could not load roster: '+e);
+</script>
+</body>
+</html>
