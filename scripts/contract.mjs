@@ -30,7 +30,7 @@ ${j(roster.slice(0, 3))}
 
 Contract fields: \`survivorId, status, headline, summary, evidence, recommendations, charts, profile, caveat\`. Extra fields: \`displayName\`, \`risk\` (0..1, identical to the submitted \`predicted_risk\`), \`thresholds\`.
 
-- \`evidence[]\`: \`{kind, text}\`. The first item (\`kind: "model"\`) states the risk and what the tier meant on development data. Then up to 4 factors that raise this person's risk and up to 2 that lower it, biggest first. Extra keys: \`feature\`, \`logitContribution\` (coefficient x standardised value, log-odds vs an average survivor). \`kind\` is one of \`prior-acute-care, medications, care-intensity, physical-function, symptoms, distress, financial-toxicity, access, treatment, support, demographic\`.
+- \`evidence[]\`: \`{kind, text}\`. The first item (\`kind: "model"\`) states the risk and what the tier meant on development data. Then up to 4 factors that raise this person's risk and up to 2 that lower it, biggest first. Extra keys: \`feature\`, \`logitContribution\` (TreeSHAP contribution on the calibrated log-odds scale, relative to an average survivor; see analysis/explain.py). \`kind\` is one of \`prior-acute-care, medications, care-intensity, physical-function, symptoms, distress, financial-toxicity, access, treatment, support, demographic\`.
 - \`recommendations[]\`: \`{audience: "coach" | "care-team" | "survivor", text}\`. Tier action first, then one per actionable driver. The coach does not diagnose; clinical items go to \`care-team\`.
 - \`charts\`: \`risk\` (value, base rate, tier cut-offs), \`drivers\` (bar chart of logit contributions), \`scores\` (2017 survey scores, \`null\` = not answered), \`use2017\` (counts).
 - \`caveat\`: always present: association not cause, plus a warning when the questionnaire was skipped or the person belongs to a subgroup too small to judge.
@@ -43,16 +43,19 @@ Unknown id: \`404 {"error":"survivor not found"}\`.
 
 Top-level keys: ${Object.keys(M).map((k) => "`" + k + "`").join(", ")}.
 
-- \`metrics.{baseline,logistic,gbm_calibrated}\`: \`auroc, auprc, brier, cal_intercept, cal_slope, mean_pred\`, each \`{value, ci95}\`, out-of-fold on the 466 development survivors.
-- \`deltaVsBaseline\`: paired bootstrap differences with \`ci95\` and \`p_better\`.
+- \`finalModel\`: \`{key, name, chosenBy, explanations, previous}\`. \`finalModel.key\` (\`forest\`) names the final model in \`metrics\`, \`deltaVsBaseline\` and \`calibrationCurve\`.
+- \`metrics.{baseline,logistic,gbm_calibrated,forest}\`: \`auroc, auprc, brier, log_loss, cal_intercept, cal_slope, mean_pred\`, each \`{value, ci95}\`, out-of-fold on the 466 development survivors. \`logistic\` is the previous submission.
+- \`modelSearch\`: the unbiased nested-CV estimate of the model search (the 10x5 CV numbers for \`forest\` are post-selection). \`deltaVsPrevious\`: forest vs the previous logistic model, paired.
+- \`firstEvent\`: ranking among survivors with no 2017 ER visit or hospital stay (the proposed prevention target).
+- \`deltaVsBaseline\`: paired bootstrap differences (auroc, auprc, brier, log_loss) with \`ci95\` and \`p_better\`.
 - \`calibrationCurve\`: 5 equal-size bins per model, with Wilson 95% CIs on the observed rate.
 - \`fairness[]\` / \`fairnessBaseline[]\`: per subgroup \`n, positives, observedRate, meanPredicted, oe, brier, auroc, tooSmall\` (n < 30 or < 10 events).
-- \`factors[]\`: model coefficients per SD with bootstrap CIs; \`plainFactors[]\`: observed 2018 rates with vs without a 2017 factor.
+- \`factors[]\`: TreeSHAP global importance (\`meanAbsLogit\`, mean absolute calibrated log-odds contribution) and \`direction\` of a higher value; \`plainFactors[]\`: observed 2018 rates with vs without a 2017 factor.
 - \`clinicalRecords\`: \`{verdict, detail}\`; \`clinicalRecordsDetail\`: the full Synthea analysis (Q1 within Synthea, Q2 transport, Q3 increment, stratum sizes, population shift).
 
 Excerpt:
 
-${j({ ...pick(M, ["asOf", "outcome", "data", "validation", "finalModel"]), metrics: { logistic: M.metrics.logistic, baseline: M.metrics.baseline }, deltaVsBaseline: { logistic: M.deltaVsBaseline.logistic }, tiers: M.tiers, fairness: M.fairness.slice(0, 2), plainFactors: M.plainFactors.slice(0, 2), clinicalRecords: M.clinicalRecords, heldoutStatusMix: M.heldoutStatusMix })}
+${j({ ...pick(M, ["asOf", "outcome", "data", "validation", "finalModel"]), metrics: { [M.finalModel.key]: M.metrics[M.finalModel.key], baseline: M.metrics.baseline }, deltaVsBaseline: { [M.finalModel.key]: M.deltaVsBaseline[M.finalModel.key] }, deltaVsPrevious: M.deltaVsPrevious, modelSearch: M.modelSearch, firstEvent: M.firstEvent, factors: M.factors.slice(0, 3), tiers: M.tiers, fairness: M.fairness.slice(0, 2), plainFactors: M.plainFactors.slice(0, 2), clinicalRecords: M.clinicalRecords, heldoutStatusMix: M.heldoutStatusMix })}
 
 ## \`GET /\`
 

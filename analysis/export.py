@@ -15,7 +15,10 @@ import pandas as pd
 
 warnings.filterwarnings("ignore")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from features import FEATURE_LABELS, domain_features, subgroups, num, yes  # noqa: E402
+from features import FEATURE_LABELS, FINAL_LABELS, RAW_USE, domain_features, final_features, subgroups  # noqa: E402
+from explain import contributions  # noqa: E402
+
+LABELS = {**FEATURE_LABELS, **FINAL_LABELS}
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "analysis", "out")
@@ -47,6 +50,11 @@ FACTOR_PLAYBOOK = {
     "family_caregiver": ("support", "coach", "A family member provides care: check how the caregiver is coping."),
     "not_married": ("support", "coach", "May have less support at home: ask who helps them day to day."),
     "age": ("demographic", "care-team", "Older age: a lower bar for proactive check-ins is reasonable."),
+    "hosp_nights_17": ("prior-acute-care", "care-team", "Nights in hospital last year: confirm a discharge follow-up plan and who to call first."),
+    "outpatient_visits_17": ("care-intensity", "care-team", "Many hospital outpatient visits: check the plan is coordinated and one team owns follow-up."),
+    "home_health_days_17": ("prior-acute-care", "care-team", "Many home health days: confirm home health is still in place and who to call after hours."),
+    "spending_17": ("care-intensity", "care-team", "High care use last year: review what drove it and whether one team owns the plan."),
+    "missed_work_days_17": ("symptoms", "coach", "Missed work for illness: ask which symptoms keep them from work and agree when to call the team."),
 }
 SHORT = {"er_visits_17": "ER visits last year", "hosp_stays_17": "hospital stays last year", "rx_fills_17": "many prescriptions",
          "office_visits_17": "many office visits", "home_health_17": "home health care", "physical_score": "low physical function",
@@ -54,7 +62,9 @@ SHORT = {"er_visits_17": "ER visits last year", "hosp_stays_17": "hospital stays
          "distress_k6": "psychological distress", "depression_phq2": "depression symptoms", "mental_score": "low mental health score",
          "fear_recurrence": "worry about recurrence", "financial_toxicity": "financial hardship", "cost_delay": "cost-related care delays",
          "uninsured": "no insurance", "public_only": "public-only insurance", "low_income": "low income", "current_treatment": "active treatment",
-         "recurrence": "recurrence", "family_caregiver": "caregiver needs", "not_married": "limited support at home", "age": "age"}
+         "recurrence": "recurrence", "family_caregiver": "caregiver needs", "not_married": "limited support at home", "age": "age",
+         "hosp_nights_17": "nights in hospital last year", "outpatient_visits_17": "hospital outpatient visits",
+         "home_health_days_17": "home health days", "spending_17": "high care use last year", "missed_work_days_17": "missed work for illness"}
 NON_ACTIONABLE = {"female", "hispanic", "nh_black", "nh_asian_other", "ca_breast", "ca_colon", "ca_lung", "ca_prostate",
                   "n_cancer_types", "no_saq"}
 
@@ -86,7 +96,12 @@ def describe(f, raw, s):
     if f == "public_only": return "Public insurance only (Medicare/Medicaid)" if v == 1 else "Has private insurance or none"
     if f == "uninsured": return "Uninsured all of 2017" if v == 1 else "Insured in 2017"
     if f == "family_caregiver": return "A family member provides care" if v == 1 else "No family caregiver reported"
-    return f"{FEATURE_LABELS[f]}: {'yes' if v == 1 else 'no' if v == 0 else v}"
+    if f == "hosp_nights_17": return f"{int(round(np.expm1(v)))} night(s) in hospital in 2017"
+    if f == "outpatient_visits_17": return f"{int(round(np.expm1(v)))} hospital outpatient visit(s) in 2017"
+    if f == "home_health_days_17": return f"{int(round(np.expm1(v)))} home health day(s) in 2017"
+    if f == "spending_17": return f"${int(round(np.expm1(v), -2)):,} total health spending in 2017 (median survivor about $6,700)"
+    if f == "missed_work_days_17": return f"{int(round(np.expm1(v)))} work day(s) missed for illness in 2017"
+    return f"{LABELS[f]}: {'yes' if v == 1 else 'no' if v == 0 else v}"
 
 
 def univariate_factors(Xd, y):
@@ -117,6 +132,54 @@ def univariate_factors(Xd, y):
     return rows
 
 
+def _boot_ci(fn, n, seed=20261017, draws=2000):
+    rg = np.random.default_rng(seed)
+    v = []
+    for _ in range(draws):
+        i = rg.integers(0, n, n)
+        r = fn(i)
+        if r is not None:
+            v.append(r)
+    return [float(np.percentile(v, 2.5)), float(np.percentile(v, 97.5))], float(np.mean(np.array(v) > 0))
+
+
+def model_search(y):
+    """Honest estimate of the final model: nested CV of the whole search (the 10x5 CV numbers are post-selection)."""
+    N = json.load(open(os.path.join(ROOT, "runs", "autoresearch", "round-nested.json")))
+    oof = pd.read_csv(os.path.join(ROOT, "runs", "autoresearch", "round-nested-oof.csv"))
+    yy = oof.y.values
+    k = int(round(0.2 * len(yy)))
+    top = {c: int(yy[np.argsort(-oof[c].values)[:k]].sum()) for c in ("procedure", "baseline", "submitted")}
+    calls = {c: {"n": int((oof[c] >= 0.5).sum()), "cameTrue": float(yy[oof[c].values >= 0.5].mean())} for c in ("procedure", "baseline", "submitted")}
+    return {"note": "Nested CV: the whole 37-candidate search re-run inside each of 10 outer folds, so the scored model never saw its test fold. "
+                    "This is the unbiased estimate of what the chosen model does on new survivors.",
+            "candidates": len(N["candidatePool"]), "outerFolds": N["outerFolds"], "picks": N["picks"],
+            "auroc": {"search": N["procedure"]["auroc"], "baseline": N["baseline"]["auroc"], "previous": N["submittedModel"]["auroc"]},
+            "logLoss": {"search": N["procedure"]["logLoss"], "baseline": N["baseline"]["logLoss"], "previous": N["submittedModel"]["logLoss"]},
+            "vsBaseline": N["procedureVsBaseline"], "vsPrevious": N["procedureVsSubmitted"],
+            "top20Events": {"of": int(yy.sum()), "flagged": k, **top},
+            "callsAt50": calls,
+            "powerNote": "With 466 survivors and 134 events an AUROC gain needs to be about +0.056 to clear a 95% CI; "
+                         "the held-out set (199, about 57 events) has an AUROC standard error of about 0.04."}
+
+
+def first_event(Xd, y):
+    """Alternative target: among survivors with no ER visit or hospital stay in 2017, who has a FIRST one in 2018?"""
+    oof = pd.read_csv(os.path.join(OUT, "oof.csv"))
+    m = ((Xd.er_visits_17.fillna(0) == 0) & (Xd.hosp_stays_17.fillna(0) == 0)).values
+    yy = oof.y.values[m]
+    pf, pb = oof.p_forest.values[m], oof.p_baseline.values[m]
+    from sklearn.metrics import roc_auc_score
+    d = lambda i: roc_auc_score(yy[i], pf[i]) - roc_auc_score(yy[i], pb[i]) if 0 < yy[i].sum() < len(i) else None
+    ci, pb_ = _boot_ci(d, len(yy))
+    return {"definition": "Survivors with no ER visit or hospital stay in 2017; outcome = first acute care in 2018",
+            "n": int(m.sum()), "events": int(yy.sum()), "rate": float(yy.mean()),
+            "aurocModel": float(roc_auc_score(yy, pf)), "aurocBaseline": float(roc_auc_score(yy, pb)),
+            "deltaAuroc": float(roc_auc_score(yy, pf) - roc_auc_score(yy, pb)), "deltaCi95": ci, "pBetter": pb_,
+            "why": "Prior acute care explains most of the ranking on the full target (the 2017 repeat users are easy to find). "
+                   "Finding the first event is the harder, more useful job for prevention."}
+
+
 def main():
     meps = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "data", "meps")
     s17 = pd.read_csv(os.path.join(meps, "meps2017_survivors.csv")).set_index("ID")
@@ -129,14 +192,14 @@ def main():
     sub = pd.read_csv(os.path.join(ROOT, "submission", "heldout_predictions.csv")).set_index("ID")
 
     Xd = domain_features(s17)
-    imp, sc, lr = model.steps[0][1], model.steps[1][1], model.steps[2][1]
-    names = list(Xd.columns) + [f"missing:{Xd.columns[j]}" for j in imp.indicator_.features_]
-    Z = sc.transform(imp.transform(Xd))
-    contrib = pd.DataFrame(Z * lr.coef_[0], index=Xd.index, columns=names)
-    risk = pd.Series(model.predict_proba(Xd)[:, 1], index=Xd.index)
+    Xf = final_features(s17)
+    contrib = contributions(model, Xf)  # TreeSHAP, calibrated log-odds scale (analysis/explain.py)
+    risk = pd.Series(model.predict_proba(Xf)[:, 1], index=Xf.index)
+    Xall = Xd.join(Xf[list(RAW_USE)])
     assert np.allclose(risk.loc[sub.index].round(6), sub.predicted_risk, atol=1e-6), "export drifted from submission"
 
     T = M["tiers"]
+    FAIR = {(r["attribute"], r["group"]): r for r in M["fairness"]}
     base_rate = M["positives_dev"] / M["n_dev"]
     groups = subgroups(s17)
 
@@ -146,7 +209,7 @@ def main():
     tier_rate = {t["status"]: t["observedRate"] for t in T["tiers"]}
     roster, details = [], {}
     for sid in held.ID:
-        x, c, p = Xd.loc[sid], contrib.loc[sid], float(risk.loc[sid])
+        x, c, p = Xall.loc[sid], contrib.loc[sid], float(risk.loc[sid])
         st = status_of(p)
         sex = "F" if x.female == 1 else "M"
         cancers = [n for n, col in (("breast", "ca_breast"), ("colon", "ca_colon"), ("lung", "ca_lung"), ("prostate", "ca_prostate")) if x[col] == 1]
@@ -163,7 +226,9 @@ def main():
         ranked = [(f, v) for f, v in c.sort_values(ascending=False).items() if not f.startswith("missing:")]
         up = [(f, v) for f, v in ranked if v > 0.02 and f not in NON_ACTIONABLE and not np.isnan(x[f])][:4]
         down = [(f, v) for f, v in reversed(ranked) if v < -0.05 and f not in NON_ACTIONABLE and not np.isnan(x[f])][:2]
-        lead = SHORT.get(up[0][0], FEATURE_LABELS[up[0][0]].split(" (")[0].lower()) if up else None
+        # spending summarises all care use; name a more specific driver in the headline when there is one
+        lead_f = next((f for f, _ in up if f != "spending_17"), up[0][0]) if up else None
+        lead = SHORT.get(lead_f, LABELS[lead_f].split(" (")[0].lower()) if lead_f else None
         pct = round(p * 100)
         if st == "alert":
             headline = f"Acute care risk {pct}% for 2018 (high), driven by {lead}" if lead else f"Acute care risk {pct}% for 2018 (high)"
@@ -188,9 +253,9 @@ def main():
             recs.append({"audience": "coach", "text": "Routine follow-up. No extra outreach suggested by this model."})
         seen = set()
         for f, _ in up:
-            if f in FACTOR_PLAYBOOK and FACTOR_PLAYBOOK[f][2] not in seen:
+            if f in FACTOR_PLAYBOOK and FACTOR_PLAYBOOK[f][0] not in seen:  # one recommendation per kind
                 recs.append({"audience": FACTOR_PLAYBOOK[f][1], "text": FACTOR_PLAYBOOK[f][2]})
-                seen.add(FACTOR_PLAYBOOK[f][2])
+                seen.add(FACTOR_PLAYBOOK[f][0])
         if st != "ok":
             recs.append({"audience": "survivor", "text": "If a symptom is getting worse, call your cancer care team first: they can often help the same day without an ER visit."})
         summary = (f"{pct}% predicted chance of an ER visit or hospital stay in 2018 (average survivor {round(base_rate * 100)}%). "
@@ -205,7 +270,7 @@ def main():
         }
         charts = {
             "risk": {"value": round(p, 4), "baseRate": round(base_rate, 4), "watchFrom": T["watch"], "alertFrom": T["alert"]},
-            "drivers": [{"label": FEATURE_LABELS[f].split(" (")[0], "logitContribution": round(float(v), 3)} for f, v in up + down],
+            "drivers": [{"label": LABELS[f].split(" (")[0], "logitContribution": round(float(v), 3)} for f, v in up + down],
             "scores": {k: (None if np.isnan(x[k]) else round(float(x[k]), 1)) for k in
                        ("physical_score", "mental_score", "distress_k6", "depression_phq2", "pain", "fatigue", "financial_toxicity", "cost_delay")},
             "use2017": {"erVisits": int(max(s17.loc[sid, "ERTOT17"], 0)), "hospitalStays": int(max(s17.loc[sid, "IPDIS17"], 0)),
@@ -217,10 +282,17 @@ def main():
             caveat += " This survivor skipped the health questionnaire, so mental/physical scores were filled with typical values."
         if g.race_ethnicity in ("Hispanic", "NH Asian", "NH other/multiple") or g.insurance == "Uninsured":
             caveat += f" Few {g.race_ethnicity if g.insurance != 'Uninsured' else 'uninsured'} survivors in the training data: treat this estimate with extra caution."
-        if g.race_ethnicity == "NH Black":
-            caveat += " For NH Black survivors this model ranked risk poorly on development data (AUROC about 0.43, n = 47): rely on clinical judgement."
-        if age is not None and age >= 75:
-            caveat += " The model under-predicted acute care for survivors 75+ (observed about 1.3x predicted): the true risk may be higher."
+        for attr, grp in (("race_ethnicity", g.race_ethnicity), ("age", g.age)):
+            fr = FAIR.get((attr, grp))
+            if not fr or fr["tooSmall"]:
+                continue
+            if fr["auroc"] is not None and fr["auroc"] < 0.6:
+                caveat += (f" For {grp} survivors this model ranked risk poorly on development data (AUROC {fr['auroc']:.2f} "
+                           f"[{fr['aurocCi95'][0]:.2f}, {fr['aurocCi95'][1]:.2f}], n = {fr['n']}): rely on clinical judgement.")
+            if fr["oeCi95"][0] > 1:
+                caveat += f" The model under-predicted acute care for {grp} survivors (observed {fr['oe']:.2f}x predicted): the true risk may be higher."
+            if fr["oeCi95"][1] < 1:
+                caveat += f" The model over-predicted acute care for {grp} survivors (observed {fr['oe']:.2f}x predicted)."
         d = {"survivorId": f"c1-{sid}", "displayName": display, "status": st, "headline": headline, "summary": summary,
              "risk": round(p, 4), "thresholds": {"alert": T["alert"], "watch": T["watch"]},
              "evidence": evidence, "recommendations": recs, "charts": charts, "profile": profile, "caveat": caveat}
@@ -239,20 +311,27 @@ def main():
         "data": {"devSurvivors": M["n_dev"], "devPositives": M["positives_dev"], "heldoutSurvivors": M["n_heldout"],
                  "predictorsFrom": "2017 MEPS only (2018 file used for the outcome column only)"},
         "validation": M["validation"],
-        "finalModel": {"name": "L2 logistic regression on 34 survey-domain features + missing indicators",
-                       "regularisationC": M["finalC"], "tunedBy": "inner 5-fold CV on log loss inside each training fold"},
-        "metrics": M["metrics"], "deltaVsBaseline": M["deltaVsBaseline"],
+        "finalModel": {"key": M["finalModel"],
+                       "name": "Random forest (300 trees, min leaf 10) with sigmoid calibration, on 16 features: 2017 care use "
+                               "(ER, hospital stays and nights, office, outpatient, home health, prescriptions, spending), age, "
+                               "physical and mental health scores, distress, depression screen, self-rated health, missed work days",
+                       "chosenBy": "nested cross-validation of a 37-candidate model search (runs/autoresearch): it won 6 of 10 outer folds",
+                       "explanations": "TreeSHAP per survivor, converted to calibrated log-odds (analysis/explain.py)",
+                       "previous": "L2 logistic regression on 34 survey-domain features (the first submission)"},
+        "metrics": M["metrics"], "deltaVsBaseline": M["deltaVsBaseline"], "deltaVsPrevious": M["deltaVsPrevious"],
+        "modelSearch": model_search(y),
+        "firstEvent": first_event(Xd.loc[dev.index], y),
         "calibrationCurve": M["calibrationCurve"],
         "tiers": M["tiers"],
         "fairness": M["fairness"], "fairnessBaseline": M["fairnessBaseline"],
-        "factors": [f for f in M["factors"] if not f["feature"].startswith("missing:")][:15],
+        "factors": [f for f in M["factors"] if not f["feature"].startswith("missing:")][:16],
         "plainFactors": univariate_factors(Xd.loc[dev.index], y),
         "clinicalRecords": SYN["verdict"] if SYN else {"verdict": "pending", "detail": "Synthea analysis not run yet."},
         "clinicalRecordsDetail": SYN,
         "heldoutStatusMix": {s: sum(r["status"] == s for r in roster) for s in order},
         "caveats": [
             "Associations, not causes. Prior acute care and poor physical function dominate; they mark need, not levers.",
-            "Small data: 466 development survivors, 134 with the outcome. Differences of a few AUROC points are within chance.",
+            "Small data: 466 development survivors, 134 with the outcome. The ranking gain over the baseline (nested CV +0.04) is not statistically significant; the gain in probability quality (log loss, Brier) is.",
             "Subgroups with n < 30 or < 10 events (Hispanic, NH Asian, NH other, uninsured, colon, lung) are too small to judge.",
             "MEPS is a US national sample; the Synthea clinical records are synthetic and resemble South Florida. Nothing from Synthea is evidence about real patients.",
         ],

@@ -145,3 +145,22 @@ def subgroups(df):
         "insurance": ins,
         "cancer_type": cancer,
     }, index=df.index)
+
+
+# Final model's inputs: the compact set the autoresearch loop and nested CV converged on (runs/autoresearch/log.md).
+COMPACT = ["er_visits_17", "hosp_stays_17", "rx_fills_17", "office_visits_17", "home_health_17", "age", "physical_score",
+           "mental_score", "depression_phq2", "distress_k6", "poor_physical_rating"]
+RAW_USE = {"hosp_nights_17": ("IPNGTD17", "Hospital nights in 2017 (log)"),
+           "outpatient_visits_17": ("OPTOTV17", "Hospital outpatient visits in 2017 (log)"),
+           "home_health_days_17": ("HHTOTD17", "Home health days in 2017 (log)"),
+           "spending_17": ("TOTEXP17", "Total health spending in 2017 (log $)"),
+           "missed_work_days_17": ("DDNWRK17", "Work days missed for illness in 2017 (log)")}
+FINAL_LABELS = {**{k: FEATURE_LABELS[k] for k in COMPACT}, **{k: lab for k, (_, lab) in RAW_USE.items()}}
+
+
+def final_features(df):
+    """COMPACT domain features + log1p of 5 raw 2017 use items (same values as autoresearch 'compact_raw_use')."""
+    X = domain_features(df)[COMPACT].copy()
+    for k, (col, _) in RAW_USE.items():
+        X[k] = np.log1p(df[col].where(df[col] >= 0))
+    return X

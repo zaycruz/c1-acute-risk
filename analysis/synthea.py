@@ -229,7 +229,7 @@ def main():
           "meanPredicted": float(p_transport.mean()), "observedRate": float(y.mean()),
           "oe": float(y.mean() / p_transport.mean())}
     oofm = pd.read_csv(os.path.join(OUT, "oof.csv")).set_index("ID").loc[ids]
-    p_meps = oofm.p_logistic.values
+    p_meps = oofm.p_forest.values  # the final MEPS model (calibrated forest), same folds as train.py
     dd = []
     for _ in range(2000):
         i = rng.choice(len(y), len(y), replace=True)
@@ -237,7 +237,7 @@ def main():
     q2["vsMepsModel"] = {"mepsOofAuroc": float(roc_auc_score(y, p_meps)),
                          "deltaAuroc": float(roc_auc_score(y, p_transport) - roc_auc_score(y, p_meps)),
                          "ci95": [float(np.percentile(dd, 2.5)), float(np.percentile(dd, 97.5))],
-                         "note": "Paired bootstrap: Synthea shared-variable model (never saw MEPS) vs MEPS logistic OOF predictions, same 466 survivors."}
+                         "note": "Paired bootstrap: Synthea shared-variable model (never saw MEPS) vs the final MEPS model (calibrated forest) OOF predictions, same 466 survivors."}
     print("Q2", q2)
 
     # Q3a: transferred clinical burden = E[clinical part of full Synthea logit | shared features]
@@ -329,7 +329,9 @@ def main():
     elif clin_gain or prior_gain:
         verdict = ("No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; "
                    "Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. "
-                   "But a Synthea model on shared variables alone ranks real survivors about as well as the survey model (tie within CI)")
+                   + ("But a Synthea model on shared variables alone ranks real survivors about as well as the final survey model (tie within CI)"
+                      if q2["vsMepsModel"]["ci95"][0] < 0 < q2["vsMepsModel"]["ci95"][1] else
+                      "A Synthea model on shared variables alone does transport to real survivors (calibrated), but ranks them below the final survey model"))
     elif False:
         verdict = "Not the clinical detail: stage and comorbidities add nothing, but a Synthea model on shared variables is a small useful prior"
     else:
@@ -341,13 +343,16 @@ def main():
               f"(2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC {q2['aurocInMeps']:.3f} "
               f"[{q2['ci95'][0]:.3f}, {q2['ci95'][1]:.3f}] with O/E {q2['oe']:.2f}, vs the MEPS model's {q2['vsMepsModel']['mepsOofAuroc']:.3f} out-of-fold "
               f"(paired d {q2['vsMepsModel']['deltaAuroc']:+.3f} [{q2['vsMepsModel']['ci95'][0]:+.3f}, {q2['vsMepsModel']['ci95'][1]:+.3f}]): "
-              "the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. "
+              + ("the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. "
+                 if q2["vsMepsModel"]["ci95"][0] < 0 < q2["vsMepsModel"]["ci95"][1] else
+                 "the shared-variable risk pattern learned from synthetic records transports and is calibrated, but the survey model ranks better. ")
+              +
               f"(3) Added to the MEPS model: clinical-burden score d AUROC {fmt('transfer_clinical_burden', 'auroc')}, d Brier {fmt('transfer_clinical_burden', 'brier')}; "
               f"Synthea prior d AUROC {fmt('transfer_prior_logit', 'auroc')}, d Brier {fmt('transfer_prior_logit', 'brier')}; "
               f"stratum features (3 definitions) d AUROC between {min(q3[k]['delta']['auroc']['value'] for k in q3 if k.startswith('strata_')):+.3f} and "
               f"{max(q3[k]['delta']['auroc']['value'] for k in q3 if k.startswith('strata_')):+.3f}. "
-              "(Q3's MEPS-only reference is 0.663, not 0.666, because it uses a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior "
-              "at n=466, not that real stage or comorbidity data would help these patients. The submission uses the MEPS-only model.")
+              "(Q3 adds each Synthea score as one feature to the MEPS L2 logistic on 34 domain features, our earlier model; its reference AUROC is 0.663 with a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior "
+              "at n=466, not that real stage or comorbidity data would help these patients. The submission uses a MEPS-only model (the calibrated forest).")
     out = {"verdict": {"verdict": verdict, "detail": detail},
            "design": __doc__.strip(),
            "q1WithinSynthea": q1, "q2Transport": q2,

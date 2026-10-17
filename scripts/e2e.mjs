@@ -84,16 +84,17 @@ check("POST is rejected with 405", post.status === 405);
 const met = await get("/api/c1/metrics");
 responses["/api/c1/metrics"] = met;
 const M = met.body;
-check("metrics 200 with model and baseline", met.status === 200 && M.metrics?.logistic && M.metrics?.baseline);
+const F = M.finalModel?.key;
+check("metrics 200 with final model and baseline", met.status === 200 && F && M.metrics?.[F] && M.metrics?.baseline, { finalModel: F });
 if (M.metrics) {
-  const m = M.metrics, d = M.deltaVsBaseline.logistic;
-  const s = { aurocModel: m.logistic.auroc.value, aurocBaseline: m.baseline.auroc.value, dAuroc: d.auroc.value, dAurocCi: d.auroc.ci95,
-    brierModel: m.logistic.brier.value, brierBaseline: m.baseline.brier.value, dBrierCi: d.brier.ci95,
-    slopeModel: m.logistic.cal_slope.value, slopeBaseline: m.baseline.cal_slope.value };
-  check("every metric has a 95% CI", ["auroc", "auprc", "brier", "cal_slope", "cal_intercept"].every((k) => Array.isArray(m.logistic[k].ci95) && m.logistic[k].ci95.length === 2));
+  const m = M.metrics, d = M.deltaVsBaseline[F];
+  const s = { aurocModel: m[F].auroc.value, aurocBaseline: m.baseline.auroc.value, dAuroc: d.auroc.value, dAurocCi: d.auroc.ci95,
+    brierModel: m[F].brier.value, brierBaseline: m.baseline.brier.value, dBrierCi: d.brier.ci95,
+    slopeModel: m[F].cal_slope.value, slopeBaseline: m.baseline.cal_slope.value };
+  check("every metric has a 95% CI", ["auroc", "auprc", "brier", "cal_slope", "cal_intercept"].every((k) => Array.isArray(m[F][k].ci95) && m[F][k].ci95.length === 2));
   check("model is not worse than baseline on AUROC and Brier (point estimates)", s.aurocModel >= s.aurocBaseline && s.brierModel <= s.brierBaseline, s);
   check("model calibration slope closer to 1 than baseline", Math.abs(s.slopeModel - 1) < Math.abs(s.slopeBaseline - 1), s);
-  check("calibration curves for model and baseline", M.calibrationCurve?.logistic?.length >= 4 && M.calibrationCurve?.baseline?.length >= 4);
+  check("calibration curves for model and baseline", M.calibrationCurve?.[F]?.length >= 4 && M.calibrationCurve?.baseline?.length >= 4);
   const attrs = new Set((M.fairness || []).map((r) => r.attribute));
   check("fairness table covers age, sex, race/ethnicity, insurance, cancer type", ["age", "sex", "race_ethnicity", "insurance", "cancer_type"].every((a) => attrs.has(a)));
   check("fairness flags small subgroups", (M.fairness || []).some((r) => r.tooSmall) && (M.fairness || []).every((r) => r.tooSmall === (r.n < 30 || r.positives < 10)),
@@ -103,7 +104,13 @@ if (M.metrics) {
     M.tiers.tiers[0].observedRate > M.tiers.tiers[1].observedRate && M.tiers.tiers[1].observedRate > M.tiers.tiers[2].observedRate,
     M.tiers.tiers.map((t) => ({ status: t.status, n: t.n, rate: t.observedRate })));
   check("roster status mix matches metrics.heldoutStatusMix", JSON.stringify(M.heldoutStatusMix) === JSON.stringify(mix), { metrics: M.heldoutStatusMix, roster: mix });
-  responses.summary = s;
+  const S = M.modelSearch, FE = M.firstEvent;
+  check("nested-CV estimate present: log loss significantly better than baseline", S?.outerFolds === 10 && S.vsBaseline.dLogLossCi95[1] < 0,
+    { dAuroc: S?.vsBaseline.dAuroc, dAurocCi: S?.vsBaseline.dAurocCi95, dLogLoss: S?.vsBaseline.dLogLoss, dLogLossCi: S?.vsBaseline.dLogLossCi95, picks: S?.picks });
+  check("final model is not worse than the previous submission on log loss (paired CI)", M.deltaVsPrevious?.log_loss?.ci95?.[1] < 0, M.deltaVsPrevious?.log_loss);
+  check("first-event analysis covers the survivors without 2017 acute care", FE?.n > 0 && FE.n < M.data.devSurvivors && FE.events > 0 && Array.isArray(FE.deltaCi95), FE && { n: FE.n, events: FE.events, model: FE.aurocModel, baseline: FE.aurocBaseline });
+  check("SHAP factors have impact and direction", (M.factors || []).length >= 10 && M.factors.every((f) => f.meanAbsLogit >= 0 && ["raises", "lowers"].includes(f.direction)));
+  responses.summary = { ...s, nested: S && { auroc: S.auroc, dAuroc: S.vsBaseline.dAuroc, dLogLoss: S.vsBaseline.dLogLoss }, firstEvent: FE && { model: FE.aurocModel, baseline: FE.aurocBaseline } };
 }
 
 const passed = checks.filter((c) => c.ok).length;

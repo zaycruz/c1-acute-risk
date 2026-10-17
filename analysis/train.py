@@ -20,16 +20,17 @@ import sys
 import numpy as np
 import pandas as pd
 from sklearn.calibration import CalibratedClassifierCV
-from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression, LogisticRegressionCV
-from sklearn.metrics import average_precision_score, brier_score_loss, roc_auc_score
+from sklearn.metrics import average_precision_score, brier_score_loss, log_loss, roc_auc_score
 from sklearn.model_selection import RepeatedStratifiedKFold, StratifiedKFold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from features import FEATURE_LABELS, baseline_features, domain_features, subgroups  # noqa: E402
+from features import FINAL_LABELS, baseline_features, domain_features, final_features, subgroups  # noqa: E402
+from explain import contributions  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "analysis", "out")
@@ -48,10 +49,15 @@ def make_models():
             HistGradientBoostingClassifier(max_depth=3, learning_rate=0.05, max_iter=150, min_samples_leaf=25,
                                            l2_regularization=1.0, random_state=0),
             method="sigmoid", cv=5),
+        # Final model: the pick of the nested-CV model search (runs/autoresearch/round-nested.json, 6 of 10 outer folds).
+        "forest": make_pipeline(SimpleImputer(strategy="median", add_indicator=True), CalibratedClassifierCV(
+            RandomForestClassifier(300, min_samples_leaf=10, max_features="sqrt", n_jobs=1, random_state=0),
+            method="sigmoid", cv=5)),
     }
 
 
-FEATURESETS = {"baseline": "baseline", "logistic": "domain", "gbm_calibrated": "domain"}
+FEATURESETS = {"baseline": "baseline", "logistic": "domain", "gbm_calibrated": "domain", "forest": "final"}
+FINAL = "forest"
 
 
 def logit(p):
@@ -73,15 +79,15 @@ def cal_intercept_slope(y, p):
 
 def metric_block(y, p):
     a, s = cal_intercept_slope(y, p)
-    return {"auroc": roc_auc_score(y, p), "auprc": average_precision_score(y, p), "brier": brier_score_loss(y, p),
+    return {"auroc": roc_auc_score(y, p), "auprc": average_precision_score(y, p), "brier": brier_score_loss(y, p), "log_loss": log_loss(y, p),
             "cal_intercept": a, "cal_slope": s, "mean_pred": float(np.mean(p)), "obs_rate": float(np.mean(y))}
 
 
-def bootstrap(y, preds, rng, n=N_BOOT):
-    """preds: {name: p}. Returns per-model CIs and paired differences vs baseline."""
+def bootstrap(y, preds, rng, n=N_BOOT, ref="baseline"):
+    """preds: {name: p}. Returns per-model CIs and paired differences vs the reference model."""
     names = list(preds)
     stats = {k: [] for k in names}
-    diffs = {k: [] for k in names if k != "baseline"}
+    diffs = {k: [] for k in names if k != ref}
     idx_all = np.arange(len(y))
     for _ in range(n):
         idx = rng.choice(idx_all, len(y), replace=True)
@@ -91,7 +97,7 @@ def bootstrap(y, preds, rng, n=N_BOOT):
         for k in names:
             stats[k].append(b[k])
         for k in diffs:
-            diffs[k].append({m: b[k][m] - b["baseline"][m] for m in ("auroc", "auprc", "brier")})
+            diffs[k].append({m: b[k][m] - b[ref][m] for m in ("auroc", "auprc", "brier", "log_loss")})
 
     def ci(rows, m):
         v = np.array([r[m] for r in rows])
@@ -104,10 +110,10 @@ def bootstrap(y, preds, rng, n=N_BOOT):
     deltas = {}
     for k, rows in diffs.items():
         deltas[k] = {}
-        for m in ("auroc", "auprc", "brier"):
+        for m in ("auroc", "auprc", "brier", "log_loss"):
             v = np.array([r[m] for r in rows])
-            better = (v > 0) if m != "brier" else (v < 0)
-            deltas[k][m] = {"value": float(metric_block(y, preds[k])[m] - metric_block(y, preds["baseline"])[m]),
+            better = (v > 0) if m in ("auroc", "auprc") else (v < 0)
+            deltas[k][m] = {"value": float(metric_block(y, preds[k])[m] - metric_block(y, preds[ref])[m]),
                             "ci95": [float(np.percentile(v, 2.5)), float(np.percentile(v, 97.5))],
                             "p_better": float(better.mean())}
     return out, deltas
@@ -178,7 +184,7 @@ def main():
     held = pd.read_csv(os.path.join(meps, "heldout_ids.csv"))[["ID"]]
     assert not set(held.ID) & set(dev.index), "held-out and dev overlap"
 
-    Xs = {"baseline": baseline_features(s17), "domain": domain_features(s17)}
+    Xs = {"baseline": baseline_features(s17), "domain": domain_features(s17), "final": final_features(s17)}
     for X in Xs.values():  # leakage guard: only 2017 columns feed the model
         assert not any(c.endswith("18") or c.endswith("18X") for c in X.columns)
     y = dev.outcome_acute_care_2018.values.astype(int)
@@ -198,41 +204,32 @@ def main():
 
     rng = np.random.default_rng(SEED)
     metrics, deltas = bootstrap(y, preds, rng)
+    # Final model vs the model submitted before the switch (L2 logistic on 34 domain features), same folds.
+    _, vs_prev = bootstrap(y, {"logistic": preds["logistic"], FINAL: preds[FINAL]}, np.random.default_rng(SEED), ref="logistic")
     for k in metrics:
         metrics[k]["auroc_per_repeat"] = {"mean": float(np.mean(per_repeat_auc[k])), "sd": float(np.std(per_repeat_auc[k]))}
 
-    # Final model = logistic on domain features (chosen up front for interpretability; GBM is the comparator).
-    FINAL = "logistic"
-    final = make_models()[FINAL].fit(Xs["domain"].loc[ids], y)
+    # Final model = calibrated random forest on the compact set (nested-CV pick); refit on all dev survivors.
+    final = make_models()[FINAL].fit(Xs["final"].loc[ids], y)
     pd.DataFrame({"ID": ids, "y": y, **{f"p_{k}": v for k, v in preds.items()}}).to_csv(os.path.join(OUT, "oof.csv"), index=False)
 
-    # Coefficients (per 1 SD) with bootstrap CIs for stability
-    imp, sc, lr = final.steps[0][1], final.steps[1][1], final.steps[2][1]
-    names = list(Xs["domain"].columns) + [f"missing:{Xs['domain'].columns[j]}" for j in imp.indicator_.features_]
-    coef = lr.coef_[0]
-    C = float(lr.C_[0])
-    boot_coefs = []
-    Xd = Xs["domain"].loc[ids]
-    for b in range(300):
-        idx = rng.choice(len(y), len(y), replace=True)
-        mb = make_pipeline(SimpleImputer(strategy="median", add_indicator=True), StandardScaler(),
-                           LogisticRegression(C=C, max_iter=5000))
-        mb.fit(Xd.iloc[idx], y[idx])
-        cb = mb.steps[2][1].coef_[0]
-        nb = list(Xd.columns) + [f"missing:{Xd.columns[j]}" for j in mb.steps[0][1].indicator_.features_]
-        boot_coefs.append(dict(zip(nb, cb)))
+    # Global factors from TreeSHAP: mean |log-odds contribution| over dev survivors, and its direction
+    # (Spearman correlation of the survivor's value with its contribution: + means higher value -> higher risk).
+    Xf = Xs["final"].loc[ids]
+    con = contributions(final, Xf)
     factors = []
-    for n_, c_ in zip(names, coef):
-        v = np.array([bc.get(n_, 0.0) for bc in boot_coefs])
+    for n_ in con.columns:
         base = n_.replace("missing:", "")
-        factors.append({"feature": n_, "label": ("Missing: " if n_.startswith("missing:") else "") + FEATURE_LABELS[base],
-                        "coefPerSd": float(c_), "oddsRatioPerSd": float(np.exp(c_)),
-                        "ci95": [float(np.percentile(v, 2.5)), float(np.percentile(v, 97.5))],
-                        "sameSignShare": float(np.mean(np.sign(v) == np.sign(c_))) if c_ != 0 else 0.0})
-    factors.sort(key=lambda f: -abs(f["coefPerSd"]))
+        v = Xf[base].isna().astype(float) if n_.startswith("missing:") else Xf[base]
+        ok = v.notna().values
+        rho = float(pd.Series(v.values[ok]).corr(pd.Series(con[n_].values[ok]), method="spearman")) if ok.sum() > 2 else 0.0
+        factors.append({"feature": n_, "label": ("Missing: " if n_.startswith("missing:") else "") + FINAL_LABELS[base],
+                        "meanAbsLogit": float(con[n_].abs().mean()), "direction": "raises" if rho > 0 else "lowers",
+                        "spearman": rho})
+    factors.sort(key=lambda f: -f["meanAbsLogit"])
 
     # Held-out submission: fit on all 466 dev survivors, predict in template order.
-    hp = final.predict_proba(Xs["domain"].loc[held.ID])[:, 1]
+    hp = final.predict_proba(Xs["final"].loc[held.ID])[:, 1]
     sub = pd.DataFrame({"ID": held.ID, "predicted_risk": np.round(hp, 6)})
     os.makedirs(os.path.join(ROOT, "submission"), exist_ok=True)
     sub.to_csv(os.path.join(ROOT, "submission", "heldout_predictions.csv"), index=False)
@@ -244,8 +241,8 @@ def main():
         "n_dev": int(len(y)), "positives_dev": int(y.sum()), "n_heldout": int(len(held)),
         "validation": f"{N_REPEATS}x repeated stratified {N_SPLITS}-fold CV on the development set, one row per survivor; "
                       f"OOF predictions averaged over repeats; {N_BOOT}-sample patient bootstrap for 95% CIs; paired bootstrap for differences.",
-        "finalModel": FINAL, "finalC": C,
-        "metrics": metrics, "deltaVsBaseline": deltas,
+        "finalModel": FINAL,
+        "metrics": metrics, "deltaVsBaseline": deltas, "deltaVsPrevious": {"previous": "logistic", **vs_prev[FINAL]},
         "calibrationCurve": {k: calibration_curve(y, v) for k, v in preds.items()},
         "fairness": fairness(y, preds[FINAL], groups),
         "fairnessBaseline": fairness(y, preds["baseline"], groups),
@@ -265,9 +262,9 @@ def main():
     for k, d in deltas.items():
         print(f"delta {k}: AUROC {d['auroc']['value']:+.3f} {d['auroc']['ci95']} p_better {d['auroc']['p_better']:.2f}; "
               f"Brier {d['brier']['value']:+.4f} {d['brier']['ci95']} p_better {d['brier']['p_better']:.2f}")
-    print("C =", C, "tiers", out["tiers"])
+    print("tiers", out["tiers"])
     for f_ in factors[:12]:
-        print(f"  {f_['label']:55s} OR/SD {f_['oddsRatioPerSd']:.2f}  stable {f_['sameSignShare']:.2f}")
+        print(f"  {f_['label']:55s} mean|logit| {f_['meanAbsLogit']:.3f}  {f_['direction']} (rho {f_['spearman']:+.2f})")
 
 
 if __name__ == "__main__":

@@ -6,37 +6,67 @@ clinical records (Synthea, different people, no shared key) add anything. The re
 
 - Live: https://c1-acute-risk.zay-259.workers.dev (demo page) · API contract: [CONTRACT.md](CONTRACT.md)
 - Submission: [`submission/heldout_predictions.csv`](submission/heldout_predictions.csv) (`ID,predicted_risk`, 199 rows in template order)
-- Latest E2E artifact: `runs/e2e-latest.json` (27/27 checks), `runs/page-check-latest.json`, `runs/demo-page-*.png`
+- Latest E2E artifact: `runs/e2e-latest.json` (31/31 checks), `runs/page-check-latest.json`, `runs/demo-page-*.png`
 
 ## Results (out-of-fold, 466 development survivors, 134 events)
 
-| | Baseline (organisers') | Our model | Difference (paired bootstrap) |
+**Same-or-better ranking, significantly better probabilities.** The final model is a sigmoid-calibrated random forest
+(300 trees, min leaf 10) on 16 features: 2017 care use (ER, hospital stays and nights, office, outpatient, home health,
+prescriptions, total spending, missed work days), age, physical and mental health scores, distress, depression screen and
+self-rated health. A model search over 48 candidates (`analysis/autoresearch.py`, log in `runs/autoresearch/log.md`)
+chose it. It replaces our first submission, an L2 logistic regression on 34 domain features.
+
+**The honest estimate is the nested one.** We re-ran the whole search inside each of 10 outer folds, so the scored model never saw its test fold:
+
+| Nested CV (10 outer folds) | Search procedure (picked the forest in 6 of 10 folds) | Baseline (organisers') | Difference [95% CI] |
 |---|---|---|---|
-| AUROC | 0.659 [0.603, 0.718] | **0.666** [0.610, 0.725] | +0.007 [-0.038, +0.050] |
-| AUPRC | 0.423 | 0.438 | |
-| Brier | 0.2008 | **0.1921** | -0.0087 [-0.0205, +0.0029], better in 92% of resamples |
-| Calibration slope (1 = ideal) | 0.45 [0.25, 0.69] (over-confident) | **1.09** [0.68, 1.63] | baseline CI excludes 1 |
+| AUROC | **0.711** | 0.672 | +0.039 [-0.015, +0.091], not significant (P(better) 0.93) |
+| Log loss (lower = better) | **0.539** | 0.606 | -0.067 [-0.115, -0.020], **significant** |
+| Events caught in the top fifth (of 134) | **52** | 45 | |
+| Risk called ≥ 50% that came true | **67%** of 55 calls | 49% of 73 calls | |
 
-The honest summary: **ranking is about the same as the baseline. Calibration is much better.** The baseline's top fifth
-predicts 61% risk, but only 47% of those survivors had acute care. Ours predicts 45% and 46% had it. With about 57 events in the
-held-out set, a gain of a few AUROC points cannot be told apart from chance, so we did not chase it. A calibrated gradient-boosting comparator scored
-AUROC 0.644 with Brier 0.192, so it is not better.
+Against our first submission: AUROC +0.034 [-0.001, +0.066], log loss -0.027 [-0.043, -0.009].
 
-**Risk tiers** (out-of-fold): alert is 36% or more (top fifth; 46% had acute care, 34% of all events). Watch is 29–36% (38%). Ok is below 29% (20%).
+The same 10×5 repeated CV as before scores the final model after selection, which is slightly optimistic:
 
-**Factors.** The observed 2018 rate with the 2017 factor vs without it:
+| 10×5 CV | Baseline | Previous (logistic) | **Final (forest)** | Forest vs baseline (paired) |
+|---|---|---|---|---|
+| AUROC | 0.659 [0.603, 0.718] | 0.666 | **0.713** [0.662, 0.764] | +0.053 [-0.001, +0.105] |
+| AUPRC | 0.423 | 0.438 | **0.508** | +0.085 [+0.017, +0.146] |
+| Brier | 0.2008 | 0.1921 | **0.1796** | -0.021 [-0.035, -0.007] |
+| Log loss | 0.606 | 0.570 | **0.539** | -0.067 [-0.107, -0.027] |
+| Calibration slope (1 = ideal) | 0.45 [0.25, 0.69] | 1.09 | **1.10** [0.82, 1.44] | |
+
+Why the ranking gain is not significant: at n = 466 with 134 events an AUROC gain must be about +0.056 to clear a 95% CI.
+The held-out set (about 57 events) has an AUROC standard error of about 0.04, so a better model can still score lower there by chance.
+The probability gain is the part we can prove. The baseline's top fifth predicts 61% risk and 47% of those survivors had acute care. Ours predicts 54% and 56% had it.
+
+**Risk tiers** (out-of-fold): alert is 43% or more (top fifth; 57% had acute care, 39% of all events). Watch is 29–43% (30%). Ok is below 29% (19%).
+The held-out roster has 40 alert, 43 watch and 116 ok.
+
+**The clinical insight: prior care use dominates.** Six prior-use features (ER visits, hospital stays, prescriptions, office visits,
+home health and age) alone reach AUROC 0.697. Survey symptoms, factor scores, a Synthea prior, monotone boosting, bagging and stacking
+do not move the ceiling past about 0.71. The best predictor of acute care next year is heavy care this year.
+That marks need; it is not a lever. Within the prior-use group the search procedure ranks better than the baseline
+(+0.094 [-0.002, +0.206]). The baseline mostly separates "had acute care in 2017" from "did not".
+
+**Proposed alternative target: the first acute event.** Finding last year's repeat users is easy. Prevention needs the *first* event.
+Among the 326 survivors with no ER visit or hospital stay in 2017 (70 had a first one in 2018), the forest ranks at AUROC 0.662
+vs the baseline's 0.616: +0.046 [-0.036, +0.123] (`/api/c1/metrics` → `firstEvent`). We suggest the care team uses this as the target for outreach.
+
+**Factors.** TreeSHAP on the forest gives each survivor's drivers on the calibrated log-odds scale (`analysis/explain.py`).
+Mean impact, largest first: spending, age, hospital nights, prescription fills, office visits, ER visits, mental health score (low raises risk),
+hospital stays, physical health score (low raises risk) and outpatient visits. The observed 2018 rate with the 2017 factor vs without it:
 prior ER visit or hospital stay 46% vs 21% (2.1×). Age 75+ 44% vs 24%. Positive depression screen 47% vs 27%.
 Physical health score under 40: 40% vs 23%. 20+ prescription fills: 37% vs 22%. Fair or poor self-rated health: 42% vs 26%.
 Distress (K6 5+): 36% vs 27%. **Financial hardship and cost-related delays showed no association (about 1.0×)**, and neither did current treatment.
-These are associations. Prior acute care and poor physical function mark need; they are not levers. The care team can act on
-symptoms, distress and depression, medication burden and care coordination, and these become the per-survivor recommendations.
+These are associations. The care team can act on symptoms, distress and depression, medication burden and care coordination.
+These become the per-survivor recommendations, one per kind of driver.
 
 **Fairness** (out-of-fold, `/api/c1/metrics` → `fairness`):
-- Performance is similar by sex (AUROC 0.68 F, 0.64 M) and insurance (0.64 private, 0.68 public-only).
-- **Under-prediction at 75+** (observed/expected 1.27 [1.00, 1.53]).
-  The survivor panel warns about this, and about the NH Black result below.
-- **Weak ranking for NH Black survivors**: AUROC 0.43 [0.22, 0.65], n = 47, 11 events. The CI includes chance, but this is a flag, not a pass.
-- Prostate cancer AUROC 0.55 [0.38, 0.72]. Every subgroup AUROC and observed/expected ratio has a 500-draw bootstrap CI in the API and on the page.
+- Similar by sex (AUROC 0.72 F, 0.71 M) and insurance (0.68 private, 0.75 public-only).
+- Age 75+ is no longer clearly under-predicted: observed/expected 1.15 [0.91, 1.37]. With the logistic model it was 1.27 [1.00, 1.53].
+- **Weak ranking for NH Black survivors**: AUROC 0.48 [0.25, 0.70], n = 47, 11 events. This is a flag, not a pass, and the survivor panel warns about it.
 - **Too small to judge** (n < 30 or < 10 events): Hispanic (28), NH Asian (6), NH other (14), uninsured (7), colon (23), lung (20).
 
 ## Do the clinical records add anything? No meaningful gain, but the shared risk pattern transports
@@ -49,10 +79,10 @@ In MEPS 7% of survivors are Hispanic; in Synthea 54% are. We asked three questio
    The clinical-only features are stage, metastasis, comorbidities, opioids, kidney function, obesity and years since diagnosis.
    **No: 0.671 → 0.670, Δ -0.001 [-0.008, +0.007].** Stage is missing in 86% of person-years.
 2. **Transport:** we fitted a Synthea model on shared variables only and applied it unchanged to the real MEPS development survivors.
-   **AUROC 0.686 [0.634, 0.740], observed/expected 1.02.** Paired against the MEPS model's out-of-fold 0.666: Δ +0.020 [-0.021, +0.063], a tie.
+   **AUROC 0.686 [0.634, 0.740], observed/expected 1.02.** Paired against the final MEPS model's out-of-fold 0.713: Δ -0.026 [-0.068, +0.013], a tie.
    This is our strongest integration result. A risk pattern on shared variables (prior acute care, age, insurance), learned from synthetic Miami records,
    ranks real national survivors as well as a model fitted on the survey itself, and is calibrated.
-3. **Increment in MEPS** (same repeated CV, paired against MEPS-only):
+3. **Increment in MEPS** (same repeated CV, paired against the MEPS-only logistic, because a linear model takes a Synthea score as one feature):
    - The clinical-burden score is the clinical part of the Synthea model, projected onto shared variables. ΔAUROC +0.004 [-0.002, +0.011], ΔBrier -0.0012 [-0.0022, -0.0002].
    - The Synthea prior gives ΔAUROC +0.004 [-0.003, +0.010].
    - The MEPS-only reference in Q3 is 0.663, not 0.666, because it uses a wider C grid.
@@ -63,7 +93,7 @@ In MEPS 7% of survivors are Hispanic; in Synthea 54% are. We asked three questio
 **What it cannot show:** whether *real* stage or comorbidity data would help these patients. Every Synthea-derived feature
 is a function of variables MEPS already has, so at best it acts as a prior. **We did not align** MEPS survivors who have only skin,
 melanoma, uterine, cervical, bladder, lymphoma or "other" cancers (269 of 466 in the development set), because Synthea has only breast, colon, lung and prostate cancer.
-The submission uses the MEPS-only model. We chose it before looking at the Synthea results; switching afterwards would be selection.
+The submission uses a MEPS-only model. A Synthea-prior candidate was tried in the model search (AUROC 0.692) and lost to the forest.
 
 ## Method
 
@@ -71,7 +101,9 @@ The submission uses the MEPS-only model. We chose it before looking at the Synth
   means the gate answer was "no". `-7/-8/-9` are missing. The financial-toxicity and cost-delay items are counts.
   Utilisation is log-transformed. Only the 2017 file feeds the model. From the 2018 file we read only `ID` and the outcome,
   because it reuses names such as `VPCS42` and `K6SUM42` for 2018 measures. An assert guards against 2018 columns.
-- **Model:** L2 logistic regression. Its regularisation is tuned on log loss *inside* each training fold, which is why the shrinkage is strong (C ≈ 0.005).
+- **Model:** sigmoid-calibrated random forest on the 16 features in `final_features()` (`analysis/features.py`), with missing indicators.
+  The model search and its nested CV are in `analysis/autoresearch.py` (`--round nested`). Explanations: TreeSHAP per calibration fold,
+  multiplied by the fold's sigmoid slope, so each contribution is exact on that fold's calibrated log-odds; we report the mean over folds.
 - **Validation:** 10× repeated stratified 5-fold CV, one row per survivor. The baseline and every comparator run on the same folds.
   Out-of-fold predictions are averaged over repeats. 95% CIs come from a 2,000-sample patient bootstrap, and differences are paired.
 - **Held-out:** the model is refitted on all 466 development survivors and predicts the 199 held-out IDs. The E2E checks the file format.
@@ -82,9 +114,9 @@ Use short-lived commands only; nothing stays running. The data is not committed:
 
 ```bash
 mkdir -p data && cp -R ~/Downloads/Challenge_1/meps data/ && cp -R ~/Downloads/Challenge_1/synthea data/
-uv venv .venv && uv pip install --python .venv/bin/python pandas scikit-learn numpy pyarrow
+uv venv .venv && uv pip install --python .venv/bin/python pandas scikit-learn numpy pyarrow shap
 npm install
-npm run build:data      # train.py (about 3 min) -> synthea.py (about 1 min) -> export.py; writes submission/ and src/data/
+npm run build:data      # train.py (about 4 min) -> synthea.py (about 1 min) -> export.py; writes submission/ and src/data/
 npm run typecheck && npm run deploy
 npm run e2e             # hits every endpoint and validates the submission; writes runs/e2e-<time>.json
 npm run e2e:page        # headless browser check (desktop and phone); writes runs/demo-page-*.png
@@ -96,15 +128,13 @@ The seeds are fixed (`SEED = 20261017`), so a rerun gives the same numbers.
 ## 2-minute demo story
 
 1. **Problem (15 s).** Care teams want to call survivors *before* the ER. We have only last year's survey.
-2. **Roster (30 s).** Open the page. The 199 held-out survivors are sorted: 41 alert, 41 watch, 117 ok. Click the top alert
-   (S2480BBDE: 11 ER visits and 12 hospital stays in 2017). The evidence lists the drivers. The recommendations split into
-   care team (outreach, medication review), coach and survivor ("call the team first").
-3. **Can we trust the numbers? (40 s)** Look at the model card. Ranking equals the baseline, and the CIs overlap; we say so.
-   Calibration is where we win: a slope of 1.09 [0.68, 1.63] vs 0.45 [0.25, 0.69], and the curve sits on the diagonal. In the alert tier, 46% really had acute care.
-4. **Fairness (15 s).** It holds by sex and insurance. Older survivors are under-predicted, and NH Black ranking is weak. We do not pretend about
-   the small groups.
-5. **Clinical records (20 s).** We did not fake a join. Clinical detail adds nothing even inside Synthea. A Synthea model on shared
-   variables does transport to real survivors (0.686), but it gives no clear increment. That is a legitimate finding.
+2. **Roster (30 s).** Open the page. The 199 held-out survivors are sorted: 40 alert, 43 watch, 116 ok. Click the top alert
+   (S71188550: 85, 26 nights in hospital in 2017). The evidence lists this person's SHAP drivers. The recommendations split into
+   care team, coach and survivor ("call the team first").
+3. **Can we trust the numbers? (40 s)** Look at the model card: "same-or-better ranking, significantly better probabilities".
+   Nested CV says AUROC 0.711 vs 0.672 (not significant) and log loss significantly better. When the model says 50%+, it is right 67% of the time; the baseline is right 49%.
+4. **The insight (20 s).** Heavy care this year predicts acute care next year; nothing else moves the ceiling. So we propose the harder target: the *first* acute event (0.662 vs 0.616).
+5. **Fairness and clinical records (15 s).** It holds by sex and insurance; NH Black ranking is weak and flagged. We did not fake a join: clinical detail adds nothing even inside Synthea.
 
 ## Caveats
 
@@ -112,4 +142,5 @@ The seeds are fixed (`SEED = 20261017`), so a rerun gives the same numbers.
 - The data is small: 466 development survivors and 134 events. The judges' held-out set has about 57 events.
 - MEPS is a national sample; the sample weights are not used, so the results describe this sample, not the US population. Age is top-coded at 85.
 - Synthea is synthetic. Nothing from it is evidence about real patients. The Synthea year (Y → Y+1, 2015–2025) is simulated time, not 2017–18.
-- In `factors[]`, `ci95` is on the coefficient (log-odds per SD) scale. `oddsRatioPerSd` is its exponential.
+- In `factors[]`, `meanAbsLogit` is the mean absolute TreeSHAP contribution on the calibrated log-odds scale. It ranks drivers; it is not an effect size.
+- The 10×5 CV numbers for the forest are after selection. Quote the nested-CV numbers as the estimate for new survivors.

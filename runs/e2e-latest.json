@@ -1,8 +1,8 @@
 {
- "at": "2026-10-17T14:52:54.524Z",
+ "at": "2026-10-17T15:49:00.245Z",
  "base": "https://c1-acute-risk.zay-259.workers.dev",
- "passed": 27,
- "total": 27,
+ "passed": 31,
+ "total": 31,
  "checks": [
   {
    "name": "submission header is exactly ID,predicted_risk",
@@ -27,9 +27,9 @@
    "name": "predicted_risk all numeric in [0,1], no blanks",
    "ok": true,
    "info": {
-    "min": 0.135085,
-    "max": 0.732312,
-    "mean": 0.2931329246231154
+    "min": 0.099559,
+    "max": 0.698358,
+    "mean": 0.2976332663316584
    }
   },
   {
@@ -75,9 +75,9 @@
    "name": "roster has alert, watch and ok survivors",
    "ok": true,
    "info": {
-    "alert": 41,
-    "watch": 41,
-    "ok": 117
+    "alert": 40,
+    "watch": 43,
+    "ok": 116
    }
   },
   {
@@ -97,8 +97,11 @@
    "ok": true
   },
   {
-   "name": "metrics 200 with model and baseline",
-   "ok": true
+   "name": "metrics 200 with final model and baseline",
+   "ok": true,
+   "info": {
+    "finalModel": "forest"
+   }
   },
   {
    "name": "every metric has a 95% CI",
@@ -108,20 +111,20 @@
    "name": "model is not worse than baseline on AUROC and Brier (point estimates)",
    "ok": true,
    "info": {
-    "aurocModel": 0.6661571659773422,
+    "aurocModel": 0.7127989570221184,
     "aurocBaseline": 0.6593463405862255,
-    "dAuroc": 0.006810825391116659,
+    "dAuroc": 0.05345261643589283,
     "dAurocCi": [
-     -0.03830729529839445,
-     0.049672308835254794
+     -0.0012418160695974814,
+     0.10476714204627115
     ],
-    "brierModel": 0.19210365226411782,
+    "brierModel": 0.17959085396966648,
     "brierBaseline": 0.20076214529615172,
     "dBrierCi": [
-     -0.020539336312090643,
-     0.0028582695377787123
+     -0.03460302573122142,
+     -0.007139706666116317
     ],
-    "slopeModel": 1.093224415389126,
+    "slopeModel": 1.1027281437453391,
     "slopeBaseline": 0.44605594589114866
    }
   },
@@ -129,20 +132,20 @@
    "name": "model calibration slope closer to 1 than baseline",
    "ok": true,
    "info": {
-    "aurocModel": 0.6661571659773422,
+    "aurocModel": 0.7127989570221184,
     "aurocBaseline": 0.6593463405862255,
-    "dAuroc": 0.006810825391116659,
+    "dAuroc": 0.05345261643589283,
     "dAurocCi": [
-     -0.03830729529839445,
-     0.049672308835254794
+     -0.0012418160695974814,
+     0.10476714204627115
     ],
-    "brierModel": 0.19210365226411782,
+    "brierModel": 0.17959085396966648,
     "brierBaseline": 0.20076214529615172,
     "dBrierCi": [
-     -0.020539336312090643,
-     0.0028582695377787123
+     -0.03460302573122142,
+     -0.007139706666116317
     ],
-    "slopeModel": 1.093224415389126,
+    "slopeModel": 1.1027281437453391,
     "slopeBaseline": 0.44605594589114866
    }
   },
@@ -172,7 +175,7 @@
    "name": "clinical-records verdict present (not pending)",
    "ok": true,
    "info": {
-    "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the survey model (tie within CI)"
+    "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the final survey model (tie within CI)"
    }
   },
   {
@@ -181,18 +184,18 @@
    "info": [
     {
      "status": "alert",
-     "n": 100,
-     "rate": 0.46
+     "n": 92,
+     "rate": 0.5652173913043478
     },
     {
      "status": "watch",
-     "n": 84,
-     "rate": 0.38095238095238093
+     "n": 97,
+     "rate": 0.29896907216494845
     },
     {
      "status": "ok",
-     "n": 282,
-     "rate": 0.19858156028368795
+     "n": 277,
+     "rate": 0.19133574007220217
     }
    ]
   },
@@ -201,663 +204,696 @@
    "ok": true,
    "info": {
     "metrics": {
-     "alert": 41,
-     "watch": 41,
-     "ok": 117
+     "alert": 40,
+     "watch": 43,
+     "ok": 116
     },
     "roster": {
-     "alert": 41,
-     "watch": 41,
-     "ok": 117
+     "alert": 40,
+     "watch": 43,
+     "ok": 116
     }
    }
+  },
+  {
+   "name": "nested-CV estimate present: log loss significantly better than baseline",
+   "ok": true,
+   "info": {
+    "dAuroc": 0.03872954504585491,
+    "dAurocCi": [
+     -0.014892280050238701,
+     0.09117944028303074
+    ],
+    "dLogLoss": -0.0670916864161446,
+    "dLogLossCi": [
+     -0.11475191094922225,
+     -0.019910800615196244
+    ],
+    "picks": {
+     "rf|compact_raw_use": 6,
+     "spline_lr|prior_use": 3,
+     "poisson_glm|compact": 1
+    }
+   }
+  },
+  {
+   "name": "final model is not worse than the previous submission on log loss (paired CI)",
+   "ok": true,
+   "info": {
+    "value": -0.030623814992775333,
+    "ci95": [
+     -0.04831748175433283,
+     -0.012863468226682799
+    ],
+    "p_better": 1
+   }
+  },
+  {
+   "name": "first-event analysis covers the survivors without 2017 acute care",
+   "ok": true,
+   "info": {
+    "n": 326,
+    "events": 70,
+    "model": 0.6623325892857141,
+    "baseline": 0.616015625
+   }
+  },
+  {
+   "name": "SHAP factors have impact and direction",
+   "ok": true
   }
  ],
  "responses": {
   "/": {
    "status": 200,
-   "ms": 391,
-   "bytes": 11431
+   "ms": 450,
+   "bytes": 13404
   },
   "/api/c1/survivors": {
    "status": 200,
-   "ms": 131,
+   "ms": 139,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c020d59ef1e0f4-MIA",
+    "cf-ray": "a4c072e64b3833b9-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 14:52:38 GMT",
+    "date": "Sat, 17 Oct 2026 15:48:40 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=Zdw9uTNuheE0jfpTcacrzR1KvWnSHie%2FSTtqHJPFrIWGqQkjwlF8XT%2Ff3fb5K2KyjNr%2FsETWvwkVbg04Il%2B97s7Sq51EQel9bY0EEYd9J2jNVOm9zXx0Wt5cgPgONektcZpTJruT5UDauxuSYaB%2BtHi7PQY%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=f8ogqzd7ddpoMQljVZSr41NcELRrTIG2R8oGX3VjydfAMbzhMhw5CyFIbblZM6yizw6GZQJEpKqVEO3RmCxdPBasxAI2j%2FZnAI%2F%2BaORwm4wM%2BIKo7G%2FXxWWhiQ%2FXJ2qd5brnYIgXCR%2FeVRk2nwLl33lghL0%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
    "body": [
     {
-     "survivorId": "c1-S2480BBDE",
-     "displayName": "S2480BBDE · 61F · other",
+     "survivorId": "c1-S71188550",
+     "displayName": "S71188550 · 85M · prostate",
      "status": "alert",
-     "headline": "Acute care risk 73% for 2018 (high), driven by ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S9707145E",
-     "displayName": "S9707145E · 74F · breast",
-     "status": "alert",
-     "headline": "Acute care risk 68% for 2018 (high), driven by ER visits last year",
+     "headline": "Acute care risk 70% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S13BA2BCD",
      "displayName": "S13BA2BCD · 67F · other",
      "status": "alert",
-     "headline": "Acute care risk 65% for 2018 (high), driven by ER visits last year",
+     "headline": "Acute care risk 65% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S71188550",
-     "displayName": "S71188550 · 85M · prostate",
+     "survivorId": "c1-S9707145E",
+     "displayName": "S9707145E · 74F · breast",
      "status": "alert",
-     "headline": "Acute care risk 57% for 2018 (high), driven by hospital stays last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S60B33FC6",
-     "displayName": "S60B33FC6 · 71F · other",
-     "status": "alert",
-     "headline": "Acute care risk 56% for 2018 (high), driven by ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S0A254803",
-     "displayName": "S0A254803 · 85F · cervix",
-     "status": "alert",
-     "headline": "Acute care risk 55% for 2018 (high), driven by hospital stays last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SAD87CDC6",
-     "displayName": "SAD87CDC6 · 53F · other",
-     "status": "alert",
-     "headline": "Acute care risk 55% for 2018 (high), driven by ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S54288CF4",
-     "displayName": "S54288CF4 · 63F · breast",
-     "status": "alert",
-     "headline": "Acute care risk 53% for 2018 (high), driven by home health care",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SF495358E",
-     "displayName": "SF495358E · 45M · other",
-     "status": "alert",
-     "headline": "Acute care risk 51% for 2018 (high), driven by ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S93CB4E8B",
-     "displayName": "S93CB4E8B · 79F · breast",
-     "status": "alert",
-     "headline": "Acute care risk 49% for 2018 (high), driven by hospital stays last year",
+     "headline": "Acute care risk 65% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S89552168",
      "displayName": "S89552168 · 72F · lung",
      "status": "alert",
-     "headline": "Acute care risk 46% for 2018 (high), driven by ER visits last year",
+     "headline": "Acute care risk 65% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SF969193E",
-     "displayName": "SF969193E · 74F · breast",
+     "survivorId": "c1-S0A254803",
+     "displayName": "S0A254803 · 85F · cervix",
      "status": "alert",
-     "headline": "Acute care risk 46% for 2018 (high), driven by ER visits last year",
+     "headline": "Acute care risk 64% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S9C1421D3",
-     "displayName": "S9C1421D3 · 34F · uterus",
+     "survivorId": "c1-S2480BBDE",
+     "displayName": "S2480BBDE · 61F · other",
      "status": "alert",
-     "headline": "Acute care risk 46% for 2018 (high), driven by ER visits last year",
+     "headline": "Acute care risk 64% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SFAE1F2A8",
-     "displayName": "SFAE1F2A8 · 46F · other",
+     "survivorId": "c1-S93CB4E8B",
+     "displayName": "S93CB4E8B · 79F · breast",
      "status": "alert",
-     "headline": "Acute care risk 46% for 2018 (high), driven by ER visits last year",
+     "headline": "Acute care risk 64% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SE1AECC69",
-     "displayName": "SE1AECC69 · 62F · breast",
+     "survivorId": "c1-S54288CF4",
+     "displayName": "S54288CF4 · 63F · breast",
      "status": "alert",
-     "headline": "Acute care risk 45% for 2018 (high), driven by hospital stays last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S98CFB2C8",
-     "displayName": "S98CFB2C8 · 82M · colon",
-     "status": "alert",
-     "headline": "Acute care risk 45% for 2018 (high), driven by age",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S8CF2CD79",
-     "displayName": "S8CF2CD79 · 85M · skin (non-melanoma)",
-     "status": "alert",
-     "headline": "Acute care risk 45% for 2018 (high), driven by hospital stays last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S3F15C22B",
-     "displayName": "S3F15C22B · 60M · colon",
-     "status": "alert",
-     "headline": "Acute care risk 44% for 2018 (high), driven by ER visits last year",
+     "headline": "Acute care risk 64% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-SBFEF1188",
      "displayName": "SBFEF1188 · 80M · colon",
      "status": "alert",
-     "headline": "Acute care risk 44% for 2018 (high), driven by many office visits",
+     "headline": "Acute care risk 61% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S2933E9D5",
-     "displayName": "S2933E9D5 · 72F · breast",
+     "survivorId": "c1-SFAE1F2A8",
+     "displayName": "SFAE1F2A8 · 46F · other",
      "status": "alert",
-     "headline": "Acute care risk 44% for 2018 (high), driven by depression symptoms",
+     "headline": "Acute care risk 61% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S4477BEB2",
-     "displayName": "S4477BEB2 · 85M · skin",
+     "survivorId": "c1-S9C1421D3",
+     "displayName": "S9C1421D3 · 34F · uterus",
      "status": "alert",
-     "headline": "Acute care risk 43% for 2018 (high), driven by home health care",
+     "headline": "Acute care risk 60% for 2018 (high), driven by ER visits last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SE9606056",
-     "displayName": "SE9606056 · 51F · lymphoma",
+     "survivorId": "c1-S60B33FC6",
+     "displayName": "S60B33FC6 · 71F · other",
      "status": "alert",
-     "headline": "Acute care risk 42% for 2018 (high), driven by ER visits last year",
+     "headline": "Acute care risk 60% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S5F2CDE69",
-     "displayName": "S5F2CDE69 · 78F · skin (non-melanoma)",
+     "survivorId": "c1-S8CF2CD79",
+     "displayName": "S8CF2CD79 · 85M · skin (non-melanoma)",
      "status": "alert",
-     "headline": "Acute care risk 42% for 2018 (high), driven by ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S57489A9B",
-     "displayName": "S57489A9B · 76M · skin (non-melanoma)",
-     "status": "alert",
-     "headline": "Acute care risk 42% for 2018 (high), driven by psychological distress",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SE5A98484",
-     "displayName": "SE5A98484 · 85M · lung",
-     "status": "alert",
-     "headline": "Acute care risk 41% for 2018 (high), driven by age",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S2C225F03",
-     "displayName": "S2C225F03 · 54M · melanoma",
-     "status": "alert",
-     "headline": "Acute care risk 41% for 2018 (high), driven by ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SB63DCCCD",
-     "displayName": "SB63DCCCD · 66F · breast",
-     "status": "alert",
-     "headline": "Acute care risk 41% for 2018 (high), driven by many office visits",
+     "headline": "Acute care risk 57% for 2018 (high), driven by age",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S0420F996",
      "displayName": "S0420F996 · 72F · skin (non-melanoma)",
      "status": "alert",
-     "headline": "Acute care risk 40% for 2018 (high), driven by hospital stays last year",
+     "headline": "Acute care risk 57% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S2692791D",
-     "displayName": "S2692791D · 67M · skin (non-melanoma)",
+     "survivorId": "c1-S20A74F40",
+     "displayName": "S20A74F40 · 85M · colon",
      "status": "alert",
-     "headline": "Acute care risk 39% for 2018 (high), driven by many prescriptions",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S624644DA",
-     "displayName": "S624644DA · 72M · prostate",
-     "status": "alert",
-     "headline": "Acute care risk 39% for 2018 (high), driven by home health care",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SACFCEF33",
-     "displayName": "SACFCEF33 · 68F · breast",
-     "status": "alert",
-     "headline": "Acute care risk 38% for 2018 (high), driven by low physical function",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S07D2544C",
-     "displayName": "S07D2544C · 72F · breast",
-     "status": "alert",
-     "headline": "Acute care risk 38% for 2018 (high), driven by ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S4475CF39",
-     "displayName": "S4475CF39 · 56M · colon",
-     "status": "alert",
-     "headline": "Acute care risk 38% for 2018 (high), driven by many prescriptions",
+     "headline": "Acute care risk 57% for 2018 (high), driven by age",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-SE3556D56",
      "displayName": "SE3556D56 · 55F · breast",
      "status": "alert",
-     "headline": "Acute care risk 38% for 2018 (high), driven by home health care",
+     "headline": "Acute care risk 56% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SC4BAD40B",
-     "displayName": "SC4BAD40B · 66F · colon",
+     "survivorId": "c1-S07D2544C",
+     "displayName": "S07D2544C · 72F · breast",
      "status": "alert",
-     "headline": "Acute care risk 37% for 2018 (high), driven by many prescriptions",
+     "headline": "Acute care risk 56% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S12CC68FA",
-     "displayName": "S12CC68FA · 72M · prostate",
+     "survivorId": "c1-SF495358E",
+     "displayName": "SF495358E · 45M · other",
      "status": "alert",
-     "headline": "Acute care risk 37% for 2018 (high), driven by limited support at home",
+     "headline": "Acute care risk 56% for 2018 (high), driven by low mental health score",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SF5390008",
-     "displayName": "SF5390008 · 64M · prostate",
+     "survivorId": "c1-SE1AECC69",
+     "displayName": "SE1AECC69 · 62F · breast",
      "status": "alert",
-     "headline": "Acute care risk 37% for 2018 (high), driven by ER visits last year",
+     "headline": "Acute care risk 55% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S7FA9558D",
-     "displayName": "S7FA9558D · 85F · breast",
+     "survivorId": "c1-SAD87CDC6",
+     "displayName": "SAD87CDC6 · 53F · other",
      "status": "alert",
-     "headline": "Acute care risk 37% for 2018 (high), driven by many office visits",
+     "headline": "Acute care risk 54% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S7E61F739",
-     "displayName": "S7E61F739 · 71F · other",
+     "survivorId": "c1-S3844C319",
+     "displayName": "S3844C319 · 47M · other",
      "status": "alert",
-     "headline": "Acute care risk 37% for 2018 (high), driven by hospital stays last year",
+     "headline": "Acute care risk 54% for 2018 (high), driven by nights in hospital last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S4477BEB2",
+     "displayName": "S4477BEB2 · 85M · skin",
+     "status": "alert",
+     "headline": "Acute care risk 53% for 2018 (high), driven by age",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SF969193E",
+     "displayName": "SF969193E · 74F · breast",
+     "status": "alert",
+     "headline": "Acute care risk 52% for 2018 (high), driven by ER visits last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SFC102367",
+     "displayName": "SFC102367 · 60M · other",
+     "status": "alert",
+     "headline": "Acute care risk 52% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S6184408F",
      "displayName": "S6184408F · 73F · skin",
      "status": "alert",
-     "headline": "Acute care risk 36% for 2018 (high), driven by hospital stays last year",
+     "headline": "Acute care risk 52% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S2E509A50",
-     "displayName": "S2E509A50 · 77F · uterus",
+     "survivorId": "c1-S7E61F739",
+     "displayName": "S7E61F739 · 71F · other",
      "status": "alert",
-     "headline": "Acute care risk 36% for 2018 (high), driven by low physical function",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S10BB1CA4",
-     "displayName": "S10BB1CA4 · 59F · uterus",
-     "status": "watch",
-     "headline": "Acute care risk 36% for 2018 (raised), mostly from low mental health score",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S2F77AF97",
-     "displayName": "S2F77AF97 · 79F · skin (non-melanoma)",
-     "status": "watch",
-     "headline": "Acute care risk 35% for 2018 (raised), mostly from age",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S20A74F40",
-     "displayName": "S20A74F40 · 85M · colon",
-     "status": "watch",
-     "headline": "Acute care risk 35% for 2018 (raised), mostly from hospital stays last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S00EB4FA8",
-     "displayName": "S00EB4FA8 · 70M · skin",
-     "status": "watch",
-     "headline": "Acute care risk 35% for 2018 (raised), mostly from many prescriptions",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S74E6438B",
-     "displayName": "S74E6438B · 71M · skin",
-     "status": "watch",
-     "headline": "Acute care risk 35% for 2018 (raised), mostly from ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S34484046",
-     "displayName": "S34484046 · 65F · uterus",
-     "status": "watch",
-     "headline": "Acute care risk 35% for 2018 (raised), mostly from ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S0B3F69CB",
-     "displayName": "S0B3F69CB · 61M · skin (non-melanoma)",
-     "status": "watch",
-     "headline": "Acute care risk 35% for 2018 (raised), mostly from hospital stays last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SC86DB5C3",
-     "displayName": "SC86DB5C3 · 60M · prostate",
-     "status": "watch",
-     "headline": "Acute care risk 35% for 2018 (raised), mostly from ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S1805EC9A",
-     "displayName": "S1805EC9A · 70F · breast",
-     "status": "watch",
-     "headline": "Acute care risk 35% for 2018 (raised), mostly from hospital stays last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SDEEABB51",
-     "displayName": "SDEEABB51 · 77F · other",
-     "status": "watch",
-     "headline": "Acute care risk 35% for 2018 (raised), mostly from many prescriptions",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S94B25A6D",
-     "displayName": "S94B25A6D · 54F · other",
-     "status": "watch",
-     "headline": "Acute care risk 35% for 2018 (raised), mostly from many prescriptions",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SBB4E5497",
-     "displayName": "SBB4E5497 · 70M · other",
-     "status": "watch",
-     "headline": "Acute care risk 35% for 2018 (raised), mostly from depression symptoms",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S88C0AEEE",
-     "displayName": "S88C0AEEE · 37F · cervix",
-     "status": "watch",
-     "headline": "Acute care risk 34% for 2018 (raised), mostly from many prescriptions",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SB7EBBE4E",
-     "displayName": "SB7EBBE4E · 67F · uterus",
-     "status": "watch",
-     "headline": "Acute care risk 34% for 2018 (raised), mostly from depression symptoms",
+     "headline": "Acute care risk 52% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-SC26171B2",
      "displayName": "SC26171B2 · 63F · other",
-     "status": "watch",
-     "headline": "Acute care risk 34% for 2018 (raised), mostly from home health care",
+     "status": "alert",
+     "headline": "Acute care risk 50% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SD64F1420",
-     "displayName": "SD64F1420 · 73F · breast",
-     "status": "watch",
-     "headline": "Acute care risk 33% for 2018 (raised), mostly from many office visits",
+     "survivorId": "c1-S9C4B6DE7",
+     "displayName": "S9C4B6DE7 · 63F · breast",
+     "status": "alert",
+     "headline": "Acute care risk 49% for 2018 (high), driven by ER visits last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S2DAF74ED",
+     "displayName": "S2DAF74ED · 83M · prostate",
+     "status": "alert",
+     "headline": "Acute care risk 49% for 2018 (high), driven by age",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S94B25A6D",
+     "displayName": "S94B25A6D · 54F · other",
+     "status": "alert",
+     "headline": "Acute care risk 49% for 2018 (high), driven by many prescriptions",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S1805EC9A",
+     "displayName": "S1805EC9A · 70F · breast",
+     "status": "alert",
+     "headline": "Acute care risk 48% for 2018 (high), driven by nights in hospital last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S639962AF",
+     "displayName": "S639962AF · 79M · prostate",
+     "status": "alert",
+     "headline": "Acute care risk 48% for 2018 (high), driven by hospital stays last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S0B3F69CB",
+     "displayName": "S0B3F69CB · 61M · skin (non-melanoma)",
+     "status": "alert",
+     "headline": "Acute care risk 48% for 2018 (high), driven by nights in hospital last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SFE369489",
+     "displayName": "SFE369489 · 81F · uterus",
+     "status": "alert",
+     "headline": "Acute care risk 47% for 2018 (high), driven by age",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S2933E9D5",
+     "displayName": "S2933E9D5 · 72F · breast",
+     "status": "alert",
+     "headline": "Acute care risk 47% for 2018 (high), driven by low mental health score",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S3C514343",
+     "displayName": "S3C514343 · 82F · melanoma",
+     "status": "alert",
+     "headline": "Acute care risk 47% for 2018 (high), driven by age",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S7FA9558D",
+     "displayName": "S7FA9558D · 85F · breast",
+     "status": "alert",
+     "headline": "Acute care risk 47% for 2018 (high), driven by age",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S4E280EC1",
+     "displayName": "S4E280EC1 · 80M · prostate",
+     "status": "alert",
+     "headline": "Acute care risk 45% for 2018 (high), driven by age",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-SE6333F61",
      "displayName": "SE6333F61 · 66M · prostate",
-     "status": "watch",
-     "headline": "Acute care risk 33% for 2018 (raised), mostly from hospital stays last year",
+     "status": "alert",
+     "headline": "Acute care risk 45% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S9BC18D05",
-     "displayName": "S9BC18D05 · 68F · colon",
-     "status": "watch",
-     "headline": "Acute care risk 33% for 2018 (raised), mostly from ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S9798F35F",
-     "displayName": "S9798F35F · 73M · other",
-     "status": "watch",
-     "headline": "Acute care risk 33% for 2018 (raised), mostly from psychological distress",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SA586CF58",
-     "displayName": "SA586CF58 · 58M · skin (non-melanoma)",
-     "status": "watch",
-     "headline": "Acute care risk 33% for 2018 (raised), mostly from ER visits last year",
+     "survivorId": "c1-S5F2CDE69",
+     "displayName": "S5F2CDE69 · 78F · skin (non-melanoma)",
+     "status": "alert",
+     "headline": "Acute care risk 43% for 2018 (high), driven by nights in hospital last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S921A8C1C",
      "displayName": "S921A8C1C · 66F · breast",
      "status": "watch",
-     "headline": "Acute care risk 32% for 2018 (raised), mostly from home health care",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S2DAF74ED",
-     "displayName": "S2DAF74ED · 83M · prostate",
-     "status": "watch",
-     "headline": "Acute care risk 32% for 2018 (raised), mostly from age",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SA5C6E2C5",
-     "displayName": "SA5C6E2C5 · 72F · skin (non-melanoma)",
-     "status": "watch",
-     "headline": "Acute care risk 32% for 2018 (raised), mostly from low physical function",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SCC2654E4",
-     "displayName": "SCC2654E4 · 63F · breast",
-     "status": "watch",
-     "headline": "Acute care risk 32% for 2018 (raised), mostly from ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S639962AF",
-     "displayName": "S639962AF · 79M · prostate",
-     "status": "watch",
-     "headline": "Acute care risk 32% for 2018 (raised), mostly from hospital stays last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SFE369489",
-     "displayName": "SFE369489 · 81F · uterus",
-     "status": "watch",
-     "headline": "Acute care risk 31% for 2018 (raised), mostly from hospital stays last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S6EF570FD",
-     "displayName": "S6EF570FD · 59M · skin (non-melanoma)",
-     "status": "watch",
-     "headline": "Acute care risk 31% for 2018 (raised), mostly from poor self-rated health",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S4E280EC1",
-     "displayName": "S4E280EC1 · 80M · prostate",
-     "status": "watch",
-     "headline": "Acute care risk 31% for 2018 (raised), mostly from hospital stays last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SDD5B699E",
-     "displayName": "SDD5B699E · 47F · breast",
-     "status": "watch",
-     "headline": "Acute care risk 31% for 2018 (raised), mostly from psychological distress",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S3CF49971",
-     "displayName": "S3CF49971 · 66M · other",
-     "status": "watch",
-     "headline": "Acute care risk 31% for 2018 (raised), mostly from ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S9C4B6DE7",
-     "displayName": "S9C4B6DE7 · 63F · breast",
-     "status": "watch",
-     "headline": "Acute care risk 31% for 2018 (raised), mostly from ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SE4846F75",
-     "displayName": "SE4846F75 · 77M · colon",
-     "status": "watch",
-     "headline": "Acute care risk 31% for 2018 (raised), mostly from ER visits last year",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S0B055BDA",
-     "displayName": "S0B055BDA · 77F · skin (non-melanoma)",
-     "status": "watch",
-     "headline": "Acute care risk 31% for 2018 (raised), mostly from many prescriptions",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SB48BD924",
-     "displayName": "SB48BD924 · 73F · cervix",
-     "status": "watch",
-     "headline": "Acute care risk 30% for 2018 (raised), mostly from depression symptoms",
+     "headline": "Acute care risk 42% for 2018 (raised), mostly from many office visits",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S3858EA78",
      "displayName": "S3858EA78 · 32M · other",
      "status": "watch",
-     "headline": "Acute care risk 30% for 2018 (raised), mostly from depression symptoms",
+     "headline": "Acute care risk 42% for 2018 (raised), mostly from many office visits",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S3844C319",
-     "displayName": "S3844C319 · 47M · other",
+     "survivorId": "c1-S3F15C22B",
+     "displayName": "S3F15C22B · 60M · colon",
      "status": "watch",
-     "headline": "Acute care risk 30% for 2018 (raised), mostly from many prescriptions",
+     "headline": "Acute care risk 41% for 2018 (raised), mostly from ER visits last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SD4638D6B",
-     "displayName": "SD4638D6B · 65M · other",
+     "survivorId": "c1-SC4BAD40B",
+     "displayName": "SC4BAD40B · 66F · colon",
      "status": "watch",
-     "headline": "Acute care risk 30% for 2018 (raised), mostly from ER visits last year",
+     "headline": "Acute care risk 41% for 2018 (raised), mostly from many prescriptions",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SD8A4FCA0",
-     "displayName": "SD8A4FCA0 · 76M · melanoma",
+     "survivorId": "c1-SD64F1420",
+     "displayName": "SD64F1420 · 73F · breast",
      "status": "watch",
-     "headline": "Acute care risk 30% for 2018 (raised), mostly from many prescriptions",
+     "headline": "Acute care risk 40% for 2018 (raised), mostly from many prescriptions",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S7FB0366C",
-     "displayName": "S7FB0366C · 77F · breast",
+     "survivorId": "c1-S34484046",
+     "displayName": "S34484046 · 65F · uterus",
      "status": "watch",
-     "headline": "Acute care risk 30% for 2018 (raised), mostly from many office visits",
+     "headline": "Acute care risk 40% for 2018 (raised), mostly from ER visits last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S37CE18E5",
-     "displayName": "S37CE18E5 · 73M · other",
+     "survivorId": "c1-S12B06C74",
+     "displayName": "S12B06C74 · 49M · other",
      "status": "watch",
-     "headline": "Acute care risk 29% for 2018 (raised), mostly from poor self-rated health",
+     "headline": "Acute care risk 40% for 2018 (raised), mostly from low mental health score",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-SF3F6C973",
      "displayName": "SF3F6C973 · 70F · skin",
      "status": "watch",
-     "headline": "Acute care risk 29% for 2018 (raised), mostly from ER visits last year",
+     "headline": "Acute care risk 40% for 2018 (raised), mostly from ER visits last year",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SFBBBC646",
-     "displayName": "SFBBBC646 · 62F · breast",
-     "status": "ok",
-     "headline": "Acute care risk 29% for 2018, below the 29% average",
+     "survivorId": "c1-S0868ECEC",
+     "displayName": "S0868ECEC · 57F · other",
+     "status": "watch",
+     "headline": "Acute care risk 40% for 2018 (raised), mostly from hospital stays last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S245DFF94",
+     "displayName": "S245DFF94 · 70M · colon",
+     "status": "watch",
+     "headline": "Acute care risk 39% for 2018 (raised), mostly from nights in hospital last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S88C0AEEE",
+     "displayName": "S88C0AEEE · 37F · cervix",
+     "status": "watch",
+     "headline": "Acute care risk 39% for 2018 (raised), mostly from low mental health score",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SE5A98484",
+     "displayName": "SE5A98484 · 85M · lung",
+     "status": "watch",
+     "headline": "Acute care risk 39% for 2018 (raised), mostly from age",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SB63DCCCD",
+     "displayName": "SB63DCCCD · 66F · breast",
+     "status": "watch",
+     "headline": "Acute care risk 39% for 2018 (raised), mostly from many office visits",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SE9606056",
+     "displayName": "SE9606056 · 51F · lymphoma",
+     "status": "watch",
+     "headline": "Acute care risk 39% for 2018 (raised), mostly from ER visits last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S14EC95E1",
+     "displayName": "S14EC95E1 · 80F · skin (non-melanoma)",
+     "status": "watch",
+     "headline": "Acute care risk 39% for 2018 (raised), mostly from age",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S5A44E4A6",
      "displayName": "S5A44E4A6 · 49M · other",
+     "status": "watch",
+     "headline": "Acute care risk 39% for 2018 (raised), mostly from hospital stays last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SE029F480",
+     "displayName": "SE029F480 · 52F · skin (non-melanoma)",
+     "status": "watch",
+     "headline": "Acute care risk 39% for 2018 (raised), mostly from hospital stays last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SBB4E5497",
+     "displayName": "SBB4E5497 · 70M · other",
+     "status": "watch",
+     "headline": "Acute care risk 38% for 2018 (raised), mostly from low mental health score",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SB623267A",
+     "displayName": "SB623267A · 78M · melanoma",
+     "status": "watch",
+     "headline": "Acute care risk 37% for 2018 (raised), mostly from age",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SE6C1FBFE",
+     "displayName": "SE6C1FBFE · 79F · lung",
+     "status": "watch",
+     "headline": "Acute care risk 37% for 2018 (raised), mostly from age",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S2692791D",
+     "displayName": "S2692791D · 67M · skin (non-melanoma)",
+     "status": "watch",
+     "headline": "Acute care risk 35% for 2018 (raised), mostly from many prescriptions",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S0B055BDA",
+     "displayName": "S0B055BDA · 77F · skin (non-melanoma)",
+     "status": "watch",
+     "headline": "Acute care risk 35% for 2018 (raised), mostly from age",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SD4638D6B",
+     "displayName": "SD4638D6B · 65M · other",
+     "status": "watch",
+     "headline": "Acute care risk 35% for 2018 (raised), mostly from ER visits last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SA1245CA0",
+     "displayName": "SA1245CA0 · 75F · bladder",
+     "status": "watch",
+     "headline": "Acute care risk 34% for 2018 (raised), mostly from hospital outpatient visits",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SDEEABB51",
+     "displayName": "SDEEABB51 · 77F · other",
+     "status": "watch",
+     "headline": "Acute care risk 34% for 2018 (raised), mostly from many prescriptions",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S12CC68FA",
+     "displayName": "S12CC68FA · 72M · prostate",
+     "status": "watch",
+     "headline": "Acute care risk 34% for 2018 (raised), mostly from hospital outpatient visits",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SFBBBC646",
+     "displayName": "SFBBBC646 · 62F · breast",
+     "status": "watch",
+     "headline": "Acute care risk 34% for 2018 (raised), mostly from ER visits last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S10BB1CA4",
+     "displayName": "S10BB1CA4 · 59F · uterus",
+     "status": "watch",
+     "headline": "Acute care risk 33% for 2018 (raised), mostly from low mental health score",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S00EB4FA8",
+     "displayName": "S00EB4FA8 · 70M · skin",
+     "status": "watch",
+     "headline": "Acute care risk 33% for 2018 (raised), mostly from many prescriptions",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SA586CF58",
+     "displayName": "SA586CF58 · 58M · skin (non-melanoma)",
+     "status": "watch",
+     "headline": "Acute care risk 32% for 2018 (raised), mostly from ER visits last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S784CFCBC",
+     "displayName": "S784CFCBC · 55F · breast",
+     "status": "watch",
+     "headline": "Acute care risk 32% for 2018 (raised), mostly from many office visits",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S2C225F03",
+     "displayName": "S2C225F03 · 54M · melanoma",
+     "status": "watch",
+     "headline": "Acute care risk 32% for 2018 (raised), mostly from ER visits last year",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S0A4D006C",
+     "displayName": "S0A4D006C · 57F · melanoma",
+     "status": "watch",
+     "headline": "Acute care risk 32% for 2018 (raised), mostly from many office visits",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S57489A9B",
+     "displayName": "S57489A9B · 76M · skin (non-melanoma)",
+     "status": "watch",
+     "headline": "Acute care risk 31% for 2018 (raised), mostly from psychological distress",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SDD5B699E",
+     "displayName": "SDD5B699E · 47F · breast",
+     "status": "watch",
+     "headline": "Acute care risk 31% for 2018 (raised), mostly from low mental health score",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S00E687D6",
+     "displayName": "S00E687D6 · 71M · prostate",
+     "status": "watch",
+     "headline": "Acute care risk 31% for 2018 (raised), mostly from many office visits",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SEFDD94D7",
+     "displayName": "SEFDD94D7 · 52M · skin (non-melanoma)",
+     "status": "watch",
+     "headline": "Acute care risk 31% for 2018 (raised), mostly from low physical function",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S0462F337",
+     "displayName": "S0462F337 · 49M · skin (non-melanoma)",
+     "status": "watch",
+     "headline": "Acute care risk 30% for 2018 (raised), mostly from many office visits",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S65274500",
+     "displayName": "S65274500 · 57M · skin (non-melanoma)",
+     "status": "watch",
+     "headline": "Acute care risk 30% for 2018 (raised), mostly from low mental health score",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SCD94B3D2",
+     "displayName": "SCD94B3D2 · 66F · skin (non-melanoma)",
+     "status": "watch",
+     "headline": "Acute care risk 30% for 2018 (raised), mostly from many office visits",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SB48BD924",
+     "displayName": "SB48BD924 · 73F · cervix",
+     "status": "watch",
+     "headline": "Acute care risk 30% for 2018 (raised), mostly from low mental health score",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S51D6A8DA",
+     "displayName": "S51D6A8DA · 77F · other",
+     "status": "watch",
+     "headline": "Acute care risk 30% for 2018 (raised), mostly from hospital outpatient visits",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SEFC81617",
+     "displayName": "SEFC81617 · 85F · melanoma",
+     "status": "watch",
+     "headline": "Acute care risk 30% for 2018 (raised), mostly from age",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S98CFB2C8",
+     "displayName": "S98CFB2C8 · 82M · colon",
      "status": "ok",
      "headline": "Acute care risk 29% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SFC102367",
-     "displayName": "SFC102367 · 60M · other",
+     "survivorId": "c1-S2E509A50",
+     "displayName": "S2E509A50 · 77F · uterus",
      "status": "ok",
      "headline": "Acute care risk 29% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S2AB6901C",
-     "displayName": "S2AB6901C · 64F · colon",
+     "survivorId": "c1-SF5390008",
+     "displayName": "SF5390008 · 64M · prostate",
      "status": "ok",
      "headline": "Acute care risk 28% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SC7961D75",
-     "displayName": "SC7961D75 · 85F · uterus",
-     "status": "ok",
-     "headline": "Acute care risk 28% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SD17FD5F8",
-     "displayName": "SD17FD5F8 · 77M · prostate",
-     "status": "ok",
-     "headline": "Acute care risk 28% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SB0ABC86C",
-     "displayName": "SB0ABC86C · 80M · prostate",
+     "survivorId": "c1-SB7EBBE4E",
+     "displayName": "SB7EBBE4E · 67F · uterus",
      "status": "ok",
      "headline": "Acute care risk 28% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
@@ -870,22 +906,8 @@
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SC95DE667",
-     "displayName": "SC95DE667 · 71M · prostate",
-     "status": "ok",
-     "headline": "Acute care risk 28% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SE6C1FBFE",
-     "displayName": "SE6C1FBFE · 79F · lung",
-     "status": "ok",
-     "headline": "Acute care risk 28% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SD90DDB52",
-     "displayName": "SD90DDB52 · 73F · breast",
+     "survivorId": "c1-SF3D208D8",
+     "displayName": "SF3D208D8 · 74F · skin (non-melanoma)",
      "status": "ok",
      "headline": "Acute care risk 28% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
@@ -894,117 +916,61 @@
      "survivorId": "c1-SA0D4CA7C",
      "displayName": "SA0D4CA7C · 63F · skin (non-melanoma)",
      "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
+     "headline": "Acute care risk 28% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S3C514343",
-     "displayName": "S3C514343 · 82F · melanoma",
+     "survivorId": "c1-SA5C6E2C5",
+     "displayName": "SA5C6E2C5 · 72F · skin (non-melanoma)",
      "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SF3D208D8",
-     "displayName": "SF3D208D8 · 74F · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S12B06C74",
-     "displayName": "S12B06C74 · 49M · other",
-     "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SEFC81617",
-     "displayName": "SEFC81617 · 85F · melanoma",
-     "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S2E91151B",
-     "displayName": "S2E91151B · 61M · colon",
-     "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SE7AC0505",
-     "displayName": "SE7AC0505 · 53F · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S0868ECEC",
-     "displayName": "S0868ECEC · 57F · other",
-     "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S51D6A8DA",
-     "displayName": "S51D6A8DA · 77F · other",
-     "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S00E687D6",
-     "displayName": "S00E687D6 · 71M · prostate",
-     "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SB623267A",
-     "displayName": "SB623267A · 78M · melanoma",
-     "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S90A8BB9A",
-     "displayName": "S90A8BB9A · 82M · prostate",
-     "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S506C3B0C",
-     "displayName": "S506C3B0C · 72M · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 27% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SB20B1287",
-     "displayName": "SB20B1287 · 70M · other",
-     "status": "ok",
-     "headline": "Acute care risk 26% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S86592363",
-     "displayName": "S86592363 · 60M · other",
-     "status": "ok",
-     "headline": "Acute care risk 26% for 2018, below the 29% average",
+     "headline": "Acute care risk 28% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S98C51AB0",
      "displayName": "S98C51AB0 · 62F · colon",
      "status": "ok",
+     "headline": "Acute care risk 27% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SCC2654E4",
+     "displayName": "SCC2654E4 · 63F · breast",
+     "status": "ok",
+     "headline": "Acute care risk 27% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S1CECFC4A",
+     "displayName": "S1CECFC4A · 51M · other",
+     "status": "ok",
+     "headline": "Acute care risk 27% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S3D9E1259",
+     "displayName": "S3D9E1259 · 84F · skin (non-melanoma)",
+     "status": "ok",
+     "headline": "Acute care risk 27% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SC7961D75",
+     "displayName": "SC7961D75 · 85F · uterus",
+     "status": "ok",
      "headline": "Acute care risk 26% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S77F00BD2",
-     "displayName": "S77F00BD2 · 49F · cervix",
+     "survivorId": "c1-SB0ABC86C",
+     "displayName": "SB0ABC86C · 80M · prostate",
+     "status": "ok",
+     "headline": "Acute care risk 26% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S87820BA8",
+     "displayName": "S87820BA8 · 85F · breast",
      "status": "ok",
      "headline": "Acute care risk 26% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
@@ -1013,103 +979,47 @@
      "survivorId": "c1-SBB37FE16",
      "displayName": "SBB37FE16 · 54M · skin (non-melanoma)",
      "status": "ok",
-     "headline": "Acute care risk 26% for 2018, below the 29% average",
+     "headline": "Acute care risk 25% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S65274500",
-     "displayName": "S65274500 · 57M · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 26% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S1627EC80",
-     "displayName": "S1627EC80 · 82M · prostate",
+     "survivorId": "c1-SC95DE667",
+     "displayName": "SC95DE667 · 71M · prostate",
      "status": "ok",
      "headline": "Acute care risk 25% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S1CECFC4A",
-     "displayName": "S1CECFC4A · 51M · other",
+     "survivorId": "c1-S41391F99",
+     "displayName": "S41391F99 · 64M · skin",
      "status": "ok",
      "headline": "Acute care risk 25% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S0A4D006C",
-     "displayName": "S0A4D006C · 57F · melanoma",
+     "survivorId": "c1-S9798F35F",
+     "displayName": "S9798F35F · 73M · other",
      "status": "ok",
-     "headline": "Acute care risk 25% for 2018, below the 29% average",
+     "headline": "Acute care risk 24% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S6D332166",
-     "displayName": "S6D332166 · 58M · lymphoma",
+     "survivorId": "c1-SF3EB15D0",
+     "displayName": "SF3EB15D0 · 49M · melanoma",
      "status": "ok",
-     "headline": "Acute care risk 25% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SEFDD94D7",
-     "displayName": "SEFDD94D7 · 52M · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 25% for 2018, below the 29% average",
+     "headline": "Acute care risk 24% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S4A033C3D",
      "displayName": "S4A033C3D · 65F · breast",
      "status": "ok",
-     "headline": "Acute care risk 25% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SF34E8CF9",
-     "displayName": "SF34E8CF9 · 72F · other",
-     "status": "ok",
-     "headline": "Acute care risk 25% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S6959C060",
-     "displayName": "S6959C060 · 63F · melanoma",
-     "status": "ok",
-     "headline": "Acute care risk 25% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S7EF1F002",
-     "displayName": "S7EF1F002 · 85F · skin",
-     "status": "ok",
-     "headline": "Acute care risk 25% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S87820BA8",
-     "displayName": "S87820BA8 · 85F · breast",
-     "status": "ok",
-     "headline": "Acute care risk 25% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S1E7A3316",
-     "displayName": "S1E7A3316 · 69M · other",
-     "status": "ok",
      "headline": "Acute care risk 24% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S776DB8F0",
-     "displayName": "S776DB8F0 · 53F · cervix",
-     "status": "ok",
-     "headline": "Acute care risk 24% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S14EC95E1",
-     "displayName": "S14EC95E1 · 80F · skin (non-melanoma)",
+     "survivorId": "c1-S74E6438B",
+     "displayName": "S74E6438B · 71M · skin",
      "status": "ok",
      "headline": "Acute care risk 24% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
@@ -1122,6 +1032,20 @@
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
+     "survivorId": "c1-S4475CF39",
+     "displayName": "S4475CF39 · 56M · colon",
+     "status": "ok",
+     "headline": "Acute care risk 24% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S06CE4796",
+     "displayName": "S06CE4796 · 67F · other",
+     "status": "ok",
+     "headline": "Acute care risk 24% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
      "survivorId": "c1-S514789B5",
      "displayName": "S514789B5 · 73F · uterus",
      "status": "ok",
@@ -1129,260 +1053,134 @@
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S245DFF94",
-     "displayName": "S245DFF94 · 70M · colon",
-     "status": "ok",
-     "headline": "Acute care risk 24% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S4BBDCA18",
-     "displayName": "S4BBDCA18 · 58F · colon",
-     "status": "ok",
-     "headline": "Acute care risk 24% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SE384EEB7",
-     "displayName": "SE384EEB7 · 67F · breast",
-     "status": "ok",
-     "headline": "Acute care risk 24% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S784CFCBC",
-     "displayName": "S784CFCBC · 55F · breast",
-     "status": "ok",
-     "headline": "Acute care risk 24% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S3D9E1259",
-     "displayName": "S3D9E1259 · 84F · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 24% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S0462F337",
-     "displayName": "S0462F337 · 49M · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 24% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S066904F3",
-     "displayName": "S066904F3 · 70F · breast",
-     "status": "ok",
-     "headline": "Acute care risk 24% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S645D92A1",
-     "displayName": "S645D92A1 · 69M · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 24% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S41391F99",
-     "displayName": "S41391F99 · 64M · skin",
-     "status": "ok",
-     "headline": "Acute care risk 24% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S1512131A",
-     "displayName": "S1512131A · 62M · prostate",
-     "status": "ok",
-     "headline": "Acute care risk 24% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S66882E0C",
-     "displayName": "S66882E0C · 66F · breast",
+     "survivorId": "c1-S46308D48",
+     "displayName": "S46308D48 · 75M · melanoma",
      "status": "ok",
      "headline": "Acute care risk 23% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S0DACAF7F",
-     "displayName": "S0DACAF7F · 42M · lymphoma",
+     "survivorId": "c1-S6EF570FD",
+     "displayName": "S6EF570FD · 59M · skin (non-melanoma)",
      "status": "ok",
      "headline": "Acute care risk 23% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SE4846F75",
+     "displayName": "SE4846F75 · 77M · colon",
+     "status": "ok",
+     "headline": "Acute care risk 23% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SD17FD5F8",
+     "displayName": "SD17FD5F8 · 77M · prostate",
+     "status": "ok",
+     "headline": "Acute care risk 22% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S2AB6901C",
+     "displayName": "S2AB6901C · 64F · colon",
+     "status": "ok",
+     "headline": "Acute care risk 22% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S7656F405",
      "displayName": "S7656F405 · 62F · breast",
      "status": "ok",
-     "headline": "Acute care risk 23% for 2018, below the 29% average",
+     "headline": "Acute care risk 22% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SD3FEF3F4",
-     "displayName": "SD3FEF3F4 · 78F · uterus",
-     "status": "ok",
-     "headline": "Acute care risk 23% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SBF69C58F",
-     "displayName": "SBF69C58F · 69F · breast",
-     "status": "ok",
-     "headline": "Acute care risk 23% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SCC6A7071",
-     "displayName": "SCC6A7071 · 79M · prostate",
-     "status": "ok",
-     "headline": "Acute care risk 23% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SA0682302",
-     "displayName": "SA0682302 · 50F · lymphoma",
-     "status": "ok",
-     "headline": "Acute care risk 23% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SE029F480",
-     "displayName": "SE029F480 · 52F · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 23% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S06CE4796",
-     "displayName": "S06CE4796 · 67F · other",
+     "survivorId": "c1-S9BC18D05",
+     "displayName": "S9BC18D05 · 68F · colon",
      "status": "ok",
      "headline": "Acute care risk 22% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S7BAB17E9",
-     "displayName": "S7BAB17E9 · 67F · lymphoma",
+     "survivorId": "c1-S7FB0366C",
+     "displayName": "S7FB0366C · 77F · breast",
      "status": "ok",
      "headline": "Acute care risk 22% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SD5725637",
-     "displayName": "SD5725637 · 65F · breast",
+     "survivorId": "c1-S3CF49971",
+     "displayName": "S3CF49971 · 66M · other",
      "status": "ok",
      "headline": "Acute care risk 22% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S46308D48",
-     "displayName": "S46308D48 · 75M · melanoma",
-     "status": "ok",
-     "headline": "Acute care risk 22% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SCD94B3D2",
-     "displayName": "SCD94B3D2 · 66F · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 22% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S22B829F8",
-     "displayName": "S22B829F8 · 52F · breast",
-     "status": "ok",
-     "headline": "Acute care risk 22% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S2814A697",
-     "displayName": "S2814A697 · 82M · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 22% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SC825F1F9",
-     "displayName": "SC825F1F9 · 76M · prostate",
-     "status": "ok",
-     "headline": "Acute care risk 22% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S2A310F2E",
-     "displayName": "S2A310F2E · 64M · melanoma",
-     "status": "ok",
-     "headline": "Acute care risk 22% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S00FB33C3",
-     "displayName": "S00FB33C3 · 62M · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 22% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S21644BB7",
-     "displayName": "S21644BB7 · 60M · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 22% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SA1245CA0",
-     "displayName": "SA1245CA0 · 75F · bladder",
-     "status": "ok",
-     "headline": "Acute care risk 22% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SBCF2671F",
-     "displayName": "SBCF2671F · 69F · breast",
-     "status": "ok",
-     "headline": "Acute care risk 22% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S1399E6D5",
-     "displayName": "S1399E6D5 · 46M · other",
-     "status": "ok",
-     "headline": "Acute care risk 21% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SD121B3C5",
-     "displayName": "SD121B3C5 · 73M · other",
-     "status": "ok",
-     "headline": "Acute care risk 21% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S36C30654",
-     "displayName": "S36C30654 · 78F · breast",
-     "status": "ok",
-     "headline": "Acute care risk 21% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SFDB6493A",
-     "displayName": "SFDB6493A · 53F · colon",
-     "status": "ok",
-     "headline": "Acute care risk 21% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S5C2DBC1E",
      "displayName": "S5C2DBC1E · 39F · other",
      "status": "ok",
+     "headline": "Acute care risk 22% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S0DACAF7F",
+     "displayName": "S0DACAF7F · 42M · lymphoma",
+     "status": "ok",
      "headline": "Acute care risk 21% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SEB569DB0",
-     "displayName": "SEB569DB0 · 70M · bladder",
+     "survivorId": "c1-S7EF1F002",
+     "displayName": "S7EF1F002 · 85F · skin",
+     "status": "ok",
+     "headline": "Acute care risk 21% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SB20B1287",
+     "displayName": "SB20B1287 · 70M · other",
+     "status": "ok",
+     "headline": "Acute care risk 21% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S4BBDCA18",
+     "displayName": "S4BBDCA18 · 58F · colon",
+     "status": "ok",
+     "headline": "Acute care risk 21% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S892931C0",
+     "displayName": "S892931C0 · 50F · breast",
+     "status": "ok",
+     "headline": "Acute care risk 21% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SA0682302",
+     "displayName": "SA0682302 · 50F · lymphoma",
+     "status": "ok",
+     "headline": "Acute care risk 21% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S624644DA",
+     "displayName": "S624644DA · 72M · prostate",
+     "status": "ok",
+     "headline": "Acute care risk 21% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SD3FEF3F4",
+     "displayName": "SD3FEF3F4 · 78F · uterus",
+     "status": "ok",
+     "headline": "Acute care risk 21% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S86592363",
+     "displayName": "S86592363 · 60M · other",
      "status": "ok",
      "headline": "Acute care risk 21% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
@@ -1391,26 +1189,47 @@
      "survivorId": "c1-SA65F3AF4",
      "displayName": "SA65F3AF4 · 46F · cervix",
      "status": "ok",
-     "headline": "Acute care risk 21% for 2018, below the 29% average",
+     "headline": "Acute care risk 20% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S1EC5F9E7",
-     "displayName": "S1EC5F9E7 · 83F · breast",
-     "status": "ok",
-     "headline": "Acute care risk 21% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S213DF793",
-     "displayName": "S213DF793 · 57F · melanoma",
+     "survivorId": "c1-SC86DB5C3",
+     "displayName": "SC86DB5C3 · 60M · prostate",
      "status": "ok",
      "headline": "Acute care risk 20% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SA1976BE1",
-     "displayName": "SA1976BE1 · 68F · melanoma",
+     "survivorId": "c1-S7BAB17E9",
+     "displayName": "S7BAB17E9 · 67F · lymphoma",
+     "status": "ok",
+     "headline": "Acute care risk 20% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S1512131A",
+     "displayName": "S1512131A · 62M · prostate",
+     "status": "ok",
+     "headline": "Acute care risk 20% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SD8A4FCA0",
+     "displayName": "SD8A4FCA0 · 76M · melanoma",
+     "status": "ok",
+     "headline": "Acute care risk 20% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SFDB6493A",
+     "displayName": "SFDB6493A · 53F · colon",
+     "status": "ok",
+     "headline": "Acute care risk 20% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S1627EC80",
+     "displayName": "S1627EC80 · 82M · prostate",
      "status": "ok",
      "headline": "Acute care risk 20% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
@@ -1423,50 +1242,50 @@
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S4E41591B",
-     "displayName": "S4E41591B · 59F · breast",
+     "survivorId": "c1-S6D332166",
+     "displayName": "S6D332166 · 58M · lymphoma",
      "status": "ok",
      "headline": "Acute care risk 20% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S6A875359",
-     "displayName": "S6A875359 · 59M · prostate",
+     "survivorId": "c1-SFEF74F3B",
+     "displayName": "SFEF74F3B · 55F · breast",
      "status": "ok",
      "headline": "Acute care risk 20% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S3765827A",
-     "displayName": "S3765827A · 85M · prostate",
+     "survivorId": "c1-S2F77AF97",
+     "displayName": "S2F77AF97 · 79F · skin (non-melanoma)",
      "status": "ok",
      "headline": "Acute care risk 20% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S39598CCF",
-     "displayName": "S39598CCF · 50M · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 20% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S7DF4628B",
-     "displayName": "S7DF4628B · 62F · skin (non-melanoma)",
+     "survivorId": "c1-SACFCEF33",
+     "displayName": "SACFCEF33 · 68F · breast",
      "status": "ok",
      "headline": "Acute care risk 19% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SF3EB15D0",
-     "displayName": "SF3EB15D0 · 49M · melanoma",
+     "survivorId": "c1-S37CE18E5",
+     "displayName": "S37CE18E5 · 73M · other",
      "status": "ok",
      "headline": "Acute care risk 19% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S892931C0",
-     "displayName": "S892931C0 · 50F · breast",
+     "survivorId": "c1-S1EC5F9E7",
+     "displayName": "S1EC5F9E7 · 83F · breast",
+     "status": "ok",
+     "headline": "Acute care risk 19% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SD90DDB52",
+     "displayName": "SD90DDB52 · 73F · breast",
      "status": "ok",
      "headline": "Acute care risk 19% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
@@ -1479,31 +1298,24 @@
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S896FF789",
-     "displayName": "S896FF789 · 74F · breast",
+     "survivorId": "c1-S2E91151B",
+     "displayName": "S2E91151B · 61M · colon",
      "status": "ok",
-     "headline": "Acute care risk 19% for 2018, below the 29% average",
+     "headline": "Acute care risk 18% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SDFF6FCC9",
-     "displayName": "SDFF6FCC9 · 73F · breast",
+     "survivorId": "c1-SC825F1F9",
+     "displayName": "SC825F1F9 · 76M · prostate",
      "status": "ok",
-     "headline": "Acute care risk 19% for 2018, below the 29% average",
+     "headline": "Acute care risk 18% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S3FB651A6",
-     "displayName": "S3FB651A6 · 48M · prostate",
+     "survivorId": "c1-S2A310F2E",
+     "displayName": "S2A310F2E · 64M · melanoma",
      "status": "ok",
-     "headline": "Acute care risk 19% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SCE610F8F",
-     "displayName": "SCE610F8F · 65M · melanoma",
-     "status": "ok",
-     "headline": "Acute care risk 19% for 2018, below the 29% average",
+     "headline": "Acute care risk 18% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
@@ -1514,36 +1326,43 @@
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SFEF74F3B",
-     "displayName": "SFEF74F3B · 55F · breast",
+     "survivorId": "c1-SBCF2671F",
+     "displayName": "SBCF2671F · 69F · breast",
      "status": "ok",
      "headline": "Acute care risk 18% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SD453266A",
-     "displayName": "SD453266A · 67F · breast",
+     "survivorId": "c1-S3765827A",
+     "displayName": "S3765827A · 85M · prostate",
      "status": "ok",
      "headline": "Acute care risk 18% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-SF3DC0698",
-     "displayName": "SF3DC0698 · 58F · melanoma",
-     "status": "ok",
-     "headline": "Acute care risk 18% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SC360D59D",
-     "displayName": "SC360D59D · 46F · skin",
+     "survivorId": "c1-SBF69C58F",
+     "displayName": "SBF69C58F · 69F · breast",
      "status": "ok",
      "headline": "Acute care risk 17% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S729D55F9",
-     "displayName": "S729D55F9 · 62F · uterus",
+     "survivorId": "c1-S77F00BD2",
+     "displayName": "S77F00BD2 · 49F · cervix",
+     "status": "ok",
+     "headline": "Acute care risk 17% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S22B829F8",
+     "displayName": "S22B829F8 · 52F · breast",
+     "status": "ok",
+     "headline": "Acute care risk 17% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S6959C060",
+     "displayName": "S6959C060 · 63F · melanoma",
      "status": "ok",
      "headline": "Acute care risk 17% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
@@ -1556,142 +1375,373 @@
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S020BFBE7",
-     "displayName": "S020BFBE7 · 68F · breast",
+     "survivorId": "c1-S66882E0C",
+     "displayName": "S66882E0C · 66F · breast",
+     "status": "ok",
+     "headline": "Acute care risk 17% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S1399E6D5",
+     "displayName": "S1399E6D5 · 46M · other",
+     "status": "ok",
+     "headline": "Acute care risk 17% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SD121B3C5",
+     "displayName": "SD121B3C5 · 73M · other",
+     "status": "ok",
+     "headline": "Acute care risk 17% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S36C30654",
+     "displayName": "S36C30654 · 78F · breast",
      "status": "ok",
      "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SCC6A7071",
+     "displayName": "SCC6A7071 · 79M · prostate",
+     "status": "ok",
+     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SD5725637",
+     "displayName": "SD5725637 · 65F · breast",
+     "status": "ok",
+     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S2814A697",
+     "displayName": "S2814A697 · 82M · skin (non-melanoma)",
+     "status": "ok",
+     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S506C3B0C",
+     "displayName": "S506C3B0C · 72M · skin (non-melanoma)",
+     "status": "ok",
+     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S90A8BB9A",
+     "displayName": "S90A8BB9A · 82M · prostate",
+     "status": "ok",
+     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S896FF789",
+     "displayName": "S896FF789 · 74F · breast",
+     "status": "ok",
+     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S066904F3",
+     "displayName": "S066904F3 · 70F · breast",
+     "status": "ok",
+     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S6A875359",
+     "displayName": "S6A875359 · 59M · prostate",
+     "status": "ok",
+     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SD453266A",
+     "displayName": "SD453266A · 67F · breast",
+     "status": "ok",
+     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SE384EEB7",
+     "displayName": "SE384EEB7 · 67F · breast",
+     "status": "ok",
+     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SE7AC0505",
+     "displayName": "SE7AC0505 · 53F · skin (non-melanoma)",
+     "status": "ok",
+     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SF34E8CF9",
+     "displayName": "SF34E8CF9 · 72F · other",
+     "status": "ok",
+     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SA1976BE1",
+     "displayName": "SA1976BE1 · 68F · melanoma",
+     "status": "ok",
+     "headline": "Acute care risk 15% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S00FB33C3",
+     "displayName": "S00FB33C3 · 62M · skin (non-melanoma)",
+     "status": "ok",
+     "headline": "Acute care risk 15% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S645D92A1",
+     "displayName": "S645D92A1 · 69M · skin (non-melanoma)",
+     "status": "ok",
+     "headline": "Acute care risk 15% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S154CE4FE",
      "displayName": "S154CE4FE · 47F · breast",
      "status": "ok",
-     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "headline": "Acute care risk 14% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S069D0043",
-     "displayName": "S069D0043 · 48F · melanoma",
+     "survivorId": "c1-S4E41591B",
+     "displayName": "S4E41591B · 59F · breast",
      "status": "ok",
-     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "headline": "Acute care risk 14% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S2C58D143",
-     "displayName": "S2C58D143 · 61F · breast",
+     "survivorId": "c1-S39598CCF",
+     "displayName": "S39598CCF · 50M · skin (non-melanoma)",
      "status": "ok",
-     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "headline": "Acute care risk 14% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-S99FFF6BE",
      "displayName": "S99FFF6BE · 52F · breast",
      "status": "ok",
-     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "headline": "Acute care risk 14% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
-     "survivorId": "c1-S763700C7",
-     "displayName": "S763700C7 · 61F · skin (non-melanoma)",
+     "survivorId": "c1-SDFF6FCC9",
+     "displayName": "SDFF6FCC9 · 73F · breast",
      "status": "ok",
-     "headline": "Acute care risk 16% for 2018, below the 29% average",
+     "headline": "Acute care risk 14% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S1E7A3316",
+     "displayName": "S1E7A3316 · 69M · other",
+     "status": "ok",
+     "headline": "Acute care risk 13% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S776DB8F0",
+     "displayName": "S776DB8F0 · 53F · cervix",
+     "status": "ok",
+     "headline": "Acute care risk 13% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S3FB651A6",
+     "displayName": "S3FB651A6 · 48M · prostate",
+     "status": "ok",
+     "headline": "Acute care risk 13% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SEB569DB0",
+     "displayName": "SEB569DB0 · 70M · bladder",
+     "status": "ok",
+     "headline": "Acute care risk 13% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S729D55F9",
+     "displayName": "S729D55F9 · 62F · uterus",
+     "status": "ok",
+     "headline": "Acute care risk 13% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S213DF793",
+     "displayName": "S213DF793 · 57F · melanoma",
+     "status": "ok",
+     "headline": "Acute care risk 13% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S21644BB7",
+     "displayName": "S21644BB7 · 60M · skin (non-melanoma)",
+     "status": "ok",
+     "headline": "Acute care risk 12% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SF3DC0698",
+     "displayName": "SF3DC0698 · 58F · melanoma",
+     "status": "ok",
+     "headline": "Acute care risk 12% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SC360D59D",
+     "displayName": "SC360D59D · 46F · skin",
+     "status": "ok",
+     "headline": "Acute care risk 12% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S020BFBE7",
+     "displayName": "S020BFBE7 · 68F · breast",
+     "status": "ok",
+     "headline": "Acute care risk 11% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S7DF4628B",
+     "displayName": "S7DF4628B · 62F · skin (non-melanoma)",
+     "status": "ok",
+     "headline": "Acute care risk 11% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S2C58D143",
+     "displayName": "S2C58D143 · 61F · breast",
+     "status": "ok",
+     "headline": "Acute care risk 11% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-SCE318253",
      "displayName": "SCE318253 · 54F · breast",
      "status": "ok",
-     "headline": "Acute care risk 15% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-SC53C68EB",
-     "displayName": "SC53C68EB · 51M · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 15% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S55AB851F",
-     "displayName": "S55AB851F · 36M · skin",
-     "status": "ok",
-     "headline": "Acute care risk 15% for 2018, below the 29% average",
-     "updatedAt": "2017-12-31T00:00:00Z"
-    },
-    {
-     "survivorId": "c1-S95BA07AB",
-     "displayName": "S95BA07AB · 60M · skin (non-melanoma)",
-     "status": "ok",
-     "headline": "Acute care risk 15% for 2018, below the 29% average",
+     "headline": "Acute care risk 11% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     },
     {
      "survivorId": "c1-SF15FB840",
      "displayName": "SF15FB840 · 44M · prostate",
      "status": "ok",
-     "headline": "Acute care risk 14% for 2018, below the 29% average",
+     "headline": "Acute care risk 11% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S069D0043",
+     "displayName": "S069D0043 · 48F · melanoma",
+     "status": "ok",
+     "headline": "Acute care risk 11% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SC53C68EB",
+     "displayName": "SC53C68EB · 51M · skin (non-melanoma)",
+     "status": "ok",
+     "headline": "Acute care risk 11% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S55AB851F",
+     "displayName": "S55AB851F · 36M · skin",
+     "status": "ok",
+     "headline": "Acute care risk 10% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-SCE610F8F",
+     "displayName": "SCE610F8F · 65M · melanoma",
+     "status": "ok",
+     "headline": "Acute care risk 10% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S763700C7",
+     "displayName": "S763700C7 · 61F · skin (non-melanoma)",
+     "status": "ok",
+     "headline": "Acute care risk 10% for 2018, below the 29% average",
+     "updatedAt": "2017-12-31T00:00:00Z"
+    },
+    {
+     "survivorId": "c1-S95BA07AB",
+     "displayName": "S95BA07AB · 60M · skin (non-melanoma)",
+     "status": "ok",
+     "headline": "Acute care risk 10% for 2018, below the 29% average",
      "updatedAt": "2017-12-31T00:00:00Z"
     }
    ]
   },
-  "/api/c1/survivors/c1-S2480BBDE": {
+  "/api/c1/survivors/c1-S71188550": {
    "status": 200,
-   "ms": 63,
+   "ms": 62,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c020d638f0e0f4-MIA",
+    "cf-ray": "a4c072e70d2033b9-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 14:52:38 GMT",
+    "date": "Sat, 17 Oct 2026 15:48:40 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=qc2uenUPBbNvZRCFxKSKoyIgvPKBBCdRjhci7hB%2BZgmUUJltnHYhpBkwyWavJKTY93ivc46qhWva9sdWha2vHAEoDzZlqqYu5uFdLO7Rt9lzETdr7Vld20kpOgrArTQjmU77sNFhECnG%2B3Kq8FP20ULFqd8%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=632FUJ7nYsWJJwaKU236w%2BNWveY%2F91ItAqPtp3Npl2IzQeYq7LbRaLsdj22UJCOzHuNvsn%2F%2FzuNV1g%2BUN7jTDXMFbh2UWTunbJw4V4pPfmc6WQLLv6XtbhthecY2jd3KJ%2Fx%2BAr0MVcnSlyfJusb66Lvvp4I%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
    "body": {
-    "survivorId": "c1-S2480BBDE",
-    "displayName": "S2480BBDE · 61F · other",
+    "survivorId": "c1-S71188550",
+    "displayName": "S71188550 · 85M · prostate",
     "status": "alert",
-    "headline": "Acute care risk 73% for 2018 (high), driven by ER visits last year",
-    "summary": "73% predicted chance of an ER visit or hospital stay in 2018 (average survivor 29%). Status alert: alert from 36%, watch from 29%. Main drivers: 11 ER visit(s) in 2017 (most survivors had none); 12 hospital stay(s) in 2017; Had home health care in 2017.",
-    "risk": 0.7323,
+    "headline": "Acute care risk 70% for 2018 (high), driven by nights in hospital last year",
+    "summary": "70% predicted chance of an ER visit or hospital stay in 2018 (average survivor 29%). Status alert: alert from 43%, watch from 29%. Main drivers: $44,900 total health spending in 2017 (median survivor about $6,700); 26 night(s) in hospital in 2017; Age 85 or older (top-coded).",
+    "risk": 0.6984,
     "thresholds": {
-     "alert": 0.36,
+     "alert": 0.43,
      "watch": 0.29
     },
     "evidence": [
      {
       "kind": "model",
-      "text": "Predicted chance of an ER visit or hospital stay in 2018: 73%. Among development survivors in the alert tier, 46% had one."
+      "text": "Predicted chance of an ER visit or hospital stay in 2018: 70%. Among development survivors in the alert tier, 57% had one."
+     },
+     {
+      "kind": "care-intensity",
+      "text": "$44,900 total health spending in 2017 (median survivor about $6,700) (raises risk)",
+      "feature": "spending_17",
+      "logitContribution": 0.474
      },
      {
       "kind": "prior-acute-care",
-      "text": "11 ER visit(s) in 2017 (most survivors had none) (raises risk)",
-      "feature": "er_visits_17",
-      "logitContribution": 0.742
+      "text": "26 night(s) in hospital in 2017 (raises risk)",
+      "feature": "hosp_nights_17",
+      "logitContribution": 0.393
+     },
+     {
+      "kind": "demographic",
+      "text": "Age 85 or older (top-coded) (raises risk)",
+      "feature": "age",
+      "logitContribution": 0.369
      },
      {
       "kind": "prior-acute-care",
-      "text": "12 hospital stay(s) in 2017 (raises risk)",
+      "text": "4 hospital stay(s) in 2017 (raises risk)",
       "feature": "hosp_stays_17",
-      "logitContribution": 0.737
-     },
-     {
-      "kind": "prior-acute-care",
-      "text": "Had home health care in 2017 (raises risk)",
-      "feature": "home_health_17",
-      "logitContribution": 0.213
-     },
-     {
-      "kind": "medications",
-      "text": "143 prescription fills in 2017 (raises risk)",
-      "feature": "rx_fills_17",
-      "logitContribution": 0.19
+      "logitContribution": 0.227
      }
     ],
     "recommendations": [
@@ -1701,19 +1751,15 @@
      },
      {
       "audience": "care-team",
-      "text": "Review last year's ER visits for preventable causes; set a same-day call-back route before the ER."
+      "text": "High care use last year: review what drove it and whether one team owns the plan."
      },
      {
       "audience": "care-team",
-      "text": "Schedule a post-discharge style check-in and medication reconciliation."
+      "text": "Nights in hospital last year: confirm a discharge follow-up plan and who to call first."
      },
      {
       "audience": "care-team",
-      "text": "Confirm home health is still in place and who to call after hours."
-     },
-     {
-      "audience": "care-team",
-      "text": "Do a medication review (polypharmacy, side effects, adherence)."
+      "text": "Older age: a lower bar for proactive check-ins is reasonable."
      },
      {
       "audience": "survivor",
@@ -1722,56 +1768,56 @@
     ],
     "charts": {
      "risk": {
-      "value": 0.7323,
+      "value": 0.6984,
       "baseRate": 0.2876,
       "watchFrom": 0.29,
-      "alertFrom": 0.36
+      "alertFrom": 0.43
      },
      "drivers": [
       {
-       "label": "ER visits in 2017",
-       "logitContribution": 0.742
+       "label": "Total health spending in 2017",
+       "logitContribution": 0.474
+      },
+      {
+       "label": "Hospital nights in 2017",
+       "logitContribution": 0.393
+      },
+      {
+       "label": "Age",
+       "logitContribution": 0.369
       },
       {
        "label": "Hospital stays in 2017",
-       "logitContribution": 0.737
-      },
-      {
-       "label": "Any home health care in 2017",
-       "logitContribution": 0.213
-      },
-      {
-       "label": "Prescription fills in 2017",
-       "logitContribution": 0.19
+       "logitContribution": 0.227
       }
      ],
      "scores": {
-      "physical_score": 22.8,
-      "mental_score": 36.6,
-      "distress_k6": 5,
-      "depression_phq2": 1,
-      "pain": 5,
-      "fatigue": 4,
+      "physical_score": 35.8,
+      "mental_score": 60.9,
+      "distress_k6": 0,
+      "depression_phq2": 0,
+      "pain": 2,
+      "fatigue": 1,
       "financial_toxicity": 1,
-      "cost_delay": 1
+      "cost_delay": 0
      },
      "use2017": {
-      "erVisits": 11,
-      "hospitalStays": 12,
-      "officeVisits": 15,
-      "rxFills": 143
+      "erVisits": 3,
+      "hospitalStays": 4,
+      "officeVisits": 17,
+      "rxFills": 18
      }
     },
     "profile": {
-     "age": 61,
-     "sex": "female",
+     "age": 85,
+     "sex": "male",
      "raceEthnicity": "NH White",
      "insurance2017": "Any private",
      "cancerTypes": [
-      "other"
+      "prostate"
      ],
      "currentTreatment": "no",
-     "region": "Northeast",
+     "region": "Midwest",
      "dataSource": "MEPS 2017 survey (real survivor, ID reassigned by organisers)"
     },
     "caveat": "Association, not cause: these factors flag who may need help; changing one is not proven to prevent an ER visit. Risk is from survey answers only (clinical records did not improve it)."
@@ -1779,20 +1825,20 @@
   },
   "/api/c1/survivors/c1-nope": {
    "status": 404,
-   "ms": 104,
+   "ms": 47,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c02136cc49e0f4-MIA",
+    "cf-ray": "a4c0735fbaf733b9-MIA",
     "connection": "keep-alive",
     "content-length": "30",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 14:52:54 GMT",
+    "date": "Sat, 17 Oct 2026 15:48:59 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=R%2FeFUdGkRTn2N9%2BpodXRWSIYl8RS5UtCmDbo9H9vAyK7PiYH04BbcQT03RLyL1HL7HEKfOk3OEYOQtqNJADsw53l6qSD5dDOVpn125M%2FukOJlQV70wzEmBHKjFVgs%2BECgS4L6BRnbo24zTUJ7QKVvArKtOA%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=qkvlhXEg4Vq3X6jktgVoC9UBQSxRPUjHvQHz%2ByLYIovmOeueyjtQqFo82%2F%2FfJbjQrMNJsOduDcAHwzp7Xlb1jdUa2kQ%2B7PaoWZbUgKwLsGh4nAkxqngOnpQdLolGwkh1%2BCzaSuWe2Dg7Ab0jZddfVhzW0wM%3D\"}]}",
     "server": "cloudflare"
    },
    "body": {
@@ -1801,20 +1847,20 @@
   },
   "/api/c1/metrics": {
    "status": 200,
-   "ms": 88,
+   "ms": 71,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c02138492ee0f4-MIA",
+    "cf-ray": "a4c073642d6a33b9-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 14:52:54 GMT",
+    "date": "Sat, 17 Oct 2026 15:49:00 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=MKOGrf8vWN8Dm1s%2B7nKq4xYLT5MMIXYca8jgexD52VR%2FbqKy%2BtcB4BmfQUDHDTvlBXmtAJXZ%2F7k5UBovajAyho4s1EwcTOv54gXacZEfgHZcoH6nrQYXg1iLDACFcaj%2FoEVtmGmyekvDC6mHndohWMQOjHs%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=OFLtjC9%2FcSEdW6gev961aZ9KzJu6NhJatvsA5aTmScB0UHmdn%2BixU5BOLpGUYB3HLVKJcDVfuZlfiNFfRKQ3pw33ojC0E%2FcYppN7IFC8dG9eHdr5Cb1vKIIw1lBzdXR%2F0vGgoiyjxzn5uZjYePVlqDYqYsI%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -1829,9 +1875,11 @@
     },
     "validation": "10x repeated stratified 5-fold CV on the development set, one row per survivor; OOF predictions averaged over repeats; 2000-sample patient bootstrap for 95% CIs; paired bootstrap for differences.",
     "finalModel": {
-     "name": "L2 logistic regression on 34 survey-domain features + missing indicators",
-     "regularisationC": 0.004641588833612777,
-     "tunedBy": "inner 5-fold CV on log loss inside each training fold"
+     "key": "forest",
+     "name": "Random forest (300 trees, min leaf 10) with sigmoid calibration, on 16 features: 2017 care use (ER, hospital stays and nights, office, outpatient, home health, prescriptions, spending), age, physical and mental health scores, distress, depression screen, self-rated health, missed work days",
+     "chosenBy": "nested cross-validation of a 37-candidate model search (runs/autoresearch): it won 6 of 10 outer folds",
+     "explanations": "TreeSHAP per survivor, converted to calibrated log-odds (analysis/explain.py)",
+     "previous": "L2 logistic regression on 34 survey-domain features (the first submission)"
     },
     "metrics": {
      "baseline": {
@@ -1854,6 +1902,13 @@
        "ci95": [
         0.17854780373247575,
         0.22241324230065246
+       ]
+      },
+      "log_loss": {
+       "value": 0.6061798072022498,
+       "ci95": [
+        0.5458486069072257,
+        0.6669952479932213
        ]
       },
       "cal_intercept": {
@@ -1904,6 +1959,13 @@
         0.21039385619245546
        ]
       },
+      "log_loss": {
+       "value": 0.5695304883972439,
+       "ci95": [
+        0.5289966394389756,
+        0.6104600940456463
+       ]
+      },
       "cal_intercept": {
        "value": -0.000578279240339202,
        "ci95": [
@@ -1952,6 +2014,13 @@
         0.20916980780385241
        ]
       },
+      "log_loss": {
+       "value": 0.569311155011764,
+       "ci95": [
+        0.5318515184303511,
+        0.6066332896225077
+       ]
+      },
       "cal_intercept": {
        "value": -0.031390779637911294,
        "ci95": [
@@ -1976,6 +2045,61 @@
       "auroc_per_repeat": {
        "mean": 0.6388599172810645,
        "sd": 0.010243580359654569
+      }
+     },
+     "forest": {
+      "auroc": {
+       "value": 0.7127989570221184,
+       "ci95": [
+        0.662325942116102,
+        0.7638970658004742
+       ]
+      },
+      "auprc": {
+       "value": 0.5078127975600191,
+       "ci95": [
+        0.42293901907376646,
+        0.5981872372571008
+       ]
+      },
+      "brier": {
+       "value": 0.17959085396966648,
+       "ci95": [
+        0.16152185125206428,
+        0.19824151669787296
+       ]
+      },
+      "log_loss": {
+       "value": 0.5389066734044685,
+       "ci95": [
+        0.497439126224133,
+        0.5819725309620033
+       ]
+      },
+      "cal_intercept": {
+       "value": -0.011889850165572478,
+       "ci95": [
+        -0.22941104568252368,
+        0.1900415297060868
+       ]
+      },
+      "cal_slope": {
+       "value": 1.1027281437453391,
+       "ci95": [
+        0.8222359309856233,
+        1.4350184930267165
+       ]
+      },
+      "mean_pred": {
+       "value": 0.28973767813124646,
+       "ci95": [
+        0.27663508665099035,
+        0.30301795153371447
+       ]
+      },
+      "auroc_per_repeat": {
+       "mean": 0.7108995684229455,
+       "sd": 0.007710391507419087
       }
      }
     },
@@ -2004,6 +2128,14 @@
         0.0028582695377787123
        ],
        "p_better": 0.9195
+      },
+      "log_loss": {
+       "value": -0.03664931880500599,
+       "ci95": [
+        -0.07299355865991995,
+        -0.0011396155674638666
+       ],
+       "p_better": 0.98
       }
      },
      "gbm_calibrated": {
@@ -2030,8 +2162,170 @@
         0.005455364034018353
        ],
        "p_better": 0.877
+      },
+      "log_loss": {
+       "value": -0.03686865219048585,
+       "ci95": [
+        -0.07650387416860749,
+        0.0033097754465387153
+       ],
+       "p_better": 0.962
+      }
+     },
+     "forest": {
+      "auroc": {
+       "value": 0.05345261643589283,
+       "ci95": [
+        -0.0012418160695974814,
+        0.10476714204627115
+       ],
+       "p_better": 0.971
+      },
+      "auprc": {
+       "value": 0.08516438269554671,
+       "ci95": [
+        0.01700177209696026,
+        0.14581679516717885
+       ],
+       "p_better": 0.9955
+      },
+      "brier": {
+       "value": -0.021171291326485236,
+       "ci95": [
+        -0.03460302573122142,
+        -0.007139706666116317
+       ],
+       "p_better": 0.9985
+      },
+      "log_loss": {
+       "value": -0.06727313379778133,
+       "ci95": [
+        -0.10675429744275372,
+        -0.02649696634551372
+       ],
+       "p_better": 1
       }
      }
+    },
+    "deltaVsPrevious": {
+     "previous": "logistic",
+     "auroc": {
+      "value": 0.04664179104477617,
+      "ci95": [
+       0.0115008755143862,
+       0.082881824421289
+      ],
+      "p_better": 0.996
+     },
+     "auprc": {
+      "value": 0.06966057611936843,
+      "ci95": [
+       0.01999974381303008,
+       0.11139944593235392
+      ],
+      "p_better": 0.997
+     },
+     "brier": {
+      "value": -0.012512798294451344,
+      "ci95": [
+       -0.02000459450035459,
+       -0.005252871831616131
+      ],
+      "p_better": 0.9995
+     },
+     "log_loss": {
+      "value": -0.030623814992775333,
+      "ci95": [
+       -0.04831748175433283,
+       -0.012863468226682799
+      ],
+      "p_better": 1
+     }
+    },
+    "modelSearch": {
+     "note": "Nested CV: the whole 37-candidate search re-run inside each of 10 outer folds, so the scored model never saw its test fold. This is the unbiased estimate of what the chosen model does on new survivors.",
+     "candidates": 37,
+     "outerFolds": 10,
+     "picks": {
+      "rf|compact_raw_use": 6,
+      "spline_lr|prior_use": 3,
+      "poisson_glm|compact": 1
+     },
+     "auroc": {
+      "search": 0.7107309836360366,
+      "baseline": 0.6720014385901817,
+      "previous": 0.6768342024815681
+     },
+     "logLoss": {
+      "search": 0.5386771694669781,
+      "baseline": 0.6057688558831227,
+      "previous": 0.5654719445416405
+     },
+     "vsBaseline": {
+      "dAuroc": 0.03872954504585491,
+      "dAurocCi95": [
+       -0.014892280050238701,
+       0.09117944028303074
+      ],
+      "pAurocBetter": 0.9305,
+      "dLogLoss": -0.0670916864161446,
+      "dLogLossCi95": [
+       -0.11475191094922225,
+       -0.019910800615196244
+      ],
+      "pLogLossBetter": 0.9985
+     },
+     "vsPrevious": {
+      "dAuroc": 0.03389678115446848,
+      "dAurocCi95": [
+       -0.0008339056776556769,
+       0.06637186941818159
+      ],
+      "pAurocBetter": 0.972,
+      "dLogLoss": -0.026794775074662436,
+      "dLogLossCi95": [
+       -0.04330429151725538,
+       -0.009189825416749932
+      ],
+      "pLogLossBetter": 0.9975
+     },
+     "top20Events": {
+      "of": 134,
+      "flagged": 93,
+      "procedure": 52,
+      "baseline": 45,
+      "submitted": 46
+     },
+     "callsAt50": {
+      "procedure": {
+       "n": 55,
+       "cameTrue": 0.6727272727272727
+      },
+      "baseline": {
+       "n": 73,
+       "cameTrue": 0.4931506849315068
+      },
+      "submitted": {
+       "n": 22,
+       "cameTrue": 0.5
+      }
+     },
+     "powerNote": "With 466 survivors and 134 events an AUROC gain needs to be about +0.056 to clear a 95% CI; the held-out set (199, about 57 events) has an AUROC standard error of about 0.04."
+    },
+    "firstEvent": {
+     "definition": "Survivors with no ER visit or hospital stay in 2017; outcome = first acute care in 2018",
+     "n": 326,
+     "events": 70,
+     "rate": 0.2147239263803681,
+     "aurocModel": 0.6623325892857141,
+     "aurocBaseline": 0.616015625,
+     "deltaAuroc": 0.04631696428571419,
+     "deltaCi95": [
+      -0.03576313550639042,
+      0.12344240905821781
+     ],
+     "pBetter": 0.868,
+     "why": "Prior acute care explains most of the ranking on the full target (the 2017 repeat users are easy to find). Finding the first event is the harder, more useful job for prevention."
     },
     "calibrationCurve": {
      "baseline": [
@@ -2189,38 +2483,90 @@
         0.5526688012836483
        ]
       }
+     ],
+     "forest": [
+      {
+       "bin": 1,
+       "n": 94,
+       "meanPredicted": 0.1356300529477772,
+       "observed": 0.11702127659574468,
+       "observedCi95": [
+        0.0666129428495252,
+        0.1975037518897268
+       ]
+      },
+      {
+       "bin": 2,
+       "n": 93,
+       "meanPredicted": 0.1834269080561775,
+       "observed": 0.1935483870967742,
+       "observedCi95": [
+        0.12608338664374868,
+        0.28532658593002125
+       ]
+      },
+      {
+       "bin": 3,
+       "n": 93,
+       "meanPredicted": 0.2470530916061525,
+       "observed": 0.25806451612903225,
+       "observedCi95": [
+        0.17998399469266027,
+        0.35533966786557925
+       ]
+      },
+      {
+       "bin": 4,
+       "n": 93,
+       "meanPredicted": 0.3473968333206269,
+       "observed": 0.3118279569892473,
+       "observedCi95": [
+        0.2267273118974027,
+        0.411857758981228
+       ]
+      },
+      {
+       "bin": 5,
+       "n": 93,
+       "meanPredicted": 0.5368385759640301,
+       "observed": 0.5591397849462365,
+       "observedCi95": [
+        0.4578797367909649,
+        0.6557078123614655
+       ]
+      }
      ]
     },
     "tiers": {
      "watch": 0.29,
-     "alert": 0.36,
+     "alert": 0.43,
      "tiers": [
       {
        "status": "alert",
-       "riskFrom": 0.36,
+       "riskFrom": 0.43,
        "riskTo": 1,
-       "n": 100,
-       "positives": 46,
-       "observedRate": 0.46,
-       "shareOfAllPositives": 0.34328358208955223
+       "n": 92,
+       "positives": 52,
+       "observedRate": 0.5652173913043478,
+       "shareOfAllPositives": 0.3880597014925373
       },
       {
        "status": "watch",
        "riskFrom": 0.29,
-       "riskTo": 0.36,
-       "n": 84,
-       "positives": 32,
-       "observedRate": 0.38095238095238093,
-       "shareOfAllPositives": 0.23880597014925373
+       "riskTo": 0.43,
+       "n": 97,
+       "positives": 29,
+       "observedRate": 0.29896907216494845,
+       "shareOfAllPositives": 0.21641791044776118
       },
       {
        "status": "ok",
        "riskFrom": 0,
        "riskTo": 0.29,
-       "n": 282,
-       "positives": 56,
-       "observedRate": 0.19858156028368795,
-       "shareOfAllPositives": 0.417910447761194
+       "n": 277,
+       "positives": 53,
+       "observedRate": 0.19133574007220217,
+       "shareOfAllPositives": 0.39552238805970147
       }
      ]
     },
@@ -2231,17 +2577,17 @@
       "n": 50,
       "positives": 12,
       "observedRate": 0.24,
-      "meanPredicted": 0.2195627720049579,
-      "oe": 1.0930814810198362,
-      "brier": 0.17871772196378932,
-      "auroc": 0.5942982456140351,
+      "meanPredicted": 0.24169428655800843,
+      "oe": 0.9929899602421848,
+      "brier": 0.16219967258136303,
+      "auroc": 0.7236842105263157,
       "aurocCi95": [
-       0.3791787650019357,
-       0.7949373717510259
+       0.5357494986631016,
+       0.8838541666666666
       ],
       "oeCi95": [
-       0.549496399779112,
-       1.629740368487792
+       0.5108949387892121,
+       1.4927868315864754
       ],
       "tooSmall": false
      },
@@ -2251,17 +2597,17 @@
       "n": 146,
       "positives": 34,
       "observedRate": 0.2328767123287671,
-      "meanPredicted": 0.26666396002194503,
-      "oe": 0.8732965351208412,
-      "brier": 0.17143137448411816,
-      "auroc": 0.6685924369747899,
+      "meanPredicted": 0.261790995912738,
+      "oe": 0.8895520318292046,
+      "brier": 0.17024469968207195,
+      "auroc": 0.6620273109243697,
       "aurocCi95": [
-       0.5675023443988961,
-       0.7734516028633676
+       0.5607381465517242,
+       0.7653738612562142
       ],
       "oeCi95": [
-       0.6578727450335714,
-       1.1326883635063087
+       0.660755964602052,
+       1.146010047658142
       ],
       "tooSmall": false
      },
@@ -2271,17 +2617,17 @@
       "n": 151,
       "positives": 36,
       "observedRate": 0.23841059602649006,
-      "meanPredicted": 0.28575236894155703,
-      "oe": 0.8343258777156474,
-      "brier": 0.16925235585762607,
-      "auroc": 0.6603864734299518,
+      "meanPredicted": 0.2620986712866792,
+      "oe": 0.9096215362561701,
+      "brier": 0.15894621701927678,
+      "auroc": 0.735024154589372,
       "aurocCi95": [
-       0.5541880816187142,
-       0.7592856994840127
+       0.6341047875635842,
+       0.8257245296767355
       ],
       "oeCi95": [
-       0.6044557319102025,
-       1.048683950786477
+       0.654402179662326,
+       1.152093652142856
       ],
       "tooSmall": false
      },
@@ -2291,17 +2637,17 @@
       "n": 119,
       "positives": 52,
       "observedRate": 0.4369747899159664,
-      "meanPredicted": 0.34447542172679446,
-      "oe": 1.2685224035012104,
-      "brier": 0.2520868020815685,
-      "auroc": 0.5998851894374283,
+      "meanPredicted": 0.37928284801438755,
+      "oe": 1.1521079642899918,
+      "brier": 0.22456091930506838,
+      "auroc": 0.6693455797933409,
       "aurocCi95": [
-       0.49639329516728237,
-       0.7186659540896829
+       0.5655781430219147,
+       0.7668021777256605
       ],
       "oeCi95": [
-       1.0019522123514035,
-       1.526839262423121
+       0.9132886288508137,
+       1.3691212859036845
       ],
       "tooSmall": false
      },
@@ -2311,17 +2657,17 @@
       "n": 253,
       "positives": 64,
       "observedRate": 0.25296442687747034,
-      "meanPredicted": 0.2739455543975461,
-      "oe": 0.9234113232236351,
-      "brier": 0.17540057882190305,
-      "auroc": 0.6765873015873016,
+      "meanPredicted": 0.27826722338325194,
+      "oe": 0.9090701513525632,
+      "brier": 0.16528334589017948,
+      "auroc": 0.7175099206349207,
       "aurocCi95": [
-       0.6082789877879895,
-       0.7572123015873017
+       0.6450468651543794,
+       0.7894659805250831
       ],
       "oeCi95": [
-       0.7473094505798774,
-       1.124147071188349
+       0.7446762770448404,
+       1.0959837028694306
       ],
       "tooSmall": false
      },
@@ -2331,17 +2677,17 @@
       "n": 213,
       "positives": 70,
       "observedRate": 0.3286384976525822,
-      "meanPredicted": 0.3039626028006402,
-      "oe": 1.081180693363539,
-      "brier": 0.2119434531133213,
-      "auroc": 0.6437562437562439,
+      "meanPredicted": 0.3033622088882541,
+      "oe": 1.0833204928753628,
+      "brier": 0.19658521802652196,
+      "auroc": 0.7046953046953047,
       "aurocCi95": [
-       0.5618340421601749,
-       0.7276795634920634
+       0.6272314500567925,
+       0.7726464751464751
       ],
       "oeCi95": [
-       0.8734202310287571,
-       1.2870328981769656
+       0.8816750570866915,
+       1.2789612149398197
       ],
       "tooSmall": false
      },
@@ -2351,17 +2697,17 @@
       "n": 28,
       "positives": 7,
       "observedRate": 0.25,
-      "meanPredicted": 0.2983502786030078,
-      "oe": 0.83794123193247,
-      "brier": 0.1804328541243736,
-      "auroc": 0.5986394557823129,
+      "meanPredicted": 0.319952589780881,
+      "oe": 0.7813657647566226,
+      "brier": 0.19221556236805853,
+      "auroc": 0.6394557823129251,
       "aurocCi95": [
-       0.3552853260869565,
-       0.8513028689736764
+       0.40143398268398267,
+       0.8590993788819874
       ],
       "oeCi95": [
-       0.3593363900002381,
-       1.333288086625048
+       0.32574717732754593,
+       1.2655570913771828
       ],
       "tooSmall": true
      },
@@ -2371,9 +2717,9 @@
       "n": 6,
       "positives": 1,
       "observedRate": 0.16666666666666666,
-      "meanPredicted": 0.19651442022429644,
-      "oe": 0.8481141815264125,
-      "brier": 0.098524245378245,
+      "meanPredicted": 0.21860323779748603,
+      "oe": 0.7624162768397172,
+      "brier": 0.051784898522519975,
       "auroc": 1,
       "aurocCi95": [
        1,
@@ -2381,7 +2727,7 @@
       ],
       "oeCi95": [
        0,
-       2.007160557166275
+       1.4259250339098344
       ],
       "tooSmall": true
      },
@@ -2391,17 +2737,17 @@
       "n": 47,
       "positives": 11,
       "observedRate": 0.23404255319148937,
-      "meanPredicted": 0.2858753087822447,
-      "oe": 0.8186875396425471,
-      "brier": 0.20890656399602667,
-      "auroc": 0.4318181818181818,
+      "meanPredicted": 0.3197680966268274,
+      "oe": 0.7319133949270098,
+      "brier": 0.21191909758149116,
+      "auroc": 0.47979797979797983,
       "aurocCi95": [
-       0.22296941678520626,
-       0.6469444444444444
+       0.2513738738738739,
+       0.701060606060606
       ],
       "oeCi95": [
-       0.4280849999019656,
-       1.3202459454119666
+       0.3944489555785335,
+       1.1837568379376395
       ],
       "tooSmall": false
      },
@@ -2411,17 +2757,17 @@
       "n": 371,
       "positives": 113,
       "observedRate": 0.3045822102425876,
-      "meanPredicted": 0.2909723216184326,
-      "oe": 1.04677382559432,
-      "brier": 0.19421084148987827,
-      "auroc": 0.6930781367908347,
+      "meanPredicted": 0.2855053378895355,
+      "oe": 1.066817918341103,
+      "brier": 0.17679072725749462,
+      "auroc": 0.7475132057350621,
       "aurocCi95": [
-       0.6349614245106179,
-       0.7499183938779274
+       0.6880794284882706,
+       0.8027294194704909
       ],
       "oeCi95": [
-       0.903806689502875,
-       1.186431536379827
+       0.9240810326960763,
+       1.2013816631539547
       ],
       "tooSmall": false
      },
@@ -2431,17 +2777,17 @@
       "n": 14,
       "positives": 2,
       "observedRate": 0.14285714285714285,
-      "meanPredicted": 0.22374960740582345,
-      "oe": 0.6384687978380996,
-      "brier": 0.14330041905491933,
-      "auroc": 0.29166666666666663,
+      "meanPredicted": 0.2711346550023341,
+      "oe": 0.5268863283297852,
+      "brier": 0.1747882438259451,
+      "auroc": 0.20833333333333331,
       "aurocCi95": [
        0,
-       0.7692307692307692
+       0.5833333333333333
       ],
       "oeCi95": [
        0,
-       1.6675937661081823
+       1.4393533246326269
       ],
       "tooSmall": true
      },
@@ -2451,17 +2797,17 @@
       "n": 297,
       "positives": 80,
       "observedRate": 0.26936026936026936,
-      "meanPredicted": 0.2707441210445665,
-      "oe": 0.9948887101261586,
-      "brier": 0.18884348435821674,
-      "auroc": 0.6432027649769586,
+      "meanPredicted": 0.27026850443988276,
+      "oe": 0.9966395082494142,
+      "brier": 0.17889888727166964,
+      "auroc": 0.6811059907834102,
       "aurocCi95": [
-       0.5681813435863297,
-       0.7186451290857273
+       0.6142351204980981,
+       0.7554946852055132
       ],
       "oeCi95": [
-       0.8195644545081401,
-       1.1960226702674226
+       0.8155221777525226,
+       1.183942071427833
       ],
       "tooSmall": false
      },
@@ -2471,17 +2817,17 @@
       "n": 162,
       "positives": 52,
       "observedRate": 0.32098765432098764,
-      "meanPredicted": 0.3197798361357949,
-      "oe": 1.0037770304713016,
-      "brier": 0.19944697085079785,
-      "auroc": 0.6840909090909091,
+      "meanPredicted": 0.32713047823582136,
+      "oe": 0.9812220984484195,
+      "brier": 0.18107972922352494,
+      "auroc": 0.7540209790209791,
       "aurocCi95": [
-       0.5943832752957376,
-       0.7696068455134135
+       0.6764414649099991,
+       0.8277483143438346
       ],
       "oeCi95": [
-       0.7668556141702331,
-       1.249207652690021
+       0.7666697496394974,
+       1.2112082912156303
       ],
       "tooSmall": false
      },
@@ -2491,17 +2837,17 @@
       "n": 7,
       "positives": 2,
       "observedRate": 0.2857142857142857,
-      "meanPredicted": 0.2624174649829272,
-      "oe": 1.0887777066700732,
-      "brier": 0.16048254612275376,
-      "auroc": 0.9,
+      "meanPredicted": 0.250410673758942,
+      "oe": 1.140982855983722,
+      "brier": 0.17449318513823583,
+      "auroc": 0.8,
       "aurocCi95": [
-       0.5,
+       0.4,
        1
       ],
       "oeCi95": [
        0,
-       2.1822380332653144
+       2.5151497580550832
       ],
       "tooSmall": true
      },
@@ -2511,17 +2857,17 @@
       "n": 94,
       "positives": 24,
       "observedRate": 0.2553191489361702,
-      "meanPredicted": 0.27183744538339105,
-      "oe": 0.939234653916336,
-      "brier": 0.18484805084220032,
-      "auroc": 0.6255952380952381,
+      "meanPredicted": 0.2827319223900067,
+      "oe": 0.9030432318285491,
+      "brier": 0.17526347280954135,
+      "auroc": 0.6636904761904762,
       "aurocCi95": [
-       0.4861098836352924,
-       0.7560218712549222
+       0.5245507246376812,
+       0.7995607333842626
       ],
       "oeCi95": [
-       0.6608415099199879,
-       1.3502109101104303
+       0.6324409778923157,
+       1.2680633337488194
       ],
       "tooSmall": false
      },
@@ -2531,17 +2877,17 @@
       "n": 23,
       "positives": 7,
       "observedRate": 0.30434782608695654,
-      "meanPredicted": 0.30215225814114716,
-      "oe": 1.0072664290491047,
-      "brier": 0.20367586908716245,
-      "auroc": 0.6875,
+      "meanPredicted": 0.28985877209830285,
+      "oe": 1.0499865982449545,
+      "brier": 0.16811358909594282,
+      "auroc": 0.7678571428571428,
       "aurocCi95": [
-       0.4357692307692308,
-       0.8982954545454543
+       0.49562500000000004,
+       0.9500000000000001
       ],
       "oeCi95": [
-       0.4169667408042418,
-       1.6248578077344573
+       0.4487130865385236,
+       1.6143516898257442
       ],
       "tooSmall": true
      },
@@ -2551,17 +2897,17 @@
       "n": 20,
       "positives": 7,
       "observedRate": 0.35,
-      "meanPredicted": 0.3341163157695805,
-      "oe": 1.0475393851803798,
-      "brier": 0.19801451733383885,
-      "auroc": 0.6813186813186813,
+      "meanPredicted": 0.357985321924654,
+      "oe": 0.9776937169330795,
+      "brier": 0.1933750263522738,
+      "auroc": 0.6923076923076923,
       "aurocCi95": [
-       0.3426470588235294,
-       0.9825604395604394
+       0.4285714285714286,
+       0.9358688186813187
       ],
       "oeCi95": [
-       0.4738253231318588,
-       1.6877969363229826
+       0.45792111211602543,
+       1.5472046082923596
       ],
       "tooSmall": true
      },
@@ -2571,17 +2917,17 @@
       "n": 269,
       "positives": 76,
       "observedRate": 0.2825278810408922,
-      "meanPredicted": 0.2824334738061319,
-      "oe": 1.000334263617864,
-      "brier": 0.1853421069666881,
-      "auroc": 0.6964139623670575,
+      "meanPredicted": 0.282384904075469,
+      "oe": 1.0005063194362012,
+      "brier": 0.17584145257979145,
+      "auroc": 0.7253886010362695,
       "aurocCi95": [
-       0.6262650629000222,
-       0.7654134349169744
+       0.6607832530613953,
+       0.781343472124722
       ],
       "oeCi95": [
-       0.833770686012281,
-       1.1773161293298602
+       0.8244667326148004,
+       1.18115551550593
       ],
       "tooSmall": false
      },
@@ -2591,17 +2937,17 @@
       "n": 60,
       "positives": 20,
       "observedRate": 0.3333333333333333,
-      "meanPredicted": 0.31488511810982084,
-      "oe": 1.0585871295990508,
-      "brier": 0.2273787177698576,
-      "auroc": 0.55125,
+      "meanPredicted": 0.31088266519075014,
+      "oe": 1.072215889325344,
+      "brier": 0.20298512809252725,
+      "auroc": 0.6812499999999999,
       "aurocCi95": [
-       0.3839083440308087,
-       0.7212719796650717
+       0.5351535326086956,
+       0.824031530808729
       ],
       "oeCi95": [
-       0.6884884207323646,
-       1.4506475016905143
+       0.7060585996411031,
+       1.4452964512920707
       ],
       "tooSmall": false
      }
@@ -2990,169 +3336,116 @@
     ],
     "factors": [
      {
-      "feature": "er_visits_17",
-      "label": "ER visits in 2017 (log)",
-      "coefPerSd": 0.1261927618478373,
-      "oddsRatioPerSd": 1.1345008356844413,
-      "ci95": [
-       0.06539006399969027,
-       0.17907264650215152
-      ],
-      "sameSignShare": 1
-     },
-     {
-      "feature": "hosp_stays_17",
-      "label": "Hospital stays in 2017 (log)",
-      "coefPerSd": 0.10023947126623242,
-      "oddsRatioPerSd": 1.1054356064461672,
-      "ci95": [
-       0.0379229434739241,
-       0.16187359400317103
-      ],
-      "sameSignShare": 1
-     },
-     {
-      "feature": "rx_fills_17",
-      "label": "Prescription fills in 2017 (log)",
-      "coefPerSd": 0.09841121621644539,
-      "oddsRatioPerSd": 1.103416434559493,
-      "ci95": [
-       0.05189978902356016,
-       0.14016539080767804
-      ],
-      "sameSignShare": 1
-     },
-     {
-      "feature": "office_visits_17",
-      "label": "Office visits in 2017 (log)",
-      "coefPerSd": 0.08537700482708517,
-      "oddsRatioPerSd": 1.0891275956687132,
-      "ci95": [
-       0.025632635747634754,
-       0.14859008102736945
-      ],
-      "sameSignShare": 1
+      "feature": "spending_17",
+      "label": "Total health spending in 2017 (log $)",
+      "meanAbsLogit": 0.2783725919110866,
+      "direction": "raises",
+      "spearman": 0.7737790438466745
      },
      {
       "feature": "age",
       "label": "Age (years)",
-      "coefPerSd": 0.08263344360445143,
-      "oddsRatioPerSd": 1.0861436026861953,
-      "ci95": [
-       0.0335734457418126,
-       0.13632273384649904
-      ],
-      "sameSignShare": 1
+      "meanAbsLogit": 0.13522347521903647,
+      "direction": "raises",
+      "spearman": 0.8748709653027853
      },
      {
-      "feature": "home_health_17",
-      "label": "Any home health care in 2017",
-      "coefPerSd": 0.06627334762010766,
-      "oddsRatioPerSd": 1.0685187543088768,
-      "ci95": [
-       0.003046407167752745,
-       0.12346518780662132
-      ],
-      "sameSignShare": 0.98
+      "feature": "hosp_nights_17",
+      "label": "Hospital nights in 2017 (log)",
+      "meanAbsLogit": 0.09971406242997714,
+      "direction": "raises",
+      "spearman": 0.6344178263760762
      },
      {
-      "feature": "female",
-      "label": "Female",
-      "coefPerSd": -0.050788518763173154,
-      "oddsRatioPerSd": 0.95047965789278,
-      "ci95": [
-       -0.09629380070056269,
-       0.0021906109550584984
-      ],
-      "sameSignShare": 0.9666666666666667
+      "feature": "rx_fills_17",
+      "label": "Prescription fills in 2017 (log)",
+      "meanAbsLogit": 0.09367077246928039,
+      "direction": "raises",
+      "spearman": 0.8797703215152476
      },
      {
-      "feature": "physical_score",
-      "label": "Physical health summary (VR-12 PCS, higher = better)",
-      "coefPerSd": -0.04922629394638614,
-      "oddsRatioPerSd": 0.95196568125125,
-      "ci95": [
-       -0.10035145118711074,
-       -0.005364997897202846
-      ],
-      "sameSignShare": 0.9966666666666667
+      "feature": "office_visits_17",
+      "label": "Office visits in 2017 (log)",
+      "meanAbsLogit": 0.09000524023984934,
+      "direction": "raises",
+      "spearman": 0.8736403223741867
+     },
+     {
+      "feature": "er_visits_17",
+      "label": "ER visits in 2017 (log)",
+      "meanAbsLogit": 0.08655258018992565,
+      "direction": "raises",
+      "spearman": 0.759482580682415
      },
      {
       "feature": "mental_score",
       "label": "Mental health summary (VR-12 MCS, higher = better)",
-      "coefPerSd": -0.04745636427352982,
-      "oddsRatioPerSd": 0.9536520855262779,
-      "ci95": [
-       -0.09361798045787323,
-       -0.0015107693291091895
-      ],
-      "sameSignShare": 0.9733333333333334
+      "meanAbsLogit": 0.08377039194518199,
+      "direction": "lowers",
+      "spearman": -0.6246813910500914
+     },
+     {
+      "feature": "hosp_stays_17",
+      "label": "Hospital stays in 2017 (log)",
+      "meanAbsLogit": 0.06873455189183966,
+      "direction": "raises",
+      "spearman": 0.6321405936033607
+     },
+     {
+      "feature": "physical_score",
+      "label": "Physical health summary (VR-12 PCS, higher = better)",
+      "meanAbsLogit": 0.057656788828694044,
+      "direction": "lowers",
+      "spearman": -0.6642547169640821
+     },
+     {
+      "feature": "outpatient_visits_17",
+      "label": "Hospital outpatient visits in 2017 (log)",
+      "meanAbsLogit": 0.05182335689404381,
+      "direction": "raises",
+      "spearman": 0.8815128935731112
      },
      {
       "feature": "distress_k6",
       "label": "Psychological distress (K6, 0-24)",
-      "coefPerSd": 0.046553941810025354,
-      "oddsRatioPerSd": 1.047654589929233,
-      "ci95": [
-       -0.0005915596194489216,
-       0.09142236408267586
-      ],
-      "sameSignShare": 0.97
-     },
-     {
-      "feature": "poor_physical_rating",
-      "label": "Self-rated physical health (1 excellent - 5 poor)",
-      "coefPerSd": 0.04608378268202033,
-      "oddsRatioPerSd": 1.0471621413344538,
-      "ci95": [
-       -0.008345738830169726,
-       0.0941366199330801
-      ],
-      "sameSignShare": 0.9466666666666667
-     },
-     {
-      "feature": "n_cancer_types",
-      "label": "Number of cancer types",
-      "coefPerSd": 0.04268538735558626,
-      "oddsRatioPerSd": 1.0436095104485612,
-      "ci95": [
-       -0.02155133108056816,
-       0.10052785395282993
-      ],
-      "sameSignShare": 0.9066666666666666
+      "meanAbsLogit": 0.025373334371975642,
+      "direction": "raises",
+      "spearman": 0.3097137010558438
      },
      {
       "feature": "depression_phq2",
       "label": "Depression screen (PHQ-2, 0-6)",
-      "coefPerSd": 0.041872129333849935,
-      "oddsRatioPerSd": 1.042761131664813,
-      "ci95": [
-       -0.0013851855560407665,
-       0.09338276210403555
-      ],
-      "sameSignShare": 0.9666666666666667
+      "meanAbsLogit": 0.022088651688972293,
+      "direction": "raises",
+      "spearman": 0.3085027880361132
      },
      {
-      "feature": "not_married",
-      "label": "Not married",
-      "coefPerSd": 0.04106786327982922,
-      "oddsRatioPerSd": 1.041922811445599,
-      "ci95": [
-       -0.013357146993036419,
-       0.10039994071284698
-      ],
-      "sameSignShare": 0.93
+      "feature": "poor_physical_rating",
+      "label": "Self-rated physical health (1 excellent - 5 poor)",
+      "meanAbsLogit": 0.0182941846922416,
+      "direction": "raises",
+      "spearman": 0.357052890437533
      },
      {
-      "feature": "nh_black",
-      "label": "Non-Hispanic Black",
-      "coefPerSd": -0.035505880487916246,
-      "oddsRatioPerSd": 0.9651170588541111,
-      "ci95": [
-       -0.09244507434795604,
-       0.02103045559032511
-      ],
-      "sameSignShare": 0.8733333333333333
+      "feature": "missed_work_days_17",
+      "label": "Work days missed for illness in 2017 (log)",
+      "meanAbsLogit": 0.018195595482678073,
+      "direction": "raises",
+      "spearman": 0.5098635094593423
+     },
+     {
+      "feature": "home_health_days_17",
+      "label": "Home health days in 2017 (log)",
+      "meanAbsLogit": 0.016474642723662492,
+      "direction": "raises",
+      "spearman": 0.4917684170653845
+     },
+     {
+      "feature": "home_health_17",
+      "label": "Any home health care in 2017",
+      "meanAbsLogit": 0.011518557216742128,
+      "direction": "raises",
+      "spearman": 0.491593087495237
      }
     ],
     "plainFactors": [
@@ -3314,13 +3607,13 @@
      }
     ],
     "clinicalRecords": {
-     "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the survey model (tie within CI)",
-     "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02, vs the MEPS model's 0.666 out-of-fold (paired d +0.020 [-0.021, +0.063]): the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.003, +0.012], d Brier -0.0012 [-0.0022, -0.0001]; Synthea prior d AUROC +0.004 [-0.002, +0.010], d Brier -0.0009 [-0.0018, -0.0000]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. (Q3's MEPS-only reference is 0.663, not 0.666, because it uses a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses the MEPS-only model."
+     "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the final survey model (tie within CI)",
+     "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02, vs the MEPS model's 0.713 out-of-fold (paired d -0.026 [-0.068, +0.013]): the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.003, +0.012], d Brier -0.0012 [-0.0022, -0.0001]; Synthea prior d AUROC +0.004 [-0.002, +0.010], d Brier -0.0009 [-0.0018, -0.0000]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. (Q3 adds each Synthea score as one feature to the MEPS L2 logistic on 34 domain features, our earlier model; its reference AUROC is 0.663 with a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses a MEPS-only model (the calibrated forest)."
     },
     "clinicalRecordsDetail": {
      "verdict": {
-      "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the survey model (tie within CI)",
-      "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02, vs the MEPS model's 0.666 out-of-fold (paired d +0.020 [-0.021, +0.063]): the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.003, +0.012], d Brier -0.0012 [-0.0022, -0.0001]; Synthea prior d AUROC +0.004 [-0.002, +0.010], d Brier -0.0009 [-0.0018, -0.0000]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. (Q3's MEPS-only reference is 0.663, not 0.666, because it uses a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses the MEPS-only model."
+      "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the final survey model (tie within CI)",
+      "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02, vs the MEPS model's 0.713 out-of-fold (paired d -0.026 [-0.068, +0.013]): the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.003, +0.012], d Brier -0.0012 [-0.0022, -0.0001]; Synthea prior d AUROC +0.004 [-0.002, +0.010], d Brier -0.0009 [-0.0018, -0.0000]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. (Q3 adds each Synthea score as one feature to the MEPS L2 logistic on 34 domain features, our earlier model; its reference AUROC is 0.663 with a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses a MEPS-only model (the calibrated forest)."
      },
      "design": "Do the synthetic clinical records (Synthea) add anything beyond the MEPS survey?\n\nUsage: .venv/bin/python -I analysis/synthea.py [data]     (expects data/meps and data/synthea; run train.py first)\nWrites analysis/out/synthea.json.\n\nThere is no key between MEPS and Synthea, so no individual can be linked. Three pre-registered questions:\n  Q1 (inside Synthea): do clinical-only features (stage, comorbidities, metastasis, opioids, kidney function)\n     add AUROC over the features both sources share? Person-years, CV grouped by patient.\n     Pass: paired dAUROC 95% CI above 0.\n  Q2 (transport): a Synthea model trained on shared features only, applied unchanged to MEPS dev survivors.\n     Pass: AUROC CI above 0.5. Also reports calibration (O/E) to show the population shift.\n  Q3 (increment in MEPS): add Synthea-derived features to the MEPS model, same repeated CV as train.py,\n     paired against MEPS-only. (a) transferred \"clinical burden\" score = E[clinical part of the Synthea logit |\n     shared features]; (b) shrunken stratum features (acute rate, advanced-stage share, comorbidity burden)\n     under three stratum definitions. Pass: dAUROC CI above 0 or dBrier CI below 0.\nOnly MEPS survivors with breast, colon, lung or prostate cancer are aligned to strata (Synthea has only those);\neveryone else gets the overall Synthea mean plus an \"unaligned\" flag.",
      "q1WithinSynthea": {
@@ -3356,13 +3649,13 @@
       "observedRate": 0.2875536480686695,
       "oe": 1.0234659219173012,
       "vsMepsModel": {
-       "mepsOofAuroc": 0.6661571659773422,
-       "deltaAuroc": 0.02020769645747167,
+       "mepsOofAuroc": 0.7127989570221184,
+       "deltaAuroc": -0.026434094587304502,
        "ci95": [
-        -0.021453754578754498,
-        0.06282158012284882
+        -0.0680747033196654,
+        0.012947305693703283
        ],
-       "note": "Paired bootstrap: Synthea shared-variable model (never saw MEPS) vs MEPS logistic OOF predictions, same 466 survivors."
+       "note": "Paired bootstrap: Synthea shared-variable model (never saw MEPS) vs the final MEPS model (calibrated forest) OOF predictions, same 466 survivors."
       }
      },
      "q3Increment": {
@@ -3435,6 +3728,14 @@
           -0.00001230563780774138
          ],
          "p_better": 0.977
+        },
+        "log_loss": {
+         "value": -0.0022481735498470767,
+         "ci95": [
+          -0.0044722714199847665,
+          -0.00015353052498868493
+         ],
+         "p_better": 0.984
         }
        }
       },
@@ -3484,6 +3785,14 @@
           -0.00009849922729246662
          ],
          "p_better": 0.9875
+        },
+        "log_loss": {
+         "value": -0.003118838435180016,
+         "ci95": [
+          -0.005678373163279624,
+          -0.00048768351131031075
+         ],
+         "p_better": 0.991
         }
        }
       },
@@ -3533,6 +3842,14 @@
           0.0009504703023756938
          ],
          "p_better": 0.0175
+        },
+        "log_loss": {
+         "value": 0.0012912317399955686,
+         "ci95": [
+          0.00019813906415378502,
+          0.0023959684120456954
+         ],
+         "p_better": 0.007
         }
        }
       },
@@ -3582,6 +3899,14 @@
           0.0017577007744953679
          ],
          "p_better": 0.019
+        },
+        "log_loss": {
+         "value": 0.0021986857634769263,
+         "ci95": [
+          0.00021671355580515922,
+          0.0042398255218389965
+         ],
+         "p_better": 0.016
         }
        }
       },
@@ -3631,6 +3956,14 @@
           0.001894487587817338
          ],
          "p_better": 0.1315
+        },
+        "log_loss": {
+         "value": 0.001713666862067309,
+         "ci95": [
+          -0.0011314616957336042,
+          0.0045391777414592735
+         ],
+         "p_better": 0.116
         }
        }
       }
@@ -3684,34 +4017,47 @@
      "notAligned": "MEPS survivors with only skin, melanoma, uterine, cervical, bladder, lymphoma or other cancers (Synthea has none) get the overall Synthea mean and an 'unaligned' flag. Individual records were never matched: with no key, a person-level join on age/sex/race/cancer would be mostly noise."
     },
     "heldoutStatusMix": {
-     "alert": 41,
-     "watch": 41,
-     "ok": 117
+     "alert": 40,
+     "watch": 43,
+     "ok": 116
     },
     "caveats": [
      "Associations, not causes. Prior acute care and poor physical function dominate; they mark need, not levers.",
-     "Small data: 466 development survivors, 134 with the outcome. Differences of a few AUROC points are within chance.",
+     "Small data: 466 development survivors, 134 with the outcome. The ranking gain over the baseline (nested CV +0.04) is not statistically significant; the gain in probability quality (log loss, Brier) is.",
      "Subgroups with n < 30 or < 10 events (Hispanic, NH Asian, NH other, uninsured, colon, lung) are too small to judge.",
      "MEPS is a US national sample; the Synthea clinical records are synthetic and resemble South Florida. Nothing from Synthea is evidence about real patients."
     ]
    }
   },
   "summary": {
-   "aurocModel": 0.6661571659773422,
+   "aurocModel": 0.7127989570221184,
    "aurocBaseline": 0.6593463405862255,
-   "dAuroc": 0.006810825391116659,
+   "dAuroc": 0.05345261643589283,
    "dAurocCi": [
-    -0.03830729529839445,
-    0.049672308835254794
+    -0.0012418160695974814,
+    0.10476714204627115
    ],
-   "brierModel": 0.19210365226411782,
+   "brierModel": 0.17959085396966648,
    "brierBaseline": 0.20076214529615172,
    "dBrierCi": [
-    -0.020539336312090643,
-    0.0028582695377787123
+    -0.03460302573122142,
+    -0.007139706666116317
    ],
-   "slopeModel": 1.093224415389126,
-   "slopeBaseline": 0.44605594589114866
+   "slopeModel": 1.1027281437453391,
+   "slopeBaseline": 0.44605594589114866,
+   "nested": {
+    "auroc": {
+     "search": 0.7107309836360366,
+     "baseline": 0.6720014385901817,
+     "previous": 0.6768342024815681
+    },
+    "dAuroc": 0.03872954504585491,
+    "dLogLoss": -0.0670916864161446
+   },
+   "firstEvent": {
+    "model": 0.6623325892857141,
+    "baseline": 0.616015625
+   }
   }
  }
 }

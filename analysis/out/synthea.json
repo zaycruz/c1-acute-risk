@@ -1,7 +1,7 @@
 {
  "verdict": {
-  "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the survey model (tie within CI)",
-  "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02, vs the MEPS model's 0.666 out-of-fold (paired d +0.020 [-0.021, +0.063]): the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.003, +0.012], d Brier -0.0012 [-0.0022, -0.0001]; Synthea prior d AUROC +0.004 [-0.002, +0.010], d Brier -0.0009 [-0.0018, -0.0000]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. (Q3's MEPS-only reference is 0.663, not 0.666, because it uses a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses the MEPS-only model."
+  "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the final survey model (tie within CI)",
+  "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02, vs the MEPS model's 0.713 out-of-fold (paired d -0.026 [-0.068, +0.013]): the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.003, +0.012], d Brier -0.0012 [-0.0022, -0.0001]; Synthea prior d AUROC +0.004 [-0.002, +0.010], d Brier -0.0009 [-0.0018, -0.0000]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. (Q3 adds each Synthea score as one feature to the MEPS L2 logistic on 34 domain features, our earlier model; its reference AUROC is 0.663 with a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses a MEPS-only model (the calibrated forest)."
  },
  "design": "Do the synthetic clinical records (Synthea) add anything beyond the MEPS survey?\n\nUsage: .venv/bin/python -I analysis/synthea.py [data]     (expects data/meps and data/synthea; run train.py first)\nWrites analysis/out/synthea.json.\n\nThere is no key between MEPS and Synthea, so no individual can be linked. Three pre-registered questions:\n  Q1 (inside Synthea): do clinical-only features (stage, comorbidities, metastasis, opioids, kidney function)\n     add AUROC over the features both sources share? Person-years, CV grouped by patient.\n     Pass: paired dAUROC 95% CI above 0.\n  Q2 (transport): a Synthea model trained on shared features only, applied unchanged to MEPS dev survivors.\n     Pass: AUROC CI above 0.5. Also reports calibration (O/E) to show the population shift.\n  Q3 (increment in MEPS): add Synthea-derived features to the MEPS model, same repeated CV as train.py,\n     paired against MEPS-only. (a) transferred \"clinical burden\" score = E[clinical part of the Synthea logit |\n     shared features]; (b) shrunken stratum features (acute rate, advanced-stage share, comorbidity burden)\n     under three stratum definitions. Pass: dAUROC CI above 0 or dBrier CI below 0.\nOnly MEPS survivors with breast, colon, lung or prostate cancer are aligned to strata (Synthea has only those);\neveryone else gets the overall Synthea mean plus an \"unaligned\" flag.",
  "q1WithinSynthea": {
@@ -37,13 +37,13 @@
   "observedRate": 0.2875536480686695,
   "oe": 1.0234659219173012,
   "vsMepsModel": {
-   "mepsOofAuroc": 0.6661571659773422,
-   "deltaAuroc": 0.02020769645747167,
+   "mepsOofAuroc": 0.7127989570221184,
+   "deltaAuroc": -0.026434094587304502,
    "ci95": [
-    -0.021453754578754498,
-    0.06282158012284882
+    -0.0680747033196654,
+    0.012947305693703283
    ],
-   "note": "Paired bootstrap: Synthea shared-variable model (never saw MEPS) vs MEPS logistic OOF predictions, same 466 survivors."
+   "note": "Paired bootstrap: Synthea shared-variable model (never saw MEPS) vs the final MEPS model (calibrated forest) OOF predictions, same 466 survivors."
   }
  },
  "q3Increment": {
@@ -116,6 +116,14 @@
       -1.230563780774138e-05
      ],
      "p_better": 0.977
+    },
+    "log_loss": {
+     "value": -0.0022481735498470767,
+     "ci95": [
+      -0.0044722714199847665,
+      -0.00015353052498868493
+     ],
+     "p_better": 0.984
     }
    }
   },
@@ -165,6 +173,14 @@
       -9.849922729246662e-05
      ],
      "p_better": 0.9875
+    },
+    "log_loss": {
+     "value": -0.003118838435180016,
+     "ci95": [
+      -0.005678373163279624,
+      -0.00048768351131031075
+     ],
+     "p_better": 0.991
     }
    }
   },
@@ -214,6 +230,14 @@
       0.0009504703023756938
      ],
      "p_better": 0.0175
+    },
+    "log_loss": {
+     "value": 0.0012912317399955686,
+     "ci95": [
+      0.00019813906415378502,
+      0.0023959684120456954
+     ],
+     "p_better": 0.007
     }
    }
   },
@@ -263,6 +287,14 @@
       0.0017577007744953679
      ],
      "p_better": 0.019
+    },
+    "log_loss": {
+     "value": 0.0021986857634769263,
+     "ci95": [
+      0.00021671355580515922,
+      0.0042398255218389965
+     ],
+     "p_better": 0.016
     }
    }
   },
@@ -312,6 +344,14 @@
       0.001894487587817338
      ],
      "p_better": 0.1315
+    },
+    "log_loss": {
+     "value": 0.001713666862067309,
+     "ci95": [
+      -0.0011314616957336042,
+      0.0045391777414592735
+     ],
+     "p_better": 0.116
     }
    }
   }
