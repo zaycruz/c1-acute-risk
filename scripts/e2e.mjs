@@ -11,9 +11,15 @@ const checks = [];
 const responses = {};
 const check = (name, ok, info) => { checks.push({ name, ok: !!ok, ...(info ? { info } : {}) }); };
 
+async function fetchRetry(url, init) { // retry network errors only (a slow link times out connects); HTTP errors are results, not retried
+  for (let i = 0; ; i++) {
+    try { return await fetch(url, init); } catch (e) { if (i >= 3) throw e; await new Promise((r) => setTimeout(r, 2000 * (i + 1))); }
+  }
+}
+
 async function get(path) {
   const t0 = Date.now();
-  const res = await fetch(BASE + path);
+  const res = await fetchRetry(BASE + path);
   const text = await res.text();
   let body = text;
   try { body = JSON.parse(text); } catch {}
@@ -107,7 +113,7 @@ check("every survivor panel matches the contract, the submission risk and its ti
 const missing = await get("/api/c1/survivors/c1-nope");
 check("unknown survivor returns 404 JSON", missing.status === 404 && missing.body?.error);
 responses["/api/c1/survivors/c1-nope"] = missing;
-const post = await fetch(BASE + "/api/c1/survivors", { method: "POST" });
+const post = await fetchRetry(BASE + "/api/c1/survivors", { method: "POST" });
 check("POST is rejected with 405", post.status === 405);
 
 // 5. Metrics / model card
@@ -154,11 +160,14 @@ if (M.metrics) {
     SM.expectedHeldout?.aurocRange95?.[0] < SM.expectedHeldout.aurocRange95[1] && SM.provenance?.submissionSha256 === csvSha &&
     Number.isInteger(SM.provenance.inputRangeCheck?.total) && M.display.keyNumbers.some((k) => k.value === `${Math.round(SM.callsAt50.forest.cameTrue * 100)}%`),
     SM && { calls: SM.callsAt50.forest, sha: SM.provenance?.submissionSha256?.slice(0, 12), outOfRange: SM.provenance?.inputRangeCheck?.total });
-  const head = execSync("git rev-parse HEAD", { cwd: new URL("..", import.meta.url) }).toString().trim();
-  check("provenance: /metrics build.gitSha and the x-c1-commit header name this checkout's commit; x-c1-artifact is the committed CSV's sha256",
-    M.build?.gitSha === head && responses["/api/c1/metrics"].headers["x-c1-commit"] === head &&
+  const served = String(M.build?.gitSha || "");
+  const sameCode = (() => { // served commit is in this checkout's history and the served code (src, public, analysis, submission) is unchanged since
+    try { execSync(`git merge-base --is-ancestor ${served} HEAD && git diff --quiet ${served} HEAD -- src public analysis submission wrangler.jsonc`, { cwd: new URL("..", import.meta.url), stdio: "ignore" }); return true; } catch { return false; }
+  })();
+  check("provenance: build.gitSha and x-c1-commit name a commit whose served code equals this checkout; x-c1-artifact is the committed CSV's sha256",
+    /^[0-9a-f]{40}$/.test(served) && sameCode && responses["/api/c1/metrics"].headers["x-c1-commit"] === served &&
     responses["/api/c1/metrics"].headers["x-c1-artifact"] === `sha256:${csvSha}` && M.build.submissionSha256 === csvSha,
-    { served: M.build?.gitSha, local: head });
+    { served });
   const FMt = M.fairnessMitigation;
   check("fairness mitigation: pre-registered variants with CIs, a decision, and the language gap stated", FMt && FMt.variants?.length === 5 &&
     FMt.variants.every((v) => v.nhBlackAurocCi95?.length === 2 && Number.isFinite(v.overallLogLoss)) &&
