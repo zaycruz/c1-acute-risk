@@ -6,7 +6,7 @@ clinical records (Synthea, different people, no shared key) add anything. The re
 
 - Live: https://c1-acute-risk.zay-259.workers.dev (demo page) · API contract: [CONTRACT.md](CONTRACT.md)
 - Submission: [`submission/heldout_predictions.csv`](submission/heldout_predictions.csv) (`ID,predicted_risk`, 199 rows in template order)
-- Latest E2E artifact: `runs/e2e-latest.json` (31/31 checks), `runs/page-check-latest.json`, `runs/demo-page-*.png`
+- Latest E2E artifact: `runs/e2e-latest.json` (34/34 checks), `runs/page-check-latest.json`, `runs/demo-page-*.png`
 
 ## Results (out-of-fold, 466 development survivors, 134 events)
 
