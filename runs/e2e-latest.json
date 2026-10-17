@@ -1,5 +1,5 @@
 {
- "at": "2026-10-17T18:21:14.874Z",
+ "at": "2026-10-17T18:29:18.689Z",
  "base": "https://c1-acute-risk.zay-259.workers.dev",
  "passed": 39,
  "total": 39,
@@ -89,7 +89,7 @@
    }
   },
   {
-   "name": "console display fields within agreed lengths (riskWords 60, forEllie 160 with caveat, headline 90, evidence 120), redFlags well formed, humanCheck set exactly for weak-ranking groups off the ok tier",
+   "name": "console display fields within agreed lengths (riskWords 60, forAssistant 160 with caveat, headline 90, evidence 120), redFlags well formed, humanCheck set exactly for weak-ranking groups off the ok tier",
    "ok": true,
    "info": {
     "over": []
@@ -355,7 +355,7 @@
    "name": "provenance: build.gitSha and x-c1-commit name a commit whose served code equals this checkout; x-c1-artifact is the committed CSV's sha256",
    "ok": true,
    "info": {
-    "served": "1f2ad6420d0ed677502232f118454c53e2242f9c"
+    "served": "ca550c0a2c60b852c797956d2f23c7bd0d2c5355"
    }
   },
   {
@@ -385,12 +385,12 @@
  "responses": {
   "/": {
    "status": 200,
-   "ms": 593,
+   "ms": 2969,
    "bytes": 10104
   },
   "/api/c1/survivors": {
    "status": 200,
-   "ms": 504,
+   "ms": 142,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
@@ -398,17 +398,17 @@
     "access-control-expose-headers": "x-c1-commit, x-c1-artifact",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c15069be53b3cb-MIA",
+    "cf-ray": "a4c15d34bdbd7224-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 18:19:53 GMT",
+    "date": "Sat, 17 Oct 2026 18:28:37 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=E2xtktNdG861As2Yul0jYAYJwHrBosHmxm46AkMiEvCCfzLqquyXwsl28sAAz0pSf%2F9zpP06kASWZ%2BzfTxZ7eO1MGAL9e0PFxGDoZoPCslbqaTKMd%2F3LjU7Av2RBH2tXvvQnBAmmofFu4K9h647MouO%2BkWE%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=vZgJG9rUP1WDcMT23PYOTea68vNX9c9ZxqAKtaO4l5J8P0AqVc%2B8tQzqwm0Htz%2BriHslElwWEnCeMgnqJmBPS%2BMIlnCRhLG3KVTKuoEqiDnt%2F4tf9opyHjewTMiI8tklyV8tgcPA%2BWOTD1ytf%2FLSoKnLkUM%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked",
     "x-c1-artifact": "sha256:77f6006837c4081102998f7f81198985e530b5aedb6fc66df8c29b98c2013aee",
-    "x-c1-commit": "1f2ad6420d0ed677502232f118454c53e2242f9c"
+    "x-c1-commit": "ca550c0a2c60b852c797956d2f23c7bd0d2c5355"
    },
    "body": [
     {
@@ -3107,7 +3107,7 @@
   },
   "/api/c1/survivors/c1-S71188550": {
    "status": 200,
-   "ms": 503,
+   "ms": 126,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
@@ -3115,17 +3115,17 @@
     "access-control-expose-headers": "x-c1-commit, x-c1-artifact",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c1506cf936b3cb-MIA",
+    "cf-ray": "a4c15d35b8527224-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 18:19:53 GMT",
+    "date": "Sat, 17 Oct 2026 18:28:37 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=IOPLWuHOBwmsGeafryeE19Zt9s7m8MaelcHX3Y5jW4FazDCvvSE5NeJkSIDmEwSrwuAFLMDKGu%2FK78dcoPDEDXdAleVrGvr9lbOkEbWE63TtQFguJ09AOvaHyDCNnab76RTjWEpK9ObQDg8%2BabEngAQYAQc%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=eNCOAIsPKdQgsFpq41511rAM7QUD6dYx8rT1gGlbxxE7nSdd22g7bzX3M%2BW2XDDodLGQvbD2GHEFspJxE4HJVU3%2FkfkeBw2PdwQ3x9tnbI6VRnYAxrxyNrbciLHPjdFlQ83%2FHG%2FrtnQUTLHBcbPx3OwtLyw%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked",
     "x-c1-artifact": "sha256:77f6006837c4081102998f7f81198985e530b5aedb6fc66df8c29b98c2013aee",
-    "x-c1-commit": "1f2ad6420d0ed677502232f118454c53e2242f9c"
+    "x-c1-commit": "ca550c0a2c60b852c797956d2f23c7bd0d2c5355"
    },
    "body": {
     "survivorId": "c1-S71188550",
@@ -3139,6 +3139,7 @@
      "watch": 0.29
     },
     "riskWords": "Higher than most: about 7 in 10 like them had one",
+    "forAssistant": "Hospital risk 70% next year (high; average 29%), mainly nights in hospital last year. Association, not cause.",
     "forEllie": "Hospital risk 70% next year (high; average 29%), mainly nights in hospital last year. Association, not cause.",
     "fairnessFlags": [],
     "redFlags": {
@@ -3283,7 +3284,7 @@
   },
   "/api/c1/survivors/c1-nope": {
    "status": 404,
-   "ms": 145,
+   "ms": 101,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
@@ -3291,16 +3292,16 @@
     "access-control-expose-headers": "x-c1-commit, x-c1-artifact",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c152615f80b3cb-MIA",
+    "cf-ray": "a4c15e352b257224-MIA",
     "connection": "keep-alive",
     "content-length": "30",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 18:21:13 GMT",
+    "date": "Sat, 17 Oct 2026 18:29:18 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=KdXTi1o8sQxzmEtkrw8OPszCJOdjeDpLQM%2B2M7Uo%2BkGYgvrrtqkJ0Ab%2FpBtbxqQ3q2ZcLBeTAPch9cheVF9S5O3szchUWWkSOmoKYpV5LsBt5tJxm7vMMzzevL%2B4mOK9m5UI4Lteir5%2FKcailMIcDMHiN3E%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=aIa0HXXESJfeKvnv3EFMFEIU2Uhx%2FHX1SEJyacfMWpPJaLh8EQzIC4KHX1UPb3AsmPe8TgKtqJoAy%2BQ97rpG12z%2BBrAVSdjdd9kHjC6Zg%2FRrEuBwLVg83ouPH%2BoUZwmu2uDQ42yKNiKUQGF6OsOczrWli%2Fg%3D\"}]}",
     "server": "cloudflare",
     "x-c1-artifact": "sha256:77f6006837c4081102998f7f81198985e530b5aedb6fc66df8c29b98c2013aee",
-    "x-c1-commit": "1f2ad6420d0ed677502232f118454c53e2242f9c"
+    "x-c1-commit": "ca550c0a2c60b852c797956d2f23c7bd0d2c5355"
    },
    "body": {
     "error": "survivor not found"
@@ -3308,7 +3309,7 @@
   },
   "/api/c1/metrics": {
    "status": 200,
-   "ms": 443,
+   "ms": 87,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
@@ -3316,21 +3317,21 @@
     "access-control-expose-headers": "x-c1-commit, x-c1-artifact",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c152651bddb3cb-MIA",
+    "cf-ray": "a4c15e37589c7224-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 18:21:14 GMT",
+    "date": "Sat, 17 Oct 2026 18:29:18 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=BQGVmm0koEIC%2BjzBfCRXwdcyozSwcvoYni1KXj62TW5%2BaOYnFdP8fqTKhFC1gQK4urMkjmmnSZNMNvmDKgvvxG7eqlgaPbdvt3MoyDMPqLoetKTtjGwOAlI6u35kSt8p5wELpUf7Z%2BuARhMgG9dtDkTOyHw%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=g08V0SZ05DC0jxb1FDUpS9UbD89DBB8NidWf1knGUcrxX6iC0yAswusWbjK6H%2FIt6WeLVRYBkUlfyPDMzFELBLpoVM%2FBxiv4V7y4f7iyiVHYGlB2kUDeZbuAkZXKp64sllnpCbVrmITnOUbIrD2tgTZpyrY%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked",
     "x-c1-artifact": "sha256:77f6006837c4081102998f7f81198985e530b5aedb6fc66df8c29b98c2013aee",
-    "x-c1-commit": "1f2ad6420d0ed677502232f118454c53e2242f9c"
+    "x-c1-commit": "ca550c0a2c60b852c797956d2f23c7bd0d2c5355"
    },
    "body": {
     "build": {
-     "gitSha": "1f2ad6420d0ed677502232f118454c53e2242f9c",
+     "gitSha": "ca550c0a2c60b852c797956d2f23c7bd0d2c5355",
      "submissionSha256": "77f6006837c4081102998f7f81198985e530b5aedb6fc66df8c29b98c2013aee",
      "note": "gitSha is the commit deployed; submissionSha256 is the served predictions file, the same hash scripts/check_numbers.py prints on any reproduce run"
     },
