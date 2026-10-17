@@ -200,6 +200,34 @@ def served_model(y, oof, Xf, dev_ids, held_ids, sub_path, n_held=199, seed=20261
     }
 
 
+def subgroup_thresholds(y, p, groups, cut=0.5, seed=20261017, n_boot=2000):
+    """Sensitivity and PPV at a fixed risk cut, per subgroup, from the served forest's 10x5 out-of-fold predictions.
+    95% CIs: 2,000 bootstrap resamples within each group. null when a group has no events or no flagged survivors."""
+    rg = np.random.default_rng(seed)
+    ci = lambda v: [float(np.percentile(v, 2.5)), float(np.percentile(v, 97.5))] if len(v) >= 100 else None
+    def row(attr, grp, m):
+        yi, fi = y[m], p[m] >= cut
+        sens, ppv = [], []
+        for _ in range(n_boot):
+            j = rg.integers(0, len(yi), len(yi))
+            if yi[j].sum() > 0:
+                sens.append(fi[j][yi[j] == 1].mean())
+            if fi[j].sum() > 0:
+                ppv.append(yi[j][fi[j]].mean())
+        small = bool(m.sum() < 30 or yi.sum() < 10)
+        return {"attribute": attr, "group": grp, "n": int(m.sum()), "events": int(yi.sum()), "flagged": int(fi.sum()),
+                "sensitivity": float(fi[yi == 1].mean()) if yi.sum() else None, "sensitivityCi95": None if small else ci(sens),
+                "ppv": float(yi[fi].mean()) if fi.sum() else None, "ppvCi95": None if small else ci(ppv), "tooSmall": small}
+    rows = [row("all", "All survivors", np.ones(len(y), bool))]
+    for attr in ("sex", "age", "race_ethnicity", "insurance"):
+        for grp in sorted(groups[attr].unique()):
+            rows.append(row(attr, grp, groups[attr].values == grp))
+    return {"cut": cut, "source": "served forest, 10x5 out-of-fold on 466 development survivors (after selection)",
+            "note": "Sensitivity: share of the group's acute-care events flagged at risk >= 50%. PPV: share of the group's flagged survivors who had "
+                    "acute care. tooSmall marks n < 30 or < 10 events; their CIs are null because a bootstrap of so few is not informative.",
+            "rows": rows}
+
+
 def first_event(Xd, y):  # y in dev order
     """Alternative target: among survivors with no ER visit or hospital stay in 2017, who has a FIRST one in 2018?"""
     # nested-CV OOF (unbiased for the search); rows are in dev order, which the label check below guards
@@ -549,6 +577,7 @@ def main():
                        "explanations": "TreeSHAP per survivor, converted to calibrated log-odds (analysis/explain.py)",
                        "previous": "L2 logistic regression on 34 survey-domain features (the first submission)"},
         "metrics": M["metrics"], "deltaVsBaseline": M["deltaVsBaseline"], "deltaVsPrevious": M["deltaVsPrevious"],
+        "subgroupAt50": subgroup_thresholds(y, oof_dev.p_forest.values, groups.loc[dev.index]),
         "servedModel": served_model(y, oof_dev, Xf, dev.index, sub.index, os.path.join(ROOT, "submission", "heldout_predictions.csv")),
         "modelSearch": model_search(y),
         "firstEvent": first_event(Xd.loc[dev.index], y),  # nested-CV estimate

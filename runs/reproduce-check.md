@@ -13,6 +13,12 @@
 | Nested folds won by the forest | 6 | `runs/autoresearch/round-nested.json` → `picks/rf|compact_raw_use` | 6 | 6 | match |
 | Top-fifth events, search | 52 | `src/data/metrics.json` → `modelSearch/top20Events/procedure` | 52 | 52 | match |
 | Top-fifth events, baseline | 45 | `src/data/metrics.json` → `modelSearch/top20Events/baseline` | 45 | 45 | match |
+| At 50%: NH Black PPV | 20% | `src/data/metrics.json` → `subgroupAt50 rows[group=NH Black]/ppv` | error: 'subgroupAt50' | 20% | match |
+| At 50%: NH Black PPV CI | [0, 50] | `src/data/metrics.json` → `subgroupAt50 rows[group=NH Black]/ppvCi95` | error: 'subgroupAt50' | [0, 50] | match |
+| At 50%: NH White PPV | 72% | `src/data/metrics.json` → `subgroupAt50 rows[group=NH White]/ppv` | error: 'subgroupAt50' | 72% | match |
+| At 50%: NH White PPV CI | [57, 85] | `src/data/metrics.json` → `subgroupAt50 rows[group=NH White]/ppvCi95` | error: 'subgroupAt50' | [57, 85] | match |
+| At 50%: all survivors sensitivity | 26% | `src/data/metrics.json` → `subgroupAt50 rows[group=All survivors]/sensitivity` | error: 'subgroupAt50' | 26% | match |
+| At 50%: age 50-64 PPV | 33% | `src/data/metrics.json` → `subgroupAt50 rows[group=50-64]/ppv` | error: 'subgroupAt50' | 33% | match |
 | Hero: served forest 50%+ calls that came true | 59% | `src/data/metrics.json` → `servedModel/callsAt50/forest/cameTrue` | 59% | 59% | match |
 | Hero: served forest 50%+ CI | [46%, 71%] | `src/data/metrics.json` → `servedModel/callsAt50/forest/cameTrueCi95` | [46%, 71%] | [46%, 71%] | match |
 | Hero: served forest 50%+ calls (n) | 59 | `src/data/metrics.json` → `servedModel/callsAt50/forest/n` | 59 | 59 | match |
@@ -132,8 +138,8 @@
 | Top-tenth precision | 60% | `src/data/metrics.json` → `alertBudget/cutoffs[topShare=0.1]/devObservedRate` | 60% | 60% | match |
 | Submission CSV | committed copy | `submission/heldout_predictions.csv` | | 199 rows, same IDs and order, max |Δ predicted_risk| = 0.00e+00 | match |
 
-**Reproduction: PASS.** This run differs from the committed outputs on 0 of 130 numbers; submission CSV identical.
+**Reproduction: PASS.** This run differs from the committed outputs on 0 of 136 numbers; submission CSV identical.
 
-**README: 130 of 130 numbers match this run.**
+**README: 136 of 136 numbers match this run.**
 
 **Submission sha256 (this run): `77f6006837c4081102998f7f81198985e530b5aedb6fc66df8c29b98c2013aee`.** The live API serves its hash as the `x-c1-artifact` header and `/api/c1/metrics` → `build.submissionSha256`; equal hashes mean the served predictions are these.

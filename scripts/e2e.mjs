@@ -169,6 +169,11 @@ if (M.metrics) {
     /^[0-9a-f]{40}$/.test(served) && sameCode && responses["/api/c1/metrics"].headers["x-c1-commit"] === served &&
     responses["/api/c1/metrics"].headers["x-c1-artifact"] === `sha256:${csvSha}` && M.build.submissionSha256 === csvSha,
     { served });
+  const SG = M.subgroupAt50;
+  check("subgroup sensitivity and PPV at the 50% cut: every row has counts, CIs unless too small, and the all-survivors row matches servedModel", SG && SG.cut === 0.5 &&
+    SG.rows?.length >= 10 && SG.rows.every((r) => r.n > 0 && r.flagged <= r.n && (r.tooSmall || (r.sensitivityCi95?.length === 2 && (r.ppv === null || r.ppvCi95?.length === 2)))) &&
+    SG.rows[0].flagged === M.servedModel.callsAt50.forest.n && Math.abs(SG.rows[0].ppv - M.servedModel.callsAt50.forest.cameTrue) < 1e-9,
+    SG && { nhBlack: SG.rows.find((r) => r.group === "NH Black") });
   const FMt = M.fairnessMitigation;
   check("fairness mitigation: pre-registered variants with CIs, a decision, and the language gap stated", FMt && FMt.variants?.length === 5 &&
     FMt.variants.every((v) => v.nhBlackAurocCi95?.length === 2 && Number.isFinite(v.overallLogLoss)) &&

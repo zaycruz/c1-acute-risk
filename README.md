@@ -111,6 +111,26 @@ No variant passes. Recalibration fixes the over-prediction (observed/expected 0.
 So we keep the model and add a **safeguard**: an NH Black survivor on the alert or watch list carries `humanCheck.required = true`, and a care-team member reviews the case before outreach.
 This applies to 4 of 199 held-out survivors. The API lists who the model does not serve yet (`fairnessMitigation.whoThisDoesNotServeYet`).
 
+**Sensitivity and PPV at the 50% cut, by group** (`/api/c1/metrics` → `subgroupAt50`; served forest, 10×5 out-of-fold; 95% CIs from 2,000 resamples within the group).
+Sensitivity is the share of the group's acute-care events flagged at risk ≥ 50%; PPV is the share of flagged survivors who had acute care.
+
+| Group | n | Events | Flagged | Sensitivity [95% CI] | PPV [95% CI] |
+|---|---|---|---|---|---|
+| All survivors | 466 | 134 | 59 | 26% [19, 34] | 59% [46, 71] |
+| Female | 253 | 64 | 28 | 27% [16, 38] | 61% [42, 79] |
+| Male | 213 | 70 | 31 | 26% [16, 36] | 58% [39, 75] |
+| 18-49 | 50 | 12 | 5 | 25% [0, 50] | 60% [0, 100] |
+| 50-64 | 146 | 34 | 12 | 12% [3, 23] | 33% [8, 62] |
+| 65-74 | 151 | 36 | 12 | 22% [9, 36] | 67% [40, 92] |
+| 75+ (85 = top-coded) | 119 | 52 | 30 | 38% [25, 52] | 67% [50, 83] |
+| NH Black | 47 | 11 | 10 | 18% [0, 44] | 20% [0, 50] |
+| NH White | 371 | 113 | 43 | 27% [19, 36] | 72% [57, 85] |
+| Any private | 297 | 80 | 29 | 22% [14, 32] | 62% [43, 80] |
+| Public only | 162 | 52 | 30 | 33% [20, 45] | 57% [39, 75] |
+
+Too small to judge, not shown: Hispanic (n = 28), NH Asian (n = 6), NH other/multiple (n = 14), Uninsured (n = 7).
+For NH Black survivors, only 2 of the 10 flagged had acute care (PPV 20% [0, 50]), against 72% [57, 85] for NH White survivors. That is why their alerts get a human check before outreach. Survivors aged 50–64 also have a low PPV (33% [8, 62]).
+
 **Alert budget** (`/api/c1/metrics` → `alertBudget`). The model predicts a whole year, so an alert is one outreach call within that year. Same-day needs come from `redFlags`.
 The alert tier (top fifth) is about 20 survivors per 100 a year: about 1.9 calls a week for a navigator with 500 survivors. 57% of them had acute care, and the tier finds 39% of all events (1.8 calls per event found).
 A top-tenth cut would find only 21% of events at 60% precision, so we keep the fifth. A team with less capacity calls the list in risk order and stops at its weekly budget.
@@ -198,5 +218,6 @@ Raised by the judges' panel and not built for this submission:
 - A monitoring protocol with alert thresholds for each weak subgroup, and a data-collection plan for language, Haitian origin and neighbourhood (MEPS has none of these).
 - A comparison of the MEPS sample with Miami-Dade demographics, with a reweighting sensitivity check.
 - A temporal or external validation once held-out labels or a second MEPS panel are available.
+- A first-event call list: survivors with no acute care in 2017 ranked by their risk of a first event (the target is only a footnote today; no model beats the baseline there yet).
 
 </details>
