@@ -35,7 +35,19 @@ It checks the data hashes, runs `uv sync --frozen`, runs each step with `uv run 
 
 Expected runtime (measured; see the latest `runs/reproduce-*.md`):
 
-RUNTIME_TABLE
+Measured on a Cloudflare Container (4 × AMD EPYC, x86_64), `--full`, 2026-10-17 ([run log](runs/reproduce-2026-10-17T17-16-07Z.md)):
+
+| step | time |
+|---|---|
+| uv sync | 4 s |
+| model search rounds 1 / 2 / 3 (`--full` only) | 654 / 202 / 401 s |
+| train.py (10×5 CV, final forest, SHAP, submission) | 239 s |
+| synthea.py | 143 s |
+| nested CV (search, then interpretable) | 479 + 263 s |
+| stratified.py | 32 s |
+| fairness_mitigation.py | 167 s |
+| export.py | 9 s |
+| **total** | **about 43 min with `--full`, about 22 min without** |
 
 The script overwrites the committed outputs in place (`analysis/out/`, `runs/autoresearch/`, `src/data/metrics.json`, `submission/`), so `git diff` shows any difference.
 Only the `"seconds"` fields and the appended sections of `runs/autoresearch/log.md` should change: `git diff -I '"seconds"' --stat -- . ':(exclude)runs/autoresearch/log.md'` should be empty.
@@ -191,3 +203,8 @@ To test a Worker built from your own run, `npm run deploy` to your own account a
 
 `runs/reproduce-<UTC stamp>.md` records a run of `scripts/reproduce.sh --full` from a fresh clone: where it ran, the commit, the tool versions, the per-step times,
 the number table and the git diff against the commit. `scripts/reproduce-cf/` is the Cloudflare Container runner used for it.
+
+**Latest: [runs/reproduce-2026-10-17T17-16-07Z.md](runs/reproduce-2026-10-17T17-16-07Z.md), commit 4cba328, Cloudflare (MIA), x86_64 Linux. FAIL by the strict rule:**
+120 of 122 numbers rerun identically. The other 2 (the within-prior-use-group ΔAUROC and its CI) differ in the third decimal, and the submission
+differs by at most 0.001 in predicted risk. On the same platform as the committed outputs (macOS arm64) reruns are exact (0 of 122). The
+cross-platform drift is most likely BLAS and SIMD floating point (Accelerate vs OpenBLAS); no conclusion changes.

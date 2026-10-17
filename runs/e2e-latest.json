@@ -1,6 +1,6 @@
 {
- "at": "2026-10-17T17:44:04.133Z",
- "base": "https://d9da612a-c1-acute-risk.zay-259.workers.dev",
+ "at": "2026-10-17T17:46:35.016Z",
+ "base": "https://c1-acute-risk.zay-259.workers.dev",
  "passed": 38,
  "total": 38,
  "checks": [
@@ -378,28 +378,27 @@
  "responses": {
   "/": {
    "status": 200,
-   "ms": 1425,
+   "ms": 463,
    "bytes": 10104
   },
   "/api/c1/survivors": {
    "status": 200,
-   "ms": 151,
+   "ms": 219,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c11b675df41921-MIA",
+    "cf-ray": "a4c11ee9296ab695-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 17:43:42 GMT",
+    "date": "Sat, 17 Oct 2026 17:46:05 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=OcGhsBpr%2FM%2FwdAdGE9NbbWYukx%2B02ruAfk63%2BMF5Ooigh5BSaWLqBkQlxbkoHkw8jdGET2ruOItouOep3lwJvAwW6YfFekLs2gHWCzhJ4o31%2F3Kbduews%2BE13rtwcUhUblj3%2BkTTmm1dPCaKMJUUI%2Fksn4sPB0OVUYolo0I%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=wgRWpxJCjyKEyHjT%2FXnxUEifGC%2FBXt5TRfDwSUbY81znMQfR01KC313yK0j%2Fgy4%2BECEQf1kYAa%2F%2F8%2FO5wY%2FeGeNUhi6KRi9DNqfl2e12fq%2F6vG1aNakQQl8%2F%2FeeFKv1MkT7ZnF%2F5VDLXehVGqqI1uqeusho%3D\"}]}",
     "server": "cloudflare",
-    "transfer-encoding": "chunked",
-    "x-robots-tag": "noindex"
+    "transfer-encoding": "chunked"
    },
    "body": [
     {
@@ -3098,23 +3097,22 @@
   },
   "/api/c1/survivors/c1-S71188550": {
    "status": 200,
-   "ms": 216,
+   "ms": 73,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c11b686a171921-MIA",
+    "cf-ray": "a4c11eea7ce7b695-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 17:43:42 GMT",
+    "date": "Sat, 17 Oct 2026 17:46:05 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=JPfCPcaKWTyJOF4R2hJV6ll1uh7KjNdF%2BBfParK2p3hStIXliVL32Nt6e0BW9mQa6Vl%2FDzsYW4F9aEf8x8oje5N9dnqCzvE8VoEcN7Y2M0KmVB7WOoq6R6jWXA2AZg3Fggk06%2Bf7kAqcobb0ztMnbe6Uc%2Fpd4GS7yBITrJg%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=PW%2Bku2q9iCzzjXflrYn71N1MPiJNVxDPFX4ORyIeO7EecdLnLaHqGNBn%2B1xKIjvh3lcarnA0GLuAyZYHaMW0nmRPqh1KyPpX8LcLOX1FPlWF9CvOUBosMz2Qm4HcGAuoWfSa6GJ0GmgRKkHG%2FlbARdDFbI8%3D\"}]}",
     "server": "cloudflare",
-    "transfer-encoding": "chunked",
-    "x-robots-tag": "noindex"
+    "transfer-encoding": "chunked"
    },
    "body": {
     "survivorId": "c1-S71188550",
@@ -3272,22 +3270,21 @@
   },
   "/api/c1/survivors/c1-nope": {
    "status": 404,
-   "ms": 57,
+   "ms": 171,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c11bf068691921-MIA",
+    "cf-ray": "a4c11f9948f1b695-MIA",
     "connection": "keep-alive",
     "content-length": "30",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 17:44:03 GMT",
+    "date": "Sat, 17 Oct 2026 17:46:33 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=jGvE82ou1wMQp1UGc7OS6YaeV%2Btt78kyiOzSk236Xs0mLleN1%2FcvlWm2WVEi2qj6zB5bynZNDMxVBPFAkOFCXYSs5LhXgvGjUn6tAVtsJkKeRPyvKxf32QOZlOWSBNeQL9e%2BA%2Bwyx%2FlMQtvMF36XQZWXGOZcQFk%2FHHLfL5I%3D\"}]}",
-    "server": "cloudflare",
-    "x-robots-tag": "noindex"
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=lb4MVq6%2BCrUwUWmZ0acnp%2FLmZ5iudS3OMVbpd9lLwhZ42Qd%2F%2F3LI05%2BYCzPETbnWusDTFt3aE1fkPIbXCwLlDDPPTiZ%2BGRIZWrfOAsmY2uCs9kedeDAhk4x6GWiHnS5rvZZg1DtW6KgnPMjBZzNn1LTHz0M%3D\"}]}",
+    "server": "cloudflare"
    },
    "body": {
     "error": "survivor not found"
@@ -3295,23 +3292,22 @@
   },
   "/api/c1/metrics": {
    "status": 200,
-   "ms": 42,
+   "ms": 336,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c11bf1ac8b1921-MIA",
+    "cf-ray": "a4c11f9f0fffb695-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 17:44:04 GMT",
+    "date": "Sat, 17 Oct 2026 17:46:34 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=n14ZT3debhOlLIiig%2FW%2FtMZpRPR24q8lyyXhoATmfbfBkA1LZvzm3Z3KdnQMFKmXZCkI5RZUOgsxSaOtg1SDRxxCcN06X2LuLqaF3f1xpc0aOhTi2zQGNQuU650gu1PgPpEzCCsbWbIqZKQekjKVRBl4ycWhWv1YncoHWyM%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=D566dlQ035eNzSCZnCWdH2K6g8asmA8BbY4oRcWxhMKengJ8JFexxCx5RzAQJ3%2FaJXiT%2FVcSV15FGcqJyx3DdmCAXi6XabOQnfFIO%2F7o%2BiJd%2FZOUse68XeySeJI0Xtbv%2Bxhok5FeW9hKvW%2BrR7in0rknQKo%3D\"}]}",
     "server": "cloudflare",
-    "transfer-encoding": "chunked",
-    "x-robots-tag": "noindex"
+    "transfer-encoding": "chunked"
    },
    "body": {
     "asOf": "2017-12-31T00:00:00Z",
