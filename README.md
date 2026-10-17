@@ -9,7 +9,7 @@ That is 59 and 69 calls among 466 development survivors, out of fold. For a care
 | Calibration slope (1 = ideal; 10×5 CV) | 1.10 [0.82, 1.44] | 0.45 [0.25, 0.69] | the baseline is over-confident |
 | AUROC (ranking) | 0.711 | 0.672 | +0.039 [-0.015, +0.091], not significant |
 
-On the 199 held-out survivors (about 57 events), expect an AUROC anywhere from 0.63 to 0.79 from chance alone (resampling the development set). Served-model numbers: `/api/c1/metrics` → `servedModel`.
+On the 199 held-out survivors (about 57 events), expect an AUROC anywhere from 0.63 to 0.79 from chance alone (resampling the development set). Served-model numbers: `/api/c1/metrics` → `servedModel`; nested-search numbers: `modelSearch` (for example `modelSearch.callsAt50.procedure.cameTrue` = 0.673 of 55 calls).
 
 **Reproduce in 3 commands** (needs [uv](https://docs.astral.sh/uv/) and the challenge zips; see [REPRODUCE.md](REPRODUCE.md)):
 

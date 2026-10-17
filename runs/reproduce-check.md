@@ -13,12 +13,12 @@
 | Nested folds won by the forest | 6 | `runs/autoresearch/round-nested.json` → `picks/rf|compact_raw_use` | 6 | 6 | match |
 | Top-fifth events, search | 52 | `src/data/metrics.json` → `modelSearch/top20Events/procedure` | 52 | 52 | match |
 | Top-fifth events, baseline | 45 | `src/data/metrics.json` → `modelSearch/top20Events/baseline` | 45 | 45 | match |
-| At 50%: NH Black PPV | 20% | `src/data/metrics.json` → `subgroupAt50 rows[group=NH Black]/ppv` | error: 'subgroupAt50' | 20% | match |
-| At 50%: NH Black PPV CI | [0, 50] | `src/data/metrics.json` → `subgroupAt50 rows[group=NH Black]/ppvCi95` | error: 'subgroupAt50' | [0, 50] | match |
-| At 50%: NH White PPV | 72% | `src/data/metrics.json` → `subgroupAt50 rows[group=NH White]/ppv` | error: 'subgroupAt50' | 72% | match |
-| At 50%: NH White PPV CI | [57, 85] | `src/data/metrics.json` → `subgroupAt50 rows[group=NH White]/ppvCi95` | error: 'subgroupAt50' | [57, 85] | match |
-| At 50%: all survivors sensitivity | 26% | `src/data/metrics.json` → `subgroupAt50 rows[group=All survivors]/sensitivity` | error: 'subgroupAt50' | 26% | match |
-| At 50%: age 50-64 PPV | 33% | `src/data/metrics.json` → `subgroupAt50 rows[group=50-64]/ppv` | error: 'subgroupAt50' | 33% | match |
+| At 50%: NH Black PPV | 20% | `src/data/metrics.json` → `subgroupAt50 rows[group=NH Black]/ppv` | 20% | 20% | match |
+| At 50%: NH Black PPV CI | [0, 50] | `src/data/metrics.json` → `subgroupAt50 rows[group=NH Black]/ppvCi95` | [0, 50] | [0, 50] | match |
+| At 50%: NH White PPV | 72% | `src/data/metrics.json` → `subgroupAt50 rows[group=NH White]/ppv` | 72% | 72% | match |
+| At 50%: NH White PPV CI | [57, 85] | `src/data/metrics.json` → `subgroupAt50 rows[group=NH White]/ppvCi95` | [57, 85] | [57, 85] | match |
+| At 50%: all survivors sensitivity | 26% | `src/data/metrics.json` → `subgroupAt50 rows[group=All survivors]/sensitivity` | 26% | 26% | match |
+| At 50%: age 50-64 PPV | 33% | `src/data/metrics.json` → `subgroupAt50 rows[group=50-64]/ppv` | 33% | 33% | match |
 | Hero: served forest 50%+ calls that came true | 59% | `src/data/metrics.json` → `servedModel/callsAt50/forest/cameTrue` | 59% | 59% | match |
 | Hero: served forest 50%+ CI | [46%, 71%] | `src/data/metrics.json` → `servedModel/callsAt50/forest/cameTrueCi95` | [46%, 71%] | [46%, 71%] | match |
 | Hero: served forest 50%+ calls (n) | 59 | `src/data/metrics.json` → `servedModel/callsAt50/forest/n` | 59 | 59 | match |

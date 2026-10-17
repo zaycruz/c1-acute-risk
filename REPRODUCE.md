@@ -204,7 +204,8 @@ To test a Worker built from your own run, `npm run deploy` to your own account a
 `runs/reproduce-<UTC stamp>.md` records a run of `scripts/reproduce.sh --full` from a fresh clone: where it ran, the commit, the tool versions, the per-step times,
 the number table and the git diff against the commit. `scripts/reproduce-cf/` is the Cloudflare Container runner used for it.
 
-**Latest: [runs/reproduce-2026-10-17T17-16-07Z.md](runs/reproduce-2026-10-17T17-16-07Z.md), commit 4cba328, Cloudflare (MIA), x86_64 Linux. FAIL by the strict rule:**
+**Latest: [runs/reproduce-2026-10-17T18-25-37Z.md](runs/reproduce-2026-10-17T18-25-37Z.md), commit d84a24f, and the earlier [runs/reproduce-2026-10-17T17-16-07Z.md](runs/reproduce-2026-10-17T17-16-07Z.md), commit 4cba328. Both ran on Cloudflare (MIA), x86_64 Linux, with identical results. FAIL by the strict rule:**
 120 of 122 numbers rerun identically. The other 2 (the within-prior-use-group ΔAUROC and its CI) differ in the third decimal, and the submission
 differs by at most 0.001 in predicted risk. On the same platform as the committed outputs (macOS arm64) reruns are exact (0 of 122). The
-cross-platform drift is most likely BLAS and SIMD floating point (Accelerate vs OpenBLAS); no conclusion changes.
+cross-platform drift is most likely BLAS and SIMD floating point (Accelerate vs OpenBLAS); no conclusion changes. For the same reason the submission sha256
+matches the live API's `x-c1-artifact` only when the rerun is on macOS arm64.
