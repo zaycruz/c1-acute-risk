@@ -1,7 +1,7 @@
 # C1 Care Team Risk: API contract
 
 Base URL (deployed): `https://c1-acute-risk.zay-259.workers.dev`. All responses are JSON with `access-control-allow-origin: *`; only `GET` (and `OPTIONS`) are accepted, anything else is `405`.
-The examples below are real responses, captured by `npm run e2e` on 2026-10-17T14:42:37.905Z (27/27 checks passed) and turned into this file by `npm run contract`.
+The examples below are real responses, captured by `npm run e2e` on 2026-10-17T14:52:54.524Z (27/27 checks passed) and turned into this file by `npm run contract`.
 
 Predictions are for the **199 held-out MEPS survivors** (`meps/heldout_ids.csv`): real people, forward predictions, outcome unknown to us.
 `survivorId` = `c1-` + the challenge's MEPS `ID`. `updatedAt` is the as-of date of the data (end of 2017), not the build time.
@@ -375,6 +375,14 @@ Excerpt:
       "oe": 1.0930814810198362,
       "brier": 0.17871772196378932,
       "auroc": 0.5942982456140351,
+      "aurocCi95": [
+        0.3791787650019357,
+        0.7949373717510259
+      ],
+      "oeCi95": [
+        0.549496399779112,
+        1.629740368487792
+      ],
       "tooSmall": false
     },
     {
@@ -387,6 +395,14 @@ Excerpt:
       "oe": 0.8732965351208412,
       "brier": 0.17143137448411816,
       "auroc": 0.6685924369747899,
+      "aurocCi95": [
+        0.5675023443988961,
+        0.7734516028633676
+      ],
+      "oeCi95": [
+        0.6578727450335714,
+        1.1326883635063087
+      ],
       "tooSmall": false
     }
   ],
@@ -417,8 +433,8 @@ Excerpt:
     }
   ],
   "clinicalRecords": {
-    "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain",
-    "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02: the shared risk pattern (prior acute care, age, insurance) transports. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.002, +0.011], d Brier -0.0012 [-0.0022, -0.0002]; Synthea prior d AUROC +0.004 [-0.003, +0.010], d Brier -0.0009 [-0.0018, +0.0001]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses the MEPS-only model."
+    "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the survey model (tie within CI)",
+    "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02, vs the MEPS model's 0.666 out-of-fold (paired d +0.020 [-0.021, +0.063]): the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.003, +0.012], d Brier -0.0012 [-0.0022, -0.0001]; Synthea prior d AUROC +0.004 [-0.002, +0.010], d Brier -0.0009 [-0.0018, -0.0000]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. (Q3's MEPS-only reference is 0.663, not 0.666, because it uses a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses the MEPS-only model."
   },
   "heldoutStatusMix": {
     "alert": 41,

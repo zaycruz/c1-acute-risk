@@ -51,13 +51,13 @@ function calSvg(curves){const W=280,H=200,p=30;const sx=v=>p+v*(W-2*p)/0.7,sy=v=
  return s+`<text x="${W-p}" y="${p}" text-anchor="end" style="fill:var(--accent)">our model</text><text x="${W-p}" y="${p+14}" text-anchor="end" style="fill:var(--alert)">baseline</text></svg><div class="small">x = predicted, y = observed (5 equal-size bins, 95% CI)</div>`}
 async function card(){const M=await (await fetch('/api/c1/metrics')).json();const m=M.metrics,d=M.deltaVsBaseline.logistic,cr=M.clinicalRecords;
  const tiers=M.tiers.tiers.map(t=>`<tr><td class="st ${t.status}">${GLYPH[t.status]}</td><td>${pc(t.riskFrom)}–${pc(t.riskTo)}</td><td>${t.n}</td><td>${pc(t.observedRate)}</td><td>${pc(t.shareOfAllPositives)}</td></tr>`).join('');
- const fair=M.fairness.map(r=>`<tr${r.tooSmall?' style="opacity:.55"':''}><td>${esc(r.attribute)}</td><td>${esc(r.group)}</td><td>${r.n}</td><td>${r.positives}</td><td>${f3(r.auroc)}</td><td>${r.oe==null?'–':r.oe.toFixed(2)}</td><td>${r.tooSmall?'too small':''}</td></tr>`).join('');
+ const fair=M.fairness.map(r=>`<tr${r.tooSmall?' style="opacity:.55"':''}><td>${esc(r.attribute)}</td><td>${esc(r.group)}</td><td>${r.n}</td><td>${r.positives}</td><td>${f3(r.auroc)}${r.aurocCi95?` <span class="small">[${r.aurocCi95[0].toFixed(2)}, ${r.aurocCi95[1].toFixed(2)}]</span>`:''}</td><td>${r.oe==null?'–':r.oe.toFixed(2)} <span class="small">[${r.oeCi95[0].toFixed(2)}, ${r.oeCi95[1].toFixed(2)}]</span></td><td>${r.tooSmall?'too small':''}</td></tr>`).join('');
  const plain=M.plainFactors.map(r=>`<tr><td>${esc(r.factor)}</td><td>${pc(r.withFactor.rate)} <span class="small">(n=${r.withFactor.n})</span></td><td>${pc(r.without.rate)}</td><td>${r.rateRatio.toFixed(2)}×</td></tr>`).join('');
  $('#cardBody').className='';$('#cardBody').innerHTML=`
  <div class="kpis">
   <div class="kpi"><small>AUROC (ours vs baseline)</small><b>${f3(m.logistic.auroc.value)}</b><small>baseline ${f3(m.baseline.auroc.value)} · Δ ${d.auroc.value>=0?'+':''}${d.auroc.value.toFixed(3)} [${f3(d.auroc.ci95[0])}, ${f3(d.auroc.ci95[1])}]</small></div>
   <div class="kpi"><small>Brier (lower = better)</small><b>${m.logistic.brier.value.toFixed(4)}</b><small>baseline ${m.baseline.brier.value.toFixed(4)} · P(better) ${pc(d.brier.p_better)}</small></div>
-  <div class="kpi"><small>Calibration slope (1 = ideal)</small><b>${m.logistic.cal_slope.value.toFixed(2)}</b><small>baseline ${m.baseline.cal_slope.value.toFixed(2)} (over-confident)</small></div>
+  <div class="kpi"><small>Calibration slope (1 = ideal)</small><b>${m.logistic.cal_slope.value.toFixed(2)}</b><small>[${m.logistic.cal_slope.ci95[0].toFixed(2)}, ${m.logistic.cal_slope.ci95[1].toFixed(2)}] · baseline ${m.baseline.cal_slope.value.toFixed(2)} [${m.baseline.cal_slope.ci95[0].toFixed(2)}, ${m.baseline.cal_slope.ci95[1].toFixed(2)}]</small></div>
   <div class="kpi"><small>AUPRC</small><b>${f3(m.logistic.auprc.value)}</b><small>baseline ${f3(m.baseline.auprc.value)} · outcome rate ${pc(M.data.devPositives/M.data.devSurvivors)}</small></div>
  </div>
  <p class="small">${esc(M.validation)} n = ${M.data.devSurvivors} development survivors (${M.data.devPositives} with the outcome).</p>
@@ -67,7 +67,7 @@ async function card(){const M=await (await fetch('/api/c1/metrics')).json();cons
   <div><h3>Risk tiers (development survivors, out-of-fold)</h3><div class="tbl"><table><tr><th>Tier</th><th>Risk</th><th>n</th><th>Had acute care</th><th>Share of all events</th></tr>${tiers}</table></div></div>
  </div>
  <h3>Plain-language factors (observed 2018 acute care, development set)</h3><div class="tbl"><table><tr><th>Factor in 2017</th><th>With</th><th>Without</th><th>Ratio</th></tr>${plain}</table></div>
- <h3>Fairness (out-of-fold, faded = too small to judge)</h3><div class="tbl"><table><tr><th>Attribute</th><th>Group</th><th>n</th><th>Events</th><th>AUROC</th><th>Obs/Exp</th><th></th></tr>${fair}</table></div>
+ <h3>Fairness (out-of-fold, faded = too small to judge)</h3><div class="tbl"><table><tr><th>Attribute</th><th>Group</th><th>n</th><th>Events</th><th>AUROC [95% CI]</th><th>Obs/Exp [95% CI]</th><th></th></tr>${fair}</table></div>
  <h3>Caveats</h3><ul class="small">${M.caveats.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>`}
 async function roster(){const R=await (await fetch('/api/c1/survivors')).json();const mix={};R.forEach(r=>mix[r.status]=(mix[r.status]||0)+1);
  $('#mix').textContent=`· ${R.length} · ${mix.alert||0} alert · ${mix.watch||0} watch · ${mix.ok||0} ok`;

@@ -1,5 +1,5 @@
 {
- "at": "2026-10-17T14:42:37.905Z",
+ "at": "2026-10-17T14:52:54.524Z",
  "base": "https://c1-acute-risk.zay-259.workers.dev",
  "passed": 27,
  "total": 27,
@@ -172,7 +172,7 @@
    "name": "clinical-records verdict present (not pending)",
    "ok": true,
    "info": {
-    "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain"
+    "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the survey model (tie within CI)"
    }
   },
   {
@@ -216,25 +216,25 @@
  "responses": {
   "/": {
    "status": 200,
-   "ms": 295,
-   "bytes": 11060
+   "ms": 391,
+   "bytes": 11431
   },
   "/api/c1/survivors": {
    "status": 200,
-   "ms": 66,
+   "ms": 131,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c0118dd830dfba-MIA",
+    "cf-ray": "a4c020d59ef1e0f4-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 14:42:12 GMT",
+    "date": "Sat, 17 Oct 2026 14:52:38 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=U1EvcpAvyMFqNOha8l6%2BFW%2BY78QvNFNMDWiepYRXFTNs5TWLj9x0xuJLW%2F7k3DLgWSTykciN6VWZMLlc%2FkFwA2r3caPjnTNqAbbm8SW81GPOS0S8WoP7w6NRFS1OfTjbhNfBz98jvakf6PThr7emiv2Uhd0%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=Zdw9uTNuheE0jfpTcacrzR1KvWnSHie%2FSTtqHJPFrIWGqQkjwlF8XT%2Ff3fb5K2KyjNr%2FsETWvwkVbg04Il%2B97s7Sq51EQel9bY0EEYd9J2jNVOm9zXx0Wt5cgPgONektcZpTJruT5UDauxuSYaB%2BtHi7PQY%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -1636,20 +1636,20 @@
   },
   "/api/c1/survivors/c1-S2480BBDE": {
    "status": 200,
-   "ms": 91,
+   "ms": 63,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c0118e6a04dfba-MIA",
+    "cf-ray": "a4c020d638f0e0f4-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 14:42:12 GMT",
+    "date": "Sat, 17 Oct 2026 14:52:38 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=RYyzV8xPkrC%2BFCrn7PDZ2zpbcTIK%2BWsgUlimGuoovevhikw1teUphrHuET4cztOCdu5GpioxlHYrxtWig79ntIHD0Ho%2BkU7zsh0dbZC5SD43X3k5TlnTFN1rPorWvPYh2Pd0J7CSXusrxwM3543z5qc0%2BQE%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=qc2uenUPBbNvZRCFxKSKoyIgvPKBBCdRjhci7hB%2BZgmUUJltnHYhpBkwyWavJKTY93ivc46qhWva9sdWha2vHAEoDzZlqqYu5uFdLO7Rt9lzETdr7Vld20kpOgrArTQjmU77sNFhECnG%2B3Kq8FP20ULFqd8%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -1779,20 +1779,20 @@
   },
   "/api/c1/survivors/c1-nope": {
    "status": 404,
-   "ms": 153,
+   "ms": 104,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c01227de0ddfba-MIA",
+    "cf-ray": "a4c02136cc49e0f4-MIA",
     "connection": "keep-alive",
     "content-length": "30",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 14:42:37 GMT",
+    "date": "Sat, 17 Oct 2026 14:52:54 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=tPJtFEAYz%2FN0yM0%2BYPLBwLY8LaIXqAWvKDsnONE%2F%2B0odAYHV1PslO2EatVSyW5Jdt5n1whRNfRsIxgIoCBDYgalsAyiVIlPjJ0cinaKjupwm3uoxrL4dlzSz0s%2BYn6KvP1PclpVzjAPCsaJnRY1Opt%2Fa6Ow%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=R%2FeFUdGkRTn2N9%2BpodXRWSIYl8RS5UtCmDbo9H9vAyK7PiYH04BbcQT03RLyL1HL7HEKfOk3OEYOQtqNJADsw53l6qSD5dDOVpn125M%2FukOJlQV70wzEmBHKjFVgs%2BECgS4L6BRnbo24zTUJ7QKVvArKtOA%3D\"}]}",
     "server": "cloudflare"
    },
    "body": {
@@ -1801,20 +1801,20 @@
   },
   "/api/c1/metrics": {
    "status": 200,
-   "ms": 87,
+   "ms": 88,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c0122a6e90dfba-MIA",
+    "cf-ray": "a4c02138492ee0f4-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 14:42:37 GMT",
+    "date": "Sat, 17 Oct 2026 14:52:54 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=te%2F6cp2%2BDSH3xyP7lYg%2FLtRNutNNdKIOSl1A1MhbRu8sOb9MYay0rJm%2BKabWX1dIvL4Sdy5ojTOegYV7c%2BgIcTElZd%2FzGIOFoSDaVHwLc4RI2TitTYDKLC6hUzWezyKymuAbO5%2FHBoaGhvwiTxMDmSDxk6g%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=MKOGrf8vWN8Dm1s%2B7nKq4xYLT5MMIXYca8jgexD52VR%2FbqKy%2BtcB4BmfQUDHDTvlBXmtAJXZ%2F7k5UBovajAyho4s1EwcTOv54gXacZEfgHZcoH6nrQYXg1iLDACFcaj%2FoEVtmGmyekvDC6mHndohWMQOjHs%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -2235,6 +2235,14 @@
       "oe": 1.0930814810198362,
       "brier": 0.17871772196378932,
       "auroc": 0.5942982456140351,
+      "aurocCi95": [
+       0.3791787650019357,
+       0.7949373717510259
+      ],
+      "oeCi95": [
+       0.549496399779112,
+       1.629740368487792
+      ],
       "tooSmall": false
      },
      {
@@ -2247,6 +2255,14 @@
       "oe": 0.8732965351208412,
       "brier": 0.17143137448411816,
       "auroc": 0.6685924369747899,
+      "aurocCi95": [
+       0.5675023443988961,
+       0.7734516028633676
+      ],
+      "oeCi95": [
+       0.6578727450335714,
+       1.1326883635063087
+      ],
       "tooSmall": false
      },
      {
@@ -2259,6 +2275,14 @@
       "oe": 0.8343258777156474,
       "brier": 0.16925235585762607,
       "auroc": 0.6603864734299518,
+      "aurocCi95": [
+       0.5541880816187142,
+       0.7592856994840127
+      ],
+      "oeCi95": [
+       0.6044557319102025,
+       1.048683950786477
+      ],
       "tooSmall": false
      },
      {
@@ -2271,6 +2295,14 @@
       "oe": 1.2685224035012104,
       "brier": 0.2520868020815685,
       "auroc": 0.5998851894374283,
+      "aurocCi95": [
+       0.49639329516728237,
+       0.7186659540896829
+      ],
+      "oeCi95": [
+       1.0019522123514035,
+       1.526839262423121
+      ],
       "tooSmall": false
      },
      {
@@ -2283,6 +2315,14 @@
       "oe": 0.9234113232236351,
       "brier": 0.17540057882190305,
       "auroc": 0.6765873015873016,
+      "aurocCi95": [
+       0.6082789877879895,
+       0.7572123015873017
+      ],
+      "oeCi95": [
+       0.7473094505798774,
+       1.124147071188349
+      ],
       "tooSmall": false
      },
      {
@@ -2295,6 +2335,14 @@
       "oe": 1.081180693363539,
       "brier": 0.2119434531133213,
       "auroc": 0.6437562437562439,
+      "aurocCi95": [
+       0.5618340421601749,
+       0.7276795634920634
+      ],
+      "oeCi95": [
+       0.8734202310287571,
+       1.2870328981769656
+      ],
       "tooSmall": false
      },
      {
@@ -2307,6 +2355,14 @@
       "oe": 0.83794123193247,
       "brier": 0.1804328541243736,
       "auroc": 0.5986394557823129,
+      "aurocCi95": [
+       0.3552853260869565,
+       0.8513028689736764
+      ],
+      "oeCi95": [
+       0.3593363900002381,
+       1.333288086625048
+      ],
       "tooSmall": true
      },
      {
@@ -2319,6 +2375,14 @@
       "oe": 0.8481141815264125,
       "brier": 0.098524245378245,
       "auroc": 1,
+      "aurocCi95": [
+       1,
+       1
+      ],
+      "oeCi95": [
+       0,
+       2.007160557166275
+      ],
       "tooSmall": true
      },
      {
@@ -2331,6 +2395,14 @@
       "oe": 0.8186875396425471,
       "brier": 0.20890656399602667,
       "auroc": 0.4318181818181818,
+      "aurocCi95": [
+       0.22296941678520626,
+       0.6469444444444444
+      ],
+      "oeCi95": [
+       0.4280849999019656,
+       1.3202459454119666
+      ],
       "tooSmall": false
      },
      {
@@ -2343,6 +2415,14 @@
       "oe": 1.04677382559432,
       "brier": 0.19421084148987827,
       "auroc": 0.6930781367908347,
+      "aurocCi95": [
+       0.6349614245106179,
+       0.7499183938779274
+      ],
+      "oeCi95": [
+       0.903806689502875,
+       1.186431536379827
+      ],
       "tooSmall": false
      },
      {
@@ -2355,6 +2435,14 @@
       "oe": 0.6384687978380996,
       "brier": 0.14330041905491933,
       "auroc": 0.29166666666666663,
+      "aurocCi95": [
+       0,
+       0.7692307692307692
+      ],
+      "oeCi95": [
+       0,
+       1.6675937661081823
+      ],
       "tooSmall": true
      },
      {
@@ -2367,6 +2455,14 @@
       "oe": 0.9948887101261586,
       "brier": 0.18884348435821674,
       "auroc": 0.6432027649769586,
+      "aurocCi95": [
+       0.5681813435863297,
+       0.7186451290857273
+      ],
+      "oeCi95": [
+       0.8195644545081401,
+       1.1960226702674226
+      ],
       "tooSmall": false
      },
      {
@@ -2379,6 +2475,14 @@
       "oe": 1.0037770304713016,
       "brier": 0.19944697085079785,
       "auroc": 0.6840909090909091,
+      "aurocCi95": [
+       0.5943832752957376,
+       0.7696068455134135
+      ],
+      "oeCi95": [
+       0.7668556141702331,
+       1.249207652690021
+      ],
       "tooSmall": false
      },
      {
@@ -2391,6 +2495,14 @@
       "oe": 1.0887777066700732,
       "brier": 0.16048254612275376,
       "auroc": 0.9,
+      "aurocCi95": [
+       0.5,
+       1
+      ],
+      "oeCi95": [
+       0,
+       2.1822380332653144
+      ],
       "tooSmall": true
      },
      {
@@ -2403,6 +2515,14 @@
       "oe": 0.939234653916336,
       "brier": 0.18484805084220032,
       "auroc": 0.6255952380952381,
+      "aurocCi95": [
+       0.4861098836352924,
+       0.7560218712549222
+      ],
+      "oeCi95": [
+       0.6608415099199879,
+       1.3502109101104303
+      ],
       "tooSmall": false
      },
      {
@@ -2415,6 +2535,14 @@
       "oe": 1.0072664290491047,
       "brier": 0.20367586908716245,
       "auroc": 0.6875,
+      "aurocCi95": [
+       0.4357692307692308,
+       0.8982954545454543
+      ],
+      "oeCi95": [
+       0.4169667408042418,
+       1.6248578077344573
+      ],
       "tooSmall": true
      },
      {
@@ -2427,6 +2555,14 @@
       "oe": 1.0475393851803798,
       "brier": 0.19801451733383885,
       "auroc": 0.6813186813186813,
+      "aurocCi95": [
+       0.3426470588235294,
+       0.9825604395604394
+      ],
+      "oeCi95": [
+       0.4738253231318588,
+       1.6877969363229826
+      ],
       "tooSmall": true
      },
      {
@@ -2439,6 +2575,14 @@
       "oe": 1.000334263617864,
       "brier": 0.1853421069666881,
       "auroc": 0.6964139623670575,
+      "aurocCi95": [
+       0.6262650629000222,
+       0.7654134349169744
+      ],
+      "oeCi95": [
+       0.833770686012281,
+       1.1773161293298602
+      ],
       "tooSmall": false
      },
      {
@@ -2451,6 +2595,14 @@
       "oe": 1.0585871295990508,
       "brier": 0.2273787177698576,
       "auroc": 0.55125,
+      "aurocCi95": [
+       0.3839083440308087,
+       0.7212719796650717
+      ],
+      "oeCi95": [
+       0.6884884207323646,
+       1.4506475016905143
+      ],
       "tooSmall": false
      }
     ],
@@ -2465,6 +2617,14 @@
       "oe": 1.4880811155841738,
       "brier": 0.17860359977548057,
       "auroc": 0.5328947368421053,
+      "aurocCi95": [
+       0.3225496323529412,
+       0.7791885198135198
+      ],
+      "oeCi95": [
+       0.733087507811938,
+       2.3548371638774617
+      ],
       "tooSmall": false
      },
      {
@@ -2477,6 +2637,14 @@
       "oe": 0.9368768345589771,
       "brier": 0.17524829356009156,
       "auroc": 0.6869747899159664,
+      "aurocCi95": [
+       0.578236289694136,
+       0.7945563826575341
+      ],
+      "oeCi95": [
+       0.6992747428849988,
+       1.2225546292170584
+      ],
       "tooSmall": false
      },
      {
@@ -2489,6 +2657,14 @@
       "oe": 0.8307144049340852,
       "brier": 0.18821029407302897,
       "auroc": 0.6072463768115942,
+      "aurocCi95": [
+       0.48629581990078913,
+       0.7241908212560386
+      ],
+      "oeCi95": [
+       0.5957275426212517,
+       1.0730511844175714
+      ],
       "tooSmall": false
      },
      {
@@ -2501,6 +2677,14 @@
       "oe": 1.113736356238278,
       "brier": 0.2573023063397642,
       "auroc": 0.5869690011481056,
+      "aurocCi95": [
+       0.4766258711737435,
+       0.6879279927942614
+      ],
+      "oeCi95": [
+       0.8724028490580817,
+       1.3368043049959937
+      ],
       "tooSmall": false
      },
      {
@@ -2513,6 +2697,14 @@
       "oe": 0.9930073245427921,
       "brier": 0.18066360027516323,
       "auroc": 0.6647652116402116,
+      "aurocCi95": [
+       0.5918454929100768,
+       0.7482136074987846
+      ],
+      "oeCi95": [
+       0.8009875534573628,
+       1.1888861937738926
+      ],
       "tooSmall": false
      },
      {
@@ -2525,6 +2717,14 @@
       "oe": 1.0010001147083036,
       "brier": 0.22463506496896907,
       "auroc": 0.6354645354645355,
+      "aurocCi95": [
+       0.5488892669648064,
+       0.7148026085092143
+      ],
+      "oeCi95": [
+       0.8049605676537981,
+       1.1917335344848747
+      ],
       "tooSmall": false
      },
      {
@@ -2537,6 +2737,14 @@
       "oe": 0.9339789868907865,
       "brier": 0.17545653300117062,
       "auroc": 0.7210884353741497,
+      "aurocCi95": [
+       0.5139277389277389,
+       0.9246401515151516
+      ],
+      "oeCi95": [
+       0.4116226317600899,
+       1.5144731984903426
+      ],
       "tooSmall": true
      },
      {
@@ -2549,6 +2757,14 @@
       "oe": 0.9036434409815945,
       "brier": 0.20943619824313234,
       "auroc": 0,
+      "aurocCi95": [
+       0,
+       0
+      ],
+      "oeCi95": [
+       0,
+       5.270745119109009
+      ],
       "tooSmall": true
      },
      {
@@ -2561,6 +2777,14 @@
       "oe": 0.9600838705499308,
       "brier": 0.2554886643069597,
       "auroc": 0.393939393939394,
+      "aurocCi95": [
+       0.20091346153846154,
+       0.6208015513897864
+      ],
+      "oeCi95": [
+       0.48832823149951926,
+       1.6842113959329972
+      ],
       "tooSmall": false
      },
      {
@@ -2573,6 +2797,14 @@
       "oe": 1.007988242432033,
       "brier": 0.19730014014554062,
       "auroc": 0.6894765726829938,
+      "aurocCi95": [
+       0.6315353260869565,
+       0.7443443127265104
+      ],
+      "oeCi95": [
+       0.8664392338796236,
+       1.1507639567392798
+      ],
       "tooSmall": false
      },
      {
@@ -2585,6 +2817,14 @@
       "oe": 0.9019232541751422,
       "brier": 0.15567431272088947,
       "auroc": 0.125,
+      "aurocCi95": [
+       0,
+       0.41666666666666663
+      ],
+      "oeCi95": [
+       0,
+       2.6648204371976427
+      ],
       "tooSmall": true
      },
      {
@@ -2597,6 +2837,14 @@
       "oe": 0.9940417308855809,
       "brier": 0.18935367733727976,
       "auroc": 0.661578341013825,
+      "aurocCi95": [
+       0.5902179946623779,
+       0.7274297218819636
+      ],
+      "oeCi95": [
+       0.8202319951044554,
+       1.1893800159335226
+      ],
       "tooSmall": false
      },
      {
@@ -2609,6 +2857,14 @@
       "oe": 1.0097253894286673,
       "brier": 0.2257536763867109,
       "auroc": 0.6339160839160839,
+      "aurocCi95": [
+       0.539250939849624,
+       0.7185586765317592
+      ],
+      "oeCi95": [
+       0.7779668794130663,
+       1.2778732221093467
+      ],
       "tooSmall": false
      },
      {
@@ -2621,6 +2877,14 @@
       "oe": 0.8326133693135647,
       "brier": 0.10643170916963747,
       "auroc": 1,
+      "aurocCi95": [
+       1,
+       1
+      ],
+      "oeCi95": [
+       0,
+       1.4511982803199224
+      ],
       "tooSmall": true
      },
      {
@@ -2633,6 +2897,14 @@
       "oe": 0.9384943903708953,
       "brier": 0.2013202609139273,
       "auroc": 0.6172619047619047,
+      "aurocCi95": [
+       0.4684071265492498,
+       0.7603522498743086
+      ],
+      "oeCi95": [
+       0.6481563294660854,
+       1.3536162065505923
+      ],
       "tooSmall": false
      },
      {
@@ -2645,6 +2917,14 @@
       "oe": 0.9200133034204513,
       "brier": 0.19691026779601875,
       "auroc": 0.6607142857142857,
+      "aurocCi95": [
+       0.3922285067873303,
+       0.8849242424242424
+      ],
+      "oeCi95": [
+       0.38276731721949075,
+       1.4449557593117293
+      ],
       "tooSmall": true
      },
      {
@@ -2657,6 +2937,14 @@
       "oe": 1.0583091702389484,
       "brier": 0.24624952700216074,
       "auroc": 0.5494505494505494,
+      "aurocCi95": [
+       0.25130494505494505,
+       0.8600840336134453
+      ],
+      "oeCi95": [
+       0.4700063334421148,
+       1.9290676261117317
+      ],
       "tooSmall": true
      },
      {
@@ -2669,6 +2957,14 @@
       "oe": 1.019861564101284,
       "brier": 0.19209635857997662,
       "auroc": 0.6855058631033543,
+      "aurocCi95": [
+       0.6213750194482238,
+       0.7546168210874094
+      ],
+      "oeCi95": [
+       0.839770749258033,
+       1.2078331187700746
+      ],
       "tooSmall": false
      },
      {
@@ -2681,6 +2977,14 @@
       "oe": 0.9967584620860374,
       "brier": 0.2250534670788697,
       "auroc": 0.63625,
+      "aurocCi95": [
+       0.48474589646464644,
+       0.7951129964806435
+      ],
+      "oeCi95": [
+       0.6587771959635079,
+       1.3703448817412123
+      ],
       "tooSmall": false
      }
     ],
@@ -3010,13 +3314,13 @@
      }
     ],
     "clinicalRecords": {
-     "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain",
-     "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02: the shared risk pattern (prior acute care, age, insurance) transports. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.002, +0.011], d Brier -0.0012 [-0.0022, -0.0002]; Synthea prior d AUROC +0.004 [-0.003, +0.010], d Brier -0.0009 [-0.0018, +0.0001]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses the MEPS-only model."
+     "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the survey model (tie within CI)",
+     "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02, vs the MEPS model's 0.666 out-of-fold (paired d +0.020 [-0.021, +0.063]): the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.003, +0.012], d Brier -0.0012 [-0.0022, -0.0001]; Synthea prior d AUROC +0.004 [-0.002, +0.010], d Brier -0.0009 [-0.0018, -0.0000]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. (Q3's MEPS-only reference is 0.663, not 0.666, because it uses a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses the MEPS-only model."
     },
     "clinicalRecordsDetail": {
      "verdict": {
-      "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain",
-      "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02: the shared risk pattern (prior acute care, age, insurance) transports. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.002, +0.011], d Brier -0.0012 [-0.0022, -0.0002]; Synthea prior d AUROC +0.004 [-0.003, +0.010], d Brier -0.0009 [-0.0018, +0.0001]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses the MEPS-only model."
+      "verdict": "No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. But a Synthea model on shared variables alone ranks real survivors about as well as the survey model (tie within CI)",
+      "detail": "(1) Inside Synthea (660 synthetic patients, 4033 person-years), clinical-only features (stage, metastasis, comorbidities, opioids, kidney function) add no signal over shared variables: AUROC 0.671 -> 0.670, d -0.001 [-0.008, +0.007]; stage is missing in 86% of person-years. (2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC 0.686 [0.634, 0.740] with O/E 1.02, vs the MEPS model's 0.666 out-of-fold (paired d +0.020 [-0.021, +0.063]): the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. (3) Added to the MEPS model: clinical-burden score d AUROC +0.004 [-0.003, +0.012], d Brier -0.0012 [-0.0022, -0.0001]; Synthea prior d AUROC +0.004 [-0.002, +0.010], d Brier -0.0009 [-0.0018, -0.0000]; stratum features (3 definitions) d AUROC between -0.006 and -0.003. (Q3's MEPS-only reference is 0.663, not 0.666, because it uses a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior at n=466, not that real stage or comorbidity data would help these patients. The submission uses the MEPS-only model."
      },
      "design": "Do the synthetic clinical records (Synthea) add anything beyond the MEPS survey?\n\nUsage: .venv/bin/python -I analysis/synthea.py [data]     (expects data/meps and data/synthea; run train.py first)\nWrites analysis/out/synthea.json.\n\nThere is no key between MEPS and Synthea, so no individual can be linked. Three pre-registered questions:\n  Q1 (inside Synthea): do clinical-only features (stage, comorbidities, metastasis, opioids, kidney function)\n     add AUROC over the features both sources share? Person-years, CV grouped by patient.\n     Pass: paired dAUROC 95% CI above 0.\n  Q2 (transport): a Synthea model trained on shared features only, applied unchanged to MEPS dev survivors.\n     Pass: AUROC CI above 0.5. Also reports calibration (O/E) to show the population shift.\n  Q3 (increment in MEPS): add Synthea-derived features to the MEPS model, same repeated CV as train.py,\n     paired against MEPS-only. (a) transferred \"clinical burden\" score = E[clinical part of the Synthea logit |\n     shared features]; (b) shrunken stratum features (acute rate, advanced-stage share, comorbidity burden)\n     under three stratum definitions. Pass: dAUROC CI above 0 or dBrier CI below 0.\nOnly MEPS survivors with breast, colon, lung or prostate cancer are aligned to strata (Synthea has only those);\neveryone else gets the overall Synthea mean plus an \"unaligned\" flag.",
      "q1WithinSynthea": {
@@ -3050,29 +3354,38 @@
       ],
       "meanPredicted": 0.2809606474536869,
       "observedRate": 0.2875536480686695,
-      "oe": 1.0234659219173012
+      "oe": 1.0234659219173012,
+      "vsMepsModel": {
+       "mepsOofAuroc": 0.6661571659773422,
+       "deltaAuroc": 0.02020769645747167,
+       "ci95": [
+        -0.021453754578754498,
+        0.06282158012284882
+       ],
+       "note": "Paired bootstrap: Synthea shared-variable model (never saw MEPS) vs MEPS logistic OOF predictions, same 466 survivors."
+      }
      },
      "q3Increment": {
       "baseline": {
        "auroc": {
         "value": 0.6631226398129834,
         "ci95": [
-         0.6069323606684207,
-         0.7167662134186239
+         0.6088052024878826,
+         0.7169292340665706
         ]
        },
        "brier": {
         "value": 0.19248951216660448,
         "ci95": [
-         0.1744997935744277,
-         0.212159746749017
+         0.17401927677112541,
+         0.21138631583957612
         ]
        },
        "cal_slope": {
         "value": 1.0098634577167478,
         "ci95": [
-         0.6046813901113645,
-         1.4858495823540825
+         0.6216034500875849,
+         1.4865087482046806
         ]
        }
       },
@@ -3080,48 +3393,48 @@
        "auroc": {
         "value": 0.6667415932386261,
         "ci95": [
-         0.6100727391014176,
-         0.7204044457504256
+         0.6131296710244079,
+         0.7209122581587382
         ]
        },
        "brier": {
         "value": 0.1916292854310936,
         "ci95": [
-         0.17377290882748375,
-         0.21103963931063224
+         0.17315633201025774,
+         0.21037825095714782
         ]
        },
        "cal_slope": {
         "value": 1.0407435696330904,
         "ci95": [
-         0.6401751351076869,
-         1.4905723937521749
+         0.6619886127796256,
+         1.504522946336872
         ]
        },
        "delta": {
         "auroc": {
          "value": 0.003618953425642779,
          "ci95": [
-          -0.0025979621181149103,
-          0.009801696839423385
+          -0.0024404524221477903,
+          0.010115218636459039
          ],
-         "p_better": 0.885
+         "p_better": 0.8645
         },
         "auprc": {
          "value": 0.0031494550323312165,
          "ci95": [
-          -0.006973268951476638,
-          0.013565754671347876
+          -0.0070613670468424065,
+          0.014184677938228574
          ],
-         "p_better": 0.7525
+         "p_better": 0.7365
         },
         "brier": {
          "value": -0.0008602267355108939,
          "ci95": [
-          -0.0018076016686281963,
-          0.00005872783486357256
+          -0.0017775134971090463,
+          -0.00001230563780774138
          ],
-         "p_better": 0.9665
+         "p_better": 0.977
         }
        }
       },
@@ -3129,48 +3442,48 @@
        "auroc": {
         "value": 0.6675957561589643,
         "ci95": [
-         0.6110265845916908,
-         0.721662353328196
+         0.6142454510792077,
+         0.7210578203388357
         ]
        },
        "brier": {
         "value": 0.1913174447899356,
         "ci95": [
-         0.17331487161364606,
-         0.21081800508090195
+         0.17295303064579381,
+         0.20994017725783384
         ]
        },
        "cal_slope": {
         "value": 1.036597713700482,
         "ci95": [
-         0.6426039163986483,
-         1.4852722768774975
+         0.6660369490632979,
+         1.4811075908175626
         ]
        },
        "delta": {
         "auroc": {
          "value": 0.00447311634598091,
          "ci95": [
-          -0.002475590976751904,
-          0.01146186939639226
+          -0.002868423745492704,
+          0.011625200363069353
          ],
-         "p_better": 0.892
+         "p_better": 0.8815
         },
         "auprc": {
          "value": 0.002781305512154497,
          "ci95": [
-          -0.006413922542295373,
-          0.01297224450100483
+          -0.007097365896480218,
+          0.013155213568925713
          ],
-         "p_better": 0.711
+         "p_better": 0.7065
         },
         "brier": {
          "value": -0.0011720673766688894,
          "ci95": [
-          -0.002165206635217888,
-          -0.00022568616194075812
+          -0.0022006459062597133,
+          -0.00009849922729246662
          ],
-         "p_better": 0.9885
+         "p_better": 0.9875
         }
        }
       },
@@ -3178,48 +3491,48 @@
        "auroc": {
         "value": 0.6600656356770366,
         "ci95": [
-         0.6032812333328532,
-         0.7138425525009148
+         0.6054543399760859,
+         0.7144738410987845
         ]
        },
        "brier": {
         "value": 0.19298171145405643,
         "ci95": [
-         0.17506310646452422,
-         0.2125689754914805
+         0.17446477794519186,
+         0.21177082191401603
         ]
        },
        "cal_slope": {
         "value": 1.0093045334538264,
         "ci95": [
-         0.5922278546608322,
-         1.4946171454843649
+         0.6164593056932126,
+         1.493415976840157
         ]
        },
        "delta": {
         "auroc": {
          "value": -0.0030570041359467837,
          "ci95": [
-          -0.006289575008062117,
-          0.00023824834812177456
+          -0.006333248674248606,
+          0.00010967591968368484
          ],
-         "p_better": 0.0325
+         "p_better": 0.028
         },
         "auprc": {
          "value": -0.0039212983969662,
          "ci95": [
-          -0.009762788572944747,
-          0.0005447855205178943
+          -0.009172837330875636,
+          0.0009240248048603287
          ],
-         "p_better": 0.042
+         "p_better": 0.061
         },
         "brier": {
          "value": 0.0004921992874519499,
          "ci95": [
-          0.00003759405843917901,
-          0.0009485918302571205
+          0.00003970601947746871,
+          0.0009504703023756938
          ],
-         "p_better": 0.015
+         "p_better": 0.0175
         }
        }
       },
@@ -3227,48 +3540,48 @@
        "auroc": {
         "value": 0.6567164179104478,
         "ci95": [
-         0.6006673744099269,
-         0.7116812875512524
+         0.6010302837245683,
+         0.7107330905605137
         ]
        },
        "brier": {
         "value": 0.19337864329818988,
         "ci95": [
-         0.17572910186827448,
-         0.212908980137829
+         0.17485387499213384,
+         0.21199000798774698
         ]
        },
        "cal_slope": {
         "value": 1.0084868404313123,
         "ci95": [
-         0.5929906101066751,
-         1.4835616734819608
+         0.6118238274587442,
+         1.4929228585241843
         ]
        },
        "delta": {
         "auroc": {
          "value": -0.0064062219025355915,
          "ci95": [
-          -0.011933048910733508,
-          -0.001255605196020976
+          -0.012032319082258722,
+          -0.0012088179967235436
          ],
-         "p_better": 0.0085
+         "p_better": 0.007
         },
         "auprc": {
          "value": -0.008114519036660217,
          "ci95": [
-          -0.018071649846458596,
-          0.0015079422273110304
+          -0.017626296979694863,
+          0.0016345046322957517
          ],
-         "p_better": 0.045
+         "p_better": 0.0505
         },
         "brier": {
          "value": 0.0008891311315853967,
          "ci95": [
-          0.00005749495090564342,
-          0.0017630816595234527
+          0.00006312168699399366,
+          0.0017577007744953679
          ],
-         "p_better": 0.018
+         "p_better": 0.019
         }
        }
       },
@@ -3276,48 +3589,48 @@
        "auroc": {
         "value": 0.6590541269555836,
         "ci95": [
-         0.6033206391988237,
-         0.7139375904578018
+         0.6044252649749157,
+         0.7131902034136077
         ]
        },
        "brier": {
         "value": 0.19317636257254275,
         "ci95": [
-         0.1754404554905687,
-         0.2126690175021894
+         0.17485989700728574,
+         0.211618074286654
         ]
        },
        "cal_slope": {
         "value": 1.0191964532264461,
         "ci95": [
-         0.601571456619246,
-         1.5004625300243002
+         0.6223558355079771,
+         1.5003650294363795
         ]
        },
        "delta": {
         "auroc": {
          "value": -0.004068512857399731,
          "ci95": [
-          -0.011836203198889898,
-          0.0032461691421111992
+          -0.011676651974639731,
+          0.0036032168384194244
          ],
-         "p_better": 0.138
+         "p_better": 0.1495
         },
         "auprc": {
          "value": -0.005051791693275853,
          "ci95": [
-          -0.01760284803004481,
-          0.007029587943853581
+          -0.017151223267041077,
+          0.007650686013424296
          ],
-         "p_better": 0.193
+         "p_better": 0.188
         },
         "brier": {
          "value": 0.0006868504059382718,
          "ci95": [
-          -0.0005095107193563133,
-          0.0018681088859865626
+          -0.0005235166902286612,
+          0.001894487587817338
          ],
-         "p_better": 0.132
+         "p_better": 0.1315
         }
        }
       }

@@ -228,6 +228,16 @@ def main():
     q2 = {"aurocInMeps": float(roc_auc_score(y, p_transport)), "ci95": [float(np.percentile(boot, 2.5)), float(np.percentile(boot, 97.5))],
           "meanPredicted": float(p_transport.mean()), "observedRate": float(y.mean()),
           "oe": float(y.mean() / p_transport.mean())}
+    oofm = pd.read_csv(os.path.join(OUT, "oof.csv")).set_index("ID").loc[ids]
+    p_meps = oofm.p_logistic.values
+    dd = []
+    for _ in range(2000):
+        i = rng.choice(len(y), len(y), replace=True)
+        dd.append(roc_auc_score(y[i], p_transport[i]) - roc_auc_score(y[i], p_meps[i]))
+    q2["vsMepsModel"] = {"mepsOofAuroc": float(roc_auc_score(y, p_meps)),
+                         "deltaAuroc": float(roc_auc_score(y, p_transport) - roc_auc_score(y, p_meps)),
+                         "ci95": [float(np.percentile(dd, 2.5)), float(np.percentile(dd, 97.5))],
+                         "note": "Paired bootstrap: Synthea shared-variable model (never saw MEPS) vs MEPS logistic OOF predictions, same 466 survivors."}
     print("Q2", q2)
 
     # Q3a: transferred clinical burden = E[clinical part of full Synthea logit | shared features]
@@ -318,7 +328,8 @@ def main():
         verdict = "Yes, modestly: clinical-record features add signal beyond the survey"
     elif clin_gain or prior_gain:
         verdict = ("No meaningful gain: clinical detail (stage, comorbidities) adds nothing even inside Synthea; "
-                   "Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain")
+                   "Synthea-derived scores give the MEPS model at most a tiny Brier gain (about -0.001) and no clear AUROC gain. "
+                   "But a Synthea model on shared variables alone ranks real survivors about as well as the survey model (tie within CI)")
     elif False:
         verdict = "Not the clinical detail: stage and comorbidities add nothing, but a Synthea model on shared variables is a small useful prior"
     else:
@@ -328,12 +339,14 @@ def main():
               f"AUROC {q1['aurocShared']:.3f} -> {q1['aurocSharedPlusClinical']:.3f}, d {q1['deltaAuroc']:+.3f} "
               f"[{q1['deltaAurocCi95'][0]:+.3f}, {q1['deltaAurocCi95'][1]:+.3f}]; stage is missing in {q1['stageMissingShare']:.0%} of person-years. "
               f"(2) A Synthea model on shared variables only, applied unchanged to real MEPS survivors, ranks them at AUROC {q2['aurocInMeps']:.3f} "
-              f"[{q2['ci95'][0]:.3f}, {q2['ci95'][1]:.3f}] with O/E {q2['oe']:.2f}: the shared risk pattern (prior acute care, age, insurance) transports. "
+              f"[{q2['ci95'][0]:.3f}, {q2['ci95'][1]:.3f}] with O/E {q2['oe']:.2f}, vs the MEPS model's {q2['vsMepsModel']['mepsOofAuroc']:.3f} out-of-fold "
+              f"(paired d {q2['vsMepsModel']['deltaAuroc']:+.3f} [{q2['vsMepsModel']['ci95'][0]:+.3f}, {q2['vsMepsModel']['ci95'][1]:+.3f}]): "
+              "the shared-variable risk pattern learned from synthetic records transports about as well as a model fit on the survey itself. "
               f"(3) Added to the MEPS model: clinical-burden score d AUROC {fmt('transfer_clinical_burden', 'auroc')}, d Brier {fmt('transfer_clinical_burden', 'brier')}; "
               f"Synthea prior d AUROC {fmt('transfer_prior_logit', 'auroc')}, d Brier {fmt('transfer_prior_logit', 'brier')}; "
               f"stratum features (3 definitions) d AUROC between {min(q3[k]['delta']['auroc']['value'] for k in q3 if k.startswith('strata_')):+.3f} and "
               f"{max(q3[k]['delta']['auroc']['value'] for k in q3 if k.startswith('strata_')):+.3f}. "
-              "Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior "
+              "(Q3's MEPS-only reference is 0.663, not 0.666, because it uses a wider C grid.) Without a shared key every Synthea feature is a function of variables MEPS already has, so a gain means the simulation is a useful prior "
               "at n=466, not that real stage or comorbidity data would help these patients. The submission uses the MEPS-only model.")
     out = {"verdict": {"verdict": verdict, "detail": detail},
            "design": __doc__.strip(),

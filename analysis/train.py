@@ -141,6 +141,17 @@ def fairness(y, p, groups):
                    "oe": (k / n) / float(p[m].mean()) if n and p[m].mean() > 0 else None,
                    "brier": float(brier_score_loss(y[m], p[m])) if n else None,
                    "auroc": float(roc_auc_score(y[m], p[m])) if 0 < k < n else None}
+            # 500-draw bootstrap within the subgroup for AUROC and O/E
+            yi, pi_ = y[m], p[m]
+            rg = np.random.default_rng(SEED)
+            au, oe = [], []
+            for _ in range(500):
+                j = rg.integers(0, n, n)
+                if 0 < yi[j].sum() < n:
+                    au.append(roc_auc_score(yi[j], pi_[j]))
+                oe.append(yi[j].mean() / pi_[j].mean())
+            row["aurocCi95"] = [float(np.percentile(au, 2.5)), float(np.percentile(au, 97.5))] if len(au) > 50 else None
+            row["oeCi95"] = [float(np.percentile(oe, 2.5)), float(np.percentile(oe, 97.5))]
             row["tooSmall"] = n < 30 or k < 10
             out.append(row)
     return out

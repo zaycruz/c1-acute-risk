@@ -217,6 +217,10 @@ def main():
             caveat += " This survivor skipped the health questionnaire, so mental/physical scores were filled with typical values."
         if g.race_ethnicity in ("Hispanic", "NH Asian", "NH other/multiple") or g.insurance == "Uninsured":
             caveat += f" Few {g.race_ethnicity if g.insurance != 'Uninsured' else 'uninsured'} survivors in the training data: treat this estimate with extra caution."
+        if g.race_ethnicity == "NH Black":
+            caveat += " For NH Black survivors this model ranked risk poorly on development data (AUROC about 0.43, n = 47): rely on clinical judgement."
+        if age is not None and age >= 75:
+            caveat += " The model under-predicted acute care for survivors 75+ (observed about 1.3x predicted): the true risk may be higher."
         d = {"survivorId": f"c1-{sid}", "displayName": display, "status": st, "headline": headline, "summary": summary,
              "risk": round(p, 4), "thresholds": {"alert": T["alert"], "watch": T["watch"]},
              "evidence": evidence, "recommendations": recs, "charts": charts, "profile": profile, "caveat": caveat}
