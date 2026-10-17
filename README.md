@@ -23,6 +23,18 @@ scripts/reproduce.sh      # pinned deps, fixed seeds; checks every README number
 
 API: https://c1-acute-risk.zay-259.workers.dev ([CONTRACT.md](CONTRACT.md)) · Submission: [`submission/heldout_predictions.csv`](submission/heldout_predictions.csv) (199 rows)
 
+## How it works
+
+**Technical architecture:** files, endpoints, models and fallbacks, each box checked against this repo.
+
+![C1 technical architecture](docs/arch-c1.png)
+
+**Results panel:** the data, the model, how it was validated, what the user sees, the held-out results and the honest limits.
+
+![C1 Care-team risk](docs/c1.png)
+
+Method in full, with every choice and why: [METHODOLOGY.md](METHODOLOGY.md).
+
 <details>
 <summary><b>Everything else</b>: full results, risk factors, fairness, Synthea, method, caveats</summary>
 
