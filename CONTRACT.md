@@ -1,7 +1,7 @@
 # C1 Care Team Risk: API contract
 
 Base URL (deployed): `https://c1-acute-risk.zay-259.workers.dev`. All responses are JSON with `access-control-allow-origin: *`; only `GET` (and `OPTIONS`) are accepted, anything else is `405`.
-The examples below are real responses, captured by `npm run e2e` on 2026-10-17T16:08:53.677Z (32/32 checks passed) and turned into this file by `npm run contract`.
+The examples below are real responses, captured by `npm run e2e` on 2026-10-17T16:11:49.490Z (34/34 checks passed) and turned into this file by `npm run contract`.
 
 Predictions are for the **199 held-out MEPS survivors** (`meps/heldout_ids.csv`): real people, forward predictions, outcome unknown to us.
 `survivorId` = `c1-` + the challenge's MEPS `ID`. `updatedAt` is the as-of date of the data (end of 2017), not the build time.
@@ -41,7 +41,7 @@ Sorted by `status` (alert, then watch, then ok), then by risk. Status comes from
 
 ## `GET /api/c1/survivors/:id`: survivor panel
 
-Contract fields: `survivorId, status, headline, summary, evidence, recommendations, charts, profile, caveat`. Extra fields: `displayName`, `risk` (0..1, identical to the submitted `predicted_risk`), `thresholds`.
+Contract fields: `survivorId, status, headline, summary, evidence, recommendations, charts, profile, caveat`. Extra fields: `displayName`, `risk` (0..1, identical to the submitted `predicted_risk`), `thresholds`, `riskWords` (at most 60 characters, for under the risk number), `forEllie` (one line of at most 160 characters that always includes the caveat, for Ellie to use verbatim), `fairnessFlags[]` (`{attribute, group, flag, text}` for each of this survivor's groups whose fairness flag is not `ok`; empty when none).
 
 - `evidence[]`: `{kind, text}`. The first item (`kind: "model"`) states the risk and what the tier meant on development data. Then up to 4 factors that raise this person's risk and up to 2 that lower it, biggest first. Extra keys: `feature`, `logitContribution` (TreeSHAP contribution on the calibrated log-odds scale, relative to an average survivor; see analysis/explain.py). `kind` is one of `prior-acute-care, medications, care-intensity, physical-function, symptoms, distress, financial-toxicity, access, treatment, support, demographic`.
 - `recommendations[]`: `{audience: "coach" | "care-team" | "survivor", text}`. Tier action first, then one per actionable driver. The coach does not diagnose; clinical items go to `care-team`.
@@ -60,10 +60,13 @@ Contract fields: `survivorId, status, headline, summary, evidence, recommendatio
     "alert": 0.43,
     "watch": 0.29
   },
+  "riskWords": "Higher than most: about 7 in 10 like them had one",
+  "forEllie": "Hospital risk 70% next year (high; average 29%), mainly nights in hospital last year. Association, not cause.",
+  "fairnessFlags": [],
   "evidence": [
     {
       "kind": "model",
-      "text": "Predicted chance of an ER visit or hospital stay in 2018: 70%. Among development survivors in the alert tier, 57% had one."
+      "text": "Predicted chance of an ER visit or hospital stay in 2018: 70%. In the alert tier, 57% of past survivors had one."
     },
     {
       "kind": "care-intensity",
@@ -498,7 +501,7 @@ Excerpt:
       {
         "value": "0.71",
         "label": "ranking quality (AUROC; 0.5 = coin flip, 1 = perfect)",
-        "sub": "baseline 0.67; difference not statistically significant"
+        "sub": "baseline 0.67; gap may be chance"
       }
     ],
     "howSure": [
@@ -507,7 +510,7 @@ Excerpt:
       "All numbers are scored on people the model never saw (nested cross-validation)."
     ],
     "insight": "Heavy care use last year (ER visits, hospital nights, many prescriptions and visits) is the strongest sign of acute care next year. It marks need; it is not something to change directly.",
-    "nextQuestion": "Harder and more useful: who will have a FIRST ER visit or hospital stay? Among the 326 survivors with none in 2017, 70 had one in 2018, and no model finds them much better than the baseline yet (AUROC 0.65 vs 0.63).",
+    "nextQuestion": "Who will have a FIRST ER visit or hospital stay? Of 326 survivors with none in 2017, 70 had one in 2018; no model finds them much better than the baseline yet (AUROC 0.65 vs 0.63).",
     "limits": [
       "Associations, not causes: the factors flag who may need help; changing one is not proven to prevent an ER visit.",
       "Built from survey answers only. The synthetic clinical records (Synthea) did not improve it and share no patient key with the survey.",

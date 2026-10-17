@@ -1,8 +1,8 @@
 {
- "at": "2026-10-17T16:08:53.677Z",
+ "at": "2026-10-17T16:11:49.490Z",
  "base": "https://c1-acute-risk.zay-259.workers.dev",
- "passed": 32,
- "total": 32,
+ "passed": 34,
+ "total": 34,
  "checks": [
   {
    "name": "submission header is exactly ID,predicted_risk",
@@ -78,6 +78,13 @@
     "alert": 40,
     "watch": 43,
     "ok": 116
+   }
+  },
+  {
+   "name": "console display fields within agreed lengths (riskWords 60, forEllie 160 with caveat, headline 90, evidence 120)",
+   "ok": true,
+   "info": {
+    "over": []
    }
   },
   {
@@ -286,8 +293,37 @@
      {
       "value": "0.71",
       "label": "ranking quality (AUROC; 0.5 = coin flip, 1 = perfect)",
-      "sub": "baseline 0.67; difference not statistically significant"
+      "sub": "baseline 0.67; gap may be chance"
      }
+    ]
+   }
+  },
+  {
+   "name": "display block within agreed lengths (headline 140, KPI value 9 / label 60 / sub 50, lines 200)",
+   "ok": true,
+   "info": {
+    "headline": 115,
+    "keyNumbers": [
+     [
+      3,
+      56,
+      20
+     ],
+     [
+      9,
+      38,
+      35
+     ],
+     [
+      3,
+      28,
+      12
+     ],
+     [
+      4,
+      53,
+      32
+     ]
     ]
    }
   }
@@ -295,25 +331,25 @@
  "responses": {
   "/": {
    "status": 200,
-   "ms": 584,
+   "ms": 295,
    "bytes": 13496
   },
   "/api/c1/survivors": {
    "status": 200,
-   "ms": 434,
+   "ms": 148,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c08fef8ff349bb-MIA",
+    "cf-ray": "a4c0946c0e11ae0e-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 16:08:29 GMT",
+    "date": "Sat, 17 Oct 2026 16:11:33 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=7RUq0uliIsDelb4rg0x7ocEJckBgsWlW%2BsfjqMMxtwG7dtlavstCi%2F9UqntANYK5bWj0IM5T8tA%2BrNSEfUjvMeKqGHjz2YTRKJuCjOcRL%2FXzTo3G6LJw6m%2BCPiHhuRddjf13G3pCOodN1q%2FmzkxWLVZvTMk%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=fAcIpIwaSBSUPrZZNmKt88TJe1l9BItVst1RJXaBsIB%2B4eLozHyaXvuCqWMtzagDpKS%2F4atiFPsgFnYMhrx5ycBt0B%2FFea9n5LzYCP8ANihDUTtZVqdetpEUA14StJJM0EOYezx44cqblkrUlHghvvnKYoc%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -1715,20 +1751,20 @@
   },
   "/api/c1/survivors/c1-S71188550": {
    "status": 200,
-   "ms": 218,
+   "ms": 44,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c08ff248d049bb-MIA",
+    "cf-ray": "a4c0946c8858ae0e-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 16:08:29 GMT",
+    "date": "Sat, 17 Oct 2026 16:11:33 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=voMlV%2F1h371k%2FnRbEe2Xnd2WtBbvFld1rSt1CEEEqeRp7SB451%2FoO0YUO59yWIgH8f9P1YbRC8M%2Bdb9LK5I1v8LlHMTONsdLGjjtuu4s9ljqce%2Bbb3n6B4abMAMxLZ%2Bvgah4Jx8omV6coPWx4TsUe9qeAu4%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=inxfQXUKRiO6l4ZQSAy5q9lR%2BcIpY5KXdE%2Fmv3sIDpCBgHKPFiOrr%2FlBqASjg3y9JmxTpwv7j%2FKmRIj5TlW8nRhwEVgb%2Bz%2FJ8mYV1z7fcMapm6Ro8oMA3LCkOMBEU%2BFrrFANw%2BFEMCbXV1i0GyReiJH2L%2BA%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -1743,10 +1779,13 @@
      "alert": 0.43,
      "watch": 0.29
     },
+    "riskWords": "Higher than most: about 7 in 10 like them had one",
+    "forEllie": "Hospital risk 70% next year (high; average 29%), mainly nights in hospital last year. Association, not cause.",
+    "fairnessFlags": [],
     "evidence": [
      {
       "kind": "model",
-      "text": "Predicted chance of an ER visit or hospital stay in 2018: 70%. Among development survivors in the alert tier, 57% had one."
+      "text": "Predicted chance of an ER visit or hospital stay in 2018: 70%. In the alert tier, 57% of past survivors had one."
      },
      {
       "kind": "care-intensity",
@@ -1854,20 +1893,20 @@
   },
   "/api/c1/survivors/c1-nope": {
    "status": 404,
-   "ms": 38,
+   "ms": 43,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c0908528c849bb-MIA",
+    "cf-ray": "a4c094d01aa6ae0e-MIA",
     "connection": "keep-alive",
     "content-length": "30",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 16:08:53 GMT",
+    "date": "Sat, 17 Oct 2026 16:11:49 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=vO049z%2FBsg22shaS%2BRMvq%2F6OUtDQXdhkFW1fh2L8z5kzDtJUk7RrETWU8uveMhuxZAuYOVcQEK4wH74FvACrC6S8ZfC%2F0rmB71efei8N%2F87b5pivbEVlg511tw1tlPs%2FZNSSvcuIRkgtsmBgNpU%2F%2FnCuh%2Bg%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=C8lVlFKQQ7EqDhhaLywzVqr%2FjdPcAlNtKPR02VJXdkxdMbUUXdzsWflUCaCXuw%2BI6Az3xBgdz%2Bndg4rZZsD0oGlSlaz9I7kOGuEOwQJQI7XVWMRNd0mI0jd%2FgK9nRtlqni9kwauXMcsqLp%2Fr5ritQF7DlIs%3D\"}]}",
     "server": "cloudflare"
    },
    "body": {
@@ -1876,20 +1915,20 @@
   },
   "/api/c1/metrics": {
    "status": 200,
-   "ms": 65,
+   "ms": 99,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c090872f0649bb-MIA",
+    "cf-ray": "a4c094d1c883ae0e-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 16:08:53 GMT",
+    "date": "Sat, 17 Oct 2026 16:11:49 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=6bjUmPRM4TZq6EMjNipynf4nSx2mFNb0lAC4nYgW7vKNFx%2FSLsbdxkY0MAmMMgTY9AQ%2B3Ehih3G2EMZx%2B%2FHVi0FGCs7K1KWdW3hqh87fRxGVlHI7SR8fnpQcxcprWtUQZJ4vKC7aMeUH%2F2DLKFKmh9lANI0%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=1yH0OnKpO3LovnOgGjy7j1nX8SoIWUu1jrftVkMlIJRgJpr1WGN%2FJDM32Flkv%2BdSByM3hGhMlYLt87J0%2FS6KiRmq60Jcp5jQvYPXylYOPnOnwELakejuBvrolwgBd9AADbfzB6zlgS6r49Eusg8SRzKiFl8%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -4134,7 +4173,7 @@
       {
        "value": "0.71",
        "label": "ranking quality (AUROC; 0.5 = coin flip, 1 = perfect)",
-       "sub": "baseline 0.67; difference not statistically significant"
+       "sub": "baseline 0.67; gap may be chance"
       }
      ],
      "howSure": [
@@ -4143,7 +4182,7 @@
       "All numbers are scored on people the model never saw (nested cross-validation)."
      ],
      "insight": "Heavy care use last year (ER visits, hospital nights, many prescriptions and visits) is the strongest sign of acute care next year. It marks need; it is not something to change directly.",
-     "nextQuestion": "Harder and more useful: who will have a FIRST ER visit or hospital stay? Among the 326 survivors with none in 2017, 70 had one in 2018, and no model finds them much better than the baseline yet (AUROC 0.65 vs 0.63).",
+     "nextQuestion": "Who will have a FIRST ER visit or hospital stay? Of 326 survivors with none in 2017, 70 had one in 2018; no model finds them much better than the baseline yet (AUROC 0.65 vs 0.63).",
      "limits": [
       "Associations, not causes: the factors flag who may need help; changing one is not proven to prevent an ER visit.",
       "Built from survey answers only. The synthetic clinical records (Synthea) did not improve it and share no patient key with the survey.",

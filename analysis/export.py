@@ -183,6 +183,19 @@ def first_event(Xd, y):  # y in dev order
                    "Finding the first event is the harder, more useful job for prevention."}
 
 
+def flag_fairness(rows):
+    """Plain flag + sentence per fairness group (shared by the metrics and each survivor's panel)."""
+    for g in rows:
+        g["flag"] = ("too-small" if g["tooSmall"] else
+                     "weak-ranking" if g["auroc"] is not None and g["auroc"] < 0.6 else
+                     "under-predicted" if g["oeCi95"][0] > 1 else "over-predicted" if g["oeCi95"][1] < 1 else "ok")
+        g["text"] = {"too-small": f"{g['group']}: only {g['n']} people ({g['positives']} events), too few to judge",
+                     "weak-ranking": f"{g['group']}: the model ranks risk poorly (AUROC {g['auroc']:.2f}, n = {g['n']}); use clinical judgement",
+                     "under-predicted": f"{g['group']}: real risk ran higher than predicted ({g['oe']:.2f}x)",
+                     "over-predicted": f"{g['group']}: real risk ran lower than predicted ({g['oe']:.2f}x)",
+                     "ok": f"{g['group']}: works about as well as overall (AUROC {g['auroc']:.2f})"}[g["flag"]]
+
+
 def add_display(m):
     """Plain-language, ready-to-render text for apps (Coach Console). Every number here comes from the fields above."""
     P = lambda v: f"{round(v * 100)}%"
@@ -196,15 +209,7 @@ def add_display(m):
                      if t["status"] == "alert" else
                      f"{word[t['status']]} ({P(t['riskFrom'])}-{P(t['riskTo'])}): {P(t['observedRate'])} of {t['n']} had one" if t["status"] == "watch" else
                      f"{word[t['status']]} (under {P(t['riskTo'])}): {P(t['observedRate'])} of {t['n']} had one")
-    for g in m["fairness"]:
-        g["flag"] = ("too-small" if g["tooSmall"] else
-                     "weak-ranking" if g["auroc"] is not None and g["auroc"] < 0.6 else
-                     "under-predicted" if g["oeCi95"][0] > 1 else "over-predicted" if g["oeCi95"][1] < 1 else "ok")
-        g["text"] = {"too-small": f"{g['group']}: only {g['n']} people ({g['positives']} events), too few to judge",
-                     "weak-ranking": f"{g['group']}: the model ranks risk poorly (AUROC {g['auroc']:.2f}, n = {g['n']}); use clinical judgement",
-                     "under-predicted": f"{g['group']}: real risk ran higher than predicted ({g['oe']:.2f}x)",
-                     "over-predicted": f"{g['group']}: real risk ran lower than predicted ({g['oe']:.2f}x)",
-                     "ok": f"{g['group']}: works about as well as overall (AUROC {g['auroc']:.2f})"}[g["flag"]]
+    flag_fairness(m["fairness"])
     S, FE, F = m["modelSearch"], m["firstEvent"], m["finalModel"]["key"]
     top = next(t for t in m["tiers"]["tiers"] if t["status"] == "alert")
     flagged = [g["text"] for g in m["fairness"] if g["flag"] in ("weak-ranking", "under-predicted", "over-predicted")]
@@ -215,7 +220,7 @@ def add_display(m):
             {"value": P(top["observedRate"]), "label": "of alert-tier survivors had an ER visit or hospital stay", "sub": f"average survivor {P(m['data']['devPositives'] / m['data']['devSurvivors'])}"},
             {"value": f"{S['top20Events']['procedure']} of {S['top20Events']['of']}", "label": "events caught by calling the top fifth", "sub": f"the organisers' baseline catches {S['top20Events']['baseline']}"},
             {"value": P(S["callsAt50"]["procedure"]["cameTrue"]), "label": "of 50%+ risk calls came true", "sub": f"baseline {P(S['callsAt50']['baseline']['cameTrue'])}"},
-            {"value": f"{S['auroc']['search']:.2f}", "label": "ranking quality (AUROC; 0.5 = coin flip, 1 = perfect)", "sub": f"baseline {S['auroc']['baseline']:.2f}; difference not statistically significant"},
+            {"value": f"{S['auroc']['search']:.2f}", "label": "ranking quality (AUROC; 0.5 = coin flip, 1 = perfect)", "sub": f"baseline {S['auroc']['baseline']:.2f}; gap may be chance"},
         ],
         "howSure": [
             "The risk numbers are well calibrated: when it says 30%, about 30% of those people had an ER visit or hospital stay.",
@@ -223,8 +228,8 @@ def add_display(m):
             "All numbers are scored on people the model never saw (nested cross-validation).",
         ],
         "insight": "Heavy care use last year (ER visits, hospital nights, many prescriptions and visits) is the strongest sign of acute care next year. It marks need; it is not something to change directly.",
-        "nextQuestion": (f"Harder and more useful: who will have a FIRST ER visit or hospital stay? Among the {FE['n']} survivors with none in 2017, "
-                         f"{FE['events']} had one in 2018, and no model finds them much better than the baseline yet (AUROC {FE['aurocModel']:.2f} vs {FE['aurocBaseline']:.2f})."),
+        "nextQuestion": (f"Who will have a FIRST ER visit or hospital stay? Of {FE['n']} survivors with none in 2017, {FE['events']} had one in 2018; "
+                         f"no model finds them much better than the baseline yet (AUROC {FE['aurocModel']:.2f} vs {FE['aurocBaseline']:.2f})."),
         "limits": ["Associations, not causes: the factors flag who may need help; changing one is not proven to prevent an ER visit.",
                    "Built from survey answers only. The synthetic clinical records (Synthea) did not improve it and share no patient key with the survey."]
                   + flagged,
@@ -251,6 +256,7 @@ def main():
     assert np.allclose(risk.loc[sub.index].round(6), sub.predicted_risk, atol=1e-6), "export drifted from submission"
 
     T = M["tiers"]
+    flag_fairness(M["fairness"])
     FAIR = {(r["attribute"], r["group"]): r for r in M["fairness"]}
     base_rate = M["positives_dev"] / M["n_dev"]
     groups = subgroups(s17)
@@ -289,7 +295,7 @@ def main():
         else:
             headline = f"Acute care risk {pct}% for 2018, below the {round(base_rate * 100)}% average"
         evidence = [{"kind": "model", "text": f"Predicted chance of an ER visit or hospital stay in 2018: {pct}%. "
-                     f"Among development survivors in the {st} tier, {round(tier_rate[st] * 100)}% had one."}]
+                     f"In the {st} tier, {round(tier_rate[st] * 100)}% of past survivors had one."}]
         for f, v in up:
             evidence.append({"kind": FACTOR_PLAYBOOK.get(f, ("other",))[0], "text": describe(f, x, s17.loc[sid]) + " (raises risk)",
                              "feature": f, "logitContribution": round(float(v), 3)})
@@ -345,8 +351,25 @@ def main():
                 caveat += f" The model under-predicted acute care for {grp} survivors (observed {fr['oe']:.2f}x predicted): the true risk may be higher."
             if fr["oeCi95"][1] < 1:
                 caveat += f" The model over-predicted acute care for {grp} survivors (observed {fr['oe']:.2f}x predicted)."
+        # Console display fields (limits agreed with t-0003): riskWords <= 60, forEllie <= 160 incl. the caveat.
+        k10 = max(1, min(9, round(p * 10)))
+        lead_word = {"alert": "Higher than most", "watch": "Above average", "ok": "Below average"}[st]
+        risk_words = f"{lead_word}: about {k10} in 10 like them had one"
+        flags = []
+        for attr, grp in (("race_ethnicity", g.race_ethnicity), ("age", g.age), ("insurance", g.insurance), ("cancer_type", g.cancer_type)):
+            fr = FAIR.get((attr, grp))
+            if fr and fr.get("flag", "ok") != "ok":
+                flags.append({"attribute": attr, "group": grp, "flag": fr["flag"], "text": fr["text"]})
+        weak = next((f for f in flags if f["flag"] in ("weak-ranking", "under-predicted", "over-predicted")), None)
+        small = next((f for f in flags if f["flag"] == "too-small"), None)
+        tail = (f" Less reliable for {weak['group']} survivors." if weak else f" Few {small['group']} survivors in training." if small else "") + " Association, not cause."
+        driver = f", mainly {lead}" if lead and st != "ok" else ""
+        for_ellie = f"Hospital risk {pct}% next year ({ {'alert': 'high', 'watch': 'raised', 'ok': 'low'}[st]}; average {round(base_rate * 100)}%){driver}.{tail}"
+        if len(for_ellie) > 160:
+            for_ellie = f"Hospital risk {pct}% next year{driver}.{tail}"
         d = {"survivorId": f"c1-{sid}", "displayName": display, "status": st, "headline": headline, "summary": summary,
              "risk": round(p, 4), "thresholds": {"alert": T["alert"], "watch": T["watch"]},
+             "riskWords": risk_words, "forEllie": for_ellie, "fairnessFlags": flags,
              "evidence": evidence, "recommendations": recs, "charts": charts, "profile": profile, "caveat": caveat}
         details[f"c1-{sid}"] = d
         roster.append({"survivorId": d["survivorId"], "displayName": display, "status": st, "headline": headline,

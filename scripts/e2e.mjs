@@ -58,9 +58,11 @@ check("roster has alert, watch and ok survivors", mix.alert > 0 && mix.watch > 0
 const subRisk = Object.fromEntries(rows.map((r) => [`c1-${r[0]}`, Number(r[1])]));
 let ok = 0;
 const failures = [];
+const panels = {};
 for (const r of list) {
   const d = await get(`/api/c1/survivors/${r.survivorId}`);
   const b = d.body;
+  panels[r.survivorId] = b;
   const t = b?.thresholds;
   const good = d.status === 200 && b.survivorId === r.survivorId && b.status === r.status && b.headline === r.headline &&
     typeof b.summary === "string" && b.summary.length > 0 &&
@@ -73,6 +75,18 @@ for (const r of list) {
   if (good) ok++; else failures.push(r.survivorId);
   if (r === list[0]) responses[`/api/c1/survivors/${r.survivorId}`] = d;
 }
+const LIM = { riskWords: 60, forEllie: 160, headline: 90, evidence: 120 };
+const over = [];
+for (const r of list) {
+  const b = panels[r.survivorId];
+  if (!b) continue;
+  if (!(typeof b.riskWords === "string" && b.riskWords.length <= LIM.riskWords)) over.push([r.survivorId, "riskWords"]);
+  if (!(typeof b.forEllie === "string" && b.forEllie.length <= LIM.forEllie && /not cause/i.test(b.forEllie))) over.push([r.survivorId, "forEllie"]);
+  if (b.headline.length > LIM.headline) over.push([r.survivorId, "headline"]);
+  if (b.evidence.some((e) => e.text.length > LIM.evidence)) over.push([r.survivorId, "evidence"]);
+  if (!Array.isArray(b.fairnessFlags) || b.fairnessFlags.some((f) => !f.flag || f.flag === "ok" || !f.text)) over.push([r.survivorId, "fairnessFlags"]);
+}
+check("console display fields within agreed lengths (riskWords 60, forEllie 160 with caveat, headline 90, evidence 120)", over.length === 0 && Object.keys(panels).length === list.length, { over: over.slice(0, 10) });
 check("every survivor panel matches the contract, the submission risk and its tier", ok === list.length, { ok, failures: failures.slice(0, 10) });
 const missing = await get("/api/c1/survivors/c1-nope");
 check("unknown survivor returns 404 JSON", missing.status === 404 && missing.body?.error);
@@ -114,6 +128,9 @@ if (M.metrics) {
   check("display block is ready to render (plain text, no raw objects)", D && typeof D.headline === "string" && D.keyNumbers?.length >= 3 && D.keyNumbers.every((k) => typeof k.value === "string" && typeof k.label === "string") &&
     D.howSure?.length && D.limits?.length && M.plainFactors.every((r) => typeof r.text === "string") && M.tiers.tiers.every((t) => typeof t.text === "string") &&
     M.fairness.every((g) => typeof g.text === "string" && ["ok", "too-small", "weak-ranking", "under-predicted", "over-predicted"].includes(g.flag)), D && { headline: D.headline, keyNumbers: D.keyNumbers });
+  check("display block within agreed lengths (headline 140, KPI value 9 / label 60 / sub 50, lines 200)", D && D.headline.length <= 140 &&
+    D.keyNumbers.every((k) => k.value.length <= 9 && k.label.length <= 60 && k.sub.length <= 50) &&
+    [...D.howSure, ...D.limits, D.nextQuestion].every((x) => x.length <= 200), D && { headline: D.headline.length, keyNumbers: D.keyNumbers.map((k) => [k.value.length, k.label.length, k.sub.length]) });
   responses.summary = { ...s, nested: S && { auroc: S.auroc, dAuroc: S.vsBaseline.dAuroc, dLogLoss: S.vsBaseline.dLogLoss }, firstEvent: FE && { model: FE.aurocModel, baseline: FE.aurocBaseline } };
 }
 
