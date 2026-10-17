@@ -1,7 +1,7 @@
 # C1 Care Team Risk: API contract
 
 Base URL (deployed): `https://c1-acute-risk.zay-259.workers.dev`. All responses are JSON with `access-control-allow-origin: *`; only `GET` (and `OPTIONS`) are accepted, anything else is `405`.
-The examples below are real responses, captured by `npm run e2e` on 2026-10-17T18:29:18.689Z (39/39 checks passed) and turned into this file by `npm run contract`.
+The examples below are real responses, captured by `npm run e2e` on 2026-10-17T18:36:56.211Z (40/40 checks passed) and turned into this file by `npm run contract`.
 
 Predictions are for the **199 held-out MEPS survivors** (`meps/heldout_ids.csv`): real people, forward predictions, outcome unknown to us.
 `survivorId` = `c1-` + the challenge's MEPS `ID`. `updatedAt` is the as-of date of the data (end of 2017), not the build time.
@@ -220,12 +220,13 @@ Unknown id: `404 {"error":"survivor not found"}`.
 
 ## `GET /api/c1/metrics`: model card
 
-Top-level keys: `build`, `asOf`, `outcome`, `data`, `validation`, `finalModel`, `metrics`, `deltaVsBaseline`, `deltaVsPrevious`, `servedModel`, `modelSearch`, `firstEvent`, `calibrationCurve`, `tiers`, `fairness`, `fairnessBaseline`, `factors`, `plainFactors`, `clinicalRecords`, `clinicalRecordsDetail`, `heldoutStatusMix`, `fairnessMitigation`, `alertBudget`, `caveats`, `display`.
+Top-level keys: `build`, `asOf`, `outcome`, `data`, `validation`, `finalModel`, `metrics`, `deltaVsBaseline`, `deltaVsPrevious`, `subgroupAt50`, `servedModel`, `modelSearch`, `firstEvent`, `calibrationCurve`, `tiers`, `fairness`, `fairnessBaseline`, `factors`, `plainFactors`, `clinicalRecords`, `clinicalRecordsDetail`, `heldoutStatusMix`, `fairnessMitigation`, `alertBudget`, `caveats`, `display`.
 
 - `finalModel`: `{key, name, chosenBy, explanations, previous}`. `finalModel.key` (`forest`) names the final model in `metrics`, `deltaVsBaseline` and `calibrationCurve`.
 - `metrics.{baseline,logistic,gbm_calibrated,forest}`: `auroc, auprc, brier, log_loss, cal_intercept, cal_slope, mean_pred`, each `{value, ci95}`, out-of-fold on the 466 development survivors. `logistic` is the previous submission.
 - `modelSearch`: the unbiased nested-CV estimate of the model search (the 10x5 CV numbers for `forest` are post-selection). `deltaVsPrevious`: forest vs the previous logistic model, paired.
 - `build{gitSha, submissionSha256, note}`: provenance, added by the Worker. `gitSha` is the commit deployed (set by `scripts/deploy.sh`); `submissionSha256` is the served predictions file, the same hash `scripts/check_numbers.py` prints on any reproduce run. Every API response also carries `x-c1-commit` and `x-c1-artifact: sha256:<hash>` headers (exposed to browsers via CORS).
+- `subgroupAt50{cut, source, note, rows[]}`: sensitivity and PPV at risk >= 50% for each sex, age, race/ethnicity and insurance group (and all survivors), from the served forest's out-of-fold predictions: `{attribute, group, n, events, flagged, sensitivity, sensitivityCi95, ppv, ppvCi95, tooSmall}`. CIs are null for groups with n < 30 or < 10 events.
 - `servedModel`: the served forest's own numbers (10×5 out-of-fold, after selection): `callsAt50{forest, baseline, difference, differenceCi95}` (each `{n, cameTrue, cameTrueCi95}`), `expectedHeldout{survivors, expectedEvents, aurocRange95, note}` and `provenance{submissionSha256, inputRangeCheck}` (the E2E checks the hash against the committed CSV). In `modelSearch`, `submitted` is the first submission (logistic), not the served model.
 - `fairnessMitigation`: the pre-registered attempt to fix NH Black ranking: `variants[{variant, label, nhBlackAuroc, nhBlackAurocCi95, nhBlackOe, overallAuroc, overallLogLoss, vsCurrent, passes}]`, `passCriterion`, `passed[]`, `decision`, `extraSubgroups[]` (Hispanic, pooled not-NH-White), `language{available, note}`, `safeguard`, `whoThisDoesNotServeYet[]`.
 - `alertBudget`: workload of the alert tier: `current` (the alert tier), `cutoffs[]` (top 5/10/15/20/30%, with events found, precision and calls per 100 survivors per week) and `justification`.
