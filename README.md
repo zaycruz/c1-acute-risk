@@ -13,10 +13,10 @@ clinical records (Synthea, different people, no shared key) add anything. The re
 **Same-or-better ranking, significantly better probabilities.** The final model is a sigmoid-calibrated random forest
 (300 trees, min leaf 10) on 16 features: 2017 care use (ER, hospital stays and nights, office, outpatient, home health,
 prescriptions, total spending, missed work days), age, physical and mental health scores, distress, depression screen and
-self-rated health. A model search over 48 candidates (`analysis/autoresearch.py`, log in `runs/autoresearch/log.md`)
+self-rated health. A model search over 48 candidates in 3 rounds (`analysis/autoresearch.py`, log in `runs/autoresearch/log.md`)
 chose it. It replaces our first submission, an L2 logistic regression on 34 domain features.
 
-**The honest estimate is the nested one.** We re-ran the whole search inside each of 10 outer folds, so the scored model never saw its test fold:
+**The honest estimate is the nested one.** We re-ran the rounds 1–2 search (37 candidates) inside each of 10 outer folds, so the scored model never saw its test fold. None of the 11 round-3 candidates beat the forest:
 
 | Nested CV (10 outer folds) | Search procedure (picked the forest in 6 of 10 folds) | Baseline (organisers') | Difference [95% CI] |
 |---|---|---|---|
@@ -51,8 +51,9 @@ That marks need; it is not a lever. Within the prior-use group the search proced
 (+0.094 [-0.002, +0.206]). The baseline mostly separates "had acute care in 2017" from "did not".
 
 **Proposed alternative target: the first acute event.** Finding last year's repeat users is easy. Prevention needs the *first* event.
-Among the 326 survivors with no ER visit or hospital stay in 2017 (70 had a first one in 2018), the forest ranks at AUROC 0.662
-vs the baseline's 0.616: +0.046 [-0.036, +0.123] (`/api/c1/metrics` → `firstEvent`). We suggest the care team uses this as the target for outreach.
+Among the 326 survivors with no ER visit or hospital stay in 2017 (70 had a first one in 2018), the nested-CV search ranks at AUROC 0.653
+vs the baseline's 0.634: +0.019 [-0.065, +0.103] (`/api/c1/metrics` → `firstEvent`). No model we tried finds first events much better
+than the baseline. That is why we propose it as the next target: it is the hard, useful part of the problem.
 
 **Factors.** TreeSHAP on the forest gives each survivor's drivers on the calibrated log-odds scale (`analysis/explain.py`).
 Mean impact, largest first: spending, age, hospital nights, prescription fills, office visits, ER visits, mental health score (low raises risk),
@@ -102,7 +103,7 @@ The submission uses a MEPS-only model. A Synthea-prior candidate was tried in th
   Utilisation is log-transformed. Only the 2017 file feeds the model. From the 2018 file we read only `ID` and the outcome,
   because it reuses names such as `VPCS42` and `K6SUM42` for 2018 measures. An assert guards against 2018 columns.
 - **Model:** sigmoid-calibrated random forest on the 16 features in `final_features()` (`analysis/features.py`), with missing indicators.
-  The model search and its nested CV are in `analysis/autoresearch.py` (`--round nested`). Explanations: TreeSHAP per calibration fold,
+  The model search and its nested CV are in `analysis/autoresearch.py` (`.venv/bin/python -I analysis/autoresearch.py nested`, about 90 s). `build:data` reads its committed outputs in `runs/autoresearch/`; it does not regenerate them. Explanations: TreeSHAP per calibration fold,
   multiplied by the fold's sigmoid slope, so each contribution is exact on that fold's calibrated log-odds; we report the mean over folds.
 - **Validation:** 10× repeated stratified 5-fold CV, one row per survivor. The baseline and every comparator run on the same folds.
   Out-of-fold predictions are averaged over repeats. 95% CIs come from a 2,000-sample patient bootstrap, and differences are paired.
@@ -133,7 +134,7 @@ The seeds are fixed (`SEED = 20261017`), so a rerun gives the same numbers.
    care team, coach and survivor ("call the team first").
 3. **Can we trust the numbers? (40 s)** Look at the model card: "same-or-better ranking, significantly better probabilities".
    Nested CV says AUROC 0.711 vs 0.672 (not significant) and log loss significantly better. When the model says 50%+, it is right 67% of the time; the baseline is right 49%.
-4. **The insight (20 s).** Heavy care this year predicts acute care next year; nothing else moves the ceiling. So we propose the harder target: the *first* acute event (0.662 vs 0.616).
+4. **The insight (20 s).** Heavy care this year predicts acute care next year; nothing else moves the ceiling. So we propose the harder target: the *first* acute event, where no model beats the baseline much yet (0.653 vs 0.634).
 5. **Fairness and clinical records (15 s).** It holds by sex and insurance; NH Black ranking is weak and flagged. We did not fake a join: clinical detail adds nothing even inside Synthea.
 
 ## Caveats

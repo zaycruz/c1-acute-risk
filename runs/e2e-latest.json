@@ -1,5 +1,5 @@
 {
- "at": "2026-10-17T15:49:00.245Z",
+ "at": "2026-10-17T15:53:01.286Z",
  "base": "https://c1-acute-risk.zay-259.workers.dev",
  "passed": 31,
  "total": 31,
@@ -254,8 +254,8 @@
    "info": {
     "n": 326,
     "events": 70,
-    "model": 0.6623325892857141,
-    "baseline": 0.616015625
+    "model": 0.6531808035714286,
+    "baseline": 0.6344308035714286
    }
   },
   {
@@ -271,20 +271,20 @@
   },
   "/api/c1/survivors": {
    "status": 200,
-   "ms": 139,
+   "ms": 239,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c072e64b3833b9-MIA",
+    "cf-ray": "a4c07816bda8a4e8-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 15:48:40 GMT",
+    "date": "Sat, 17 Oct 2026 15:52:12 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=f8ogqzd7ddpoMQljVZSr41NcELRrTIG2R8oGX3VjydfAMbzhMhw5CyFIbblZM6yizw6GZQJEpKqVEO3RmCxdPBasxAI2j%2FZnAI%2F%2BaORwm4wM%2BIKo7G%2FXxWWhiQ%2FXJ2qd5brnYIgXCR%2FeVRk2nwLl33lghL0%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=dv2fCInF9y9ymRhqmPHUYCgyYQwZCyCe2xRFy9295ItTYKZjTUa7rEYmt2hVoWf6oR6rUaf%2FPEHI%2FGJybqfrHSNaV%2FfMkA5G7lG%2F7SH3Mvg%2Bn5567%2FQnUkoWMj%2Fbz0Igm8V%2BljPNAsEsfX8vFwyk%2B6ohlJk%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -1686,20 +1686,20 @@
   },
   "/api/c1/survivors/c1-S71188550": {
    "status": 200,
-   "ms": 62,
+   "ms": 205,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c072e70d2033b9-MIA",
+    "cf-ray": "a4c078183f16a4e8-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 15:48:40 GMT",
+    "date": "Sat, 17 Oct 2026 15:52:12 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=632FUJ7nYsWJJwaKU236w%2BNWveY%2F91ItAqPtp3Npl2IzQeYq7LbRaLsdj22UJCOzHuNvsn%2F%2FzuNV1g%2BUN7jTDXMFbh2UWTunbJw4V4pPfmc6WQLLv6XtbhthecY2jd3KJ%2Fx%2BAr0MVcnSlyfJusb66Lvvp4I%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=BnCavMjYS%2BiRK7De%2F1Yhbutq7YMnUmZ7YFE58wT55UpcQ%2BdyZ1fykWVlDmSBseGuHy6efJZdgItIDr8pqd5DuScqXJr5%2B0H6ldGleZ4NxaLf2zCtRj1Q3XEOniTTthmcmpGQ1UxAZSLHsRAgUur1qQfShDc%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -1825,20 +1825,20 @@
   },
   "/api/c1/survivors/c1-nope": {
    "status": 404,
-   "ms": 47,
+   "ms": 71,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c0735fbaf733b9-MIA",
+    "cf-ray": "a4c0794349cea4e8-MIA",
     "connection": "keep-alive",
     "content-length": "30",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 15:48:59 GMT",
+    "date": "Sat, 17 Oct 2026 15:53:00 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=qkvlhXEg4Vq3X6jktgVoC9UBQSxRPUjHvQHz%2ByLYIovmOeueyjtQqFo82%2F%2FfJbjQrMNJsOduDcAHwzp7Xlb1jdUa2kQ%2B7PaoWZbUgKwLsGh4nAkxqngOnpQdLolGwkh1%2BCzaSuWe2Dg7Ab0jZddfVhzW0wM%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=VLQSNbXvQhv%2Bz86p5sn5UYwV7pC3se6DX6%2FGs3OAr0EpssRzHB291SHpko0Den%2Fdm%2BUnQMnd7Fs2gywJQjhJ9%2B8v%2BPd8Opfo1HgR2wZ%2FM0kuteHwJJ%2F6PkMaPn6Ug03tXn%2BDwfqwOxLVRK%2FFQ6ftBOn0kLc%3D\"}]}",
     "server": "cloudflare"
    },
    "body": {
@@ -1847,20 +1847,20 @@
   },
   "/api/c1/metrics": {
    "status": 200,
-   "ms": 71,
+   "ms": 80,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c073642d6a33b9-MIA",
+    "cf-ray": "a4c079469d63a4e8-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 15:49:00 GMT",
+    "date": "Sat, 17 Oct 2026 15:53:01 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=OFLtjC9%2FcSEdW6gev961aZ9KzJu6NhJatvsA5aTmScB0UHmdn%2BixU5BOLpGUYB3HLVKJcDVfuZlfiNFfRKQ3pw33ojC0E%2FcYppN7IFC8dG9eHdr5Cb1vKIIw1lBzdXR%2F0vGgoiyjxzn5uZjYePVlqDYqYsI%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=n4D4rec3IHxPIV1XtYDuahLk2cbCdK4Tk%2B68eup0fWnEM9o8Tt6ST6a%2FDhd%2Fwxxpz%2FvaF4bZBk0T7Do9k8hs7Q3Ts0h%2FKovO%2BWhsFB7ix7sUL5gWhoLUC7rFg7SJOkK563GjWZaSrC0KvKO15ZcVUlU%2BHyk%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -2314,17 +2314,18 @@
     },
     "firstEvent": {
      "definition": "Survivors with no ER visit or hospital stay in 2017; outcome = first acute care in 2018",
+     "estimate": "nested CV of the model search (runs/autoresearch/round-nested-oof.csv), not the post-selection 10x5 CV",
      "n": 326,
      "events": 70,
      "rate": 0.2147239263803681,
-     "aurocModel": 0.6623325892857141,
-     "aurocBaseline": 0.616015625,
-     "deltaAuroc": 0.04631696428571419,
+     "aurocModel": 0.6531808035714286,
+     "aurocBaseline": 0.6344308035714286,
+     "deltaAuroc": 0.018750000000000044,
      "deltaCi95": [
-      -0.03576313550639042,
-      0.12344240905821781
+      -0.06499562176006407,
+      0.102636688297921
      ],
-     "pBetter": 0.868,
+     "pBetter": 0.66,
      "why": "Prior acute care explains most of the ranking on the full target (the 2017 repeat users are easy to find). Finding the first event is the harder, more useful job for prevention."
     },
     "calibrationCurve": {
@@ -4055,8 +4056,8 @@
     "dLogLoss": -0.0670916864161446
    },
    "firstEvent": {
-    "model": 0.6623325892857141,
-    "baseline": 0.616015625
+    "model": 0.6531808035714286,
+    "baseline": 0.6344308035714286
    }
   }
  }

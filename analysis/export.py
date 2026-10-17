@@ -163,16 +163,19 @@ def model_search(y):
                          "the held-out set (199, about 57 events) has an AUROC standard error of about 0.04."}
 
 
-def first_event(Xd, y):
+def first_event(Xd, y):  # y in dev order
     """Alternative target: among survivors with no ER visit or hospital stay in 2017, who has a FIRST one in 2018?"""
-    oof = pd.read_csv(os.path.join(OUT, "oof.csv"))
+    # nested-CV OOF (unbiased for the search); rows are in dev order, which the label check below guards
+    oof = pd.read_csv(os.path.join(ROOT, "runs", "autoresearch", "round-nested-oof.csv"))
+    assert (oof.y.values == y).all(), "nested OOF rows out of dev order"
     m = ((Xd.er_visits_17.fillna(0) == 0) & (Xd.hosp_stays_17.fillna(0) == 0)).values
     yy = oof.y.values[m]
-    pf, pb = oof.p_forest.values[m], oof.p_baseline.values[m]
+    pf, pb = oof.procedure.values[m], oof.baseline.values[m]
     from sklearn.metrics import roc_auc_score
     d = lambda i: roc_auc_score(yy[i], pf[i]) - roc_auc_score(yy[i], pb[i]) if 0 < yy[i].sum() < len(i) else None
     ci, pb_ = _boot_ci(d, len(yy))
     return {"definition": "Survivors with no ER visit or hospital stay in 2017; outcome = first acute care in 2018",
+            "estimate": "nested CV of the model search (runs/autoresearch/round-nested-oof.csv), not the post-selection 10x5 CV",
             "n": int(m.sum()), "events": int(yy.sum()), "rate": float(yy.mean()),
             "aurocModel": float(roc_auc_score(yy, pf)), "aurocBaseline": float(roc_auc_score(yy, pb)),
             "deltaAuroc": float(roc_auc_score(yy, pf) - roc_auc_score(yy, pb)), "deltaCi95": ci, "pBetter": pb_,
@@ -320,7 +323,7 @@ def main():
                        "previous": "L2 logistic regression on 34 survey-domain features (the first submission)"},
         "metrics": M["metrics"], "deltaVsBaseline": M["deltaVsBaseline"], "deltaVsPrevious": M["deltaVsPrevious"],
         "modelSearch": model_search(y),
-        "firstEvent": first_event(Xd.loc[dev.index], y),
+        "firstEvent": first_event(Xd.loc[dev.index], y),  # nested-CV estimate
         "calibrationCurve": M["calibrationCurve"],
         "tiers": M["tiers"],
         "fairness": M["fairness"], "fairnessBaseline": M["fairnessBaseline"],

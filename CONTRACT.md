@@ -1,7 +1,7 @@
 # C1 Care Team Risk: API contract
 
 Base URL (deployed): `https://c1-acute-risk.zay-259.workers.dev`. All responses are JSON with `access-control-allow-origin: *`; only `GET` (and `OPTIONS`) are accepted, anything else is `405`.
-The examples below are real responses, captured by `npm run e2e` on 2026-10-17T15:49:00.245Z (31/31 checks passed) and turned into this file by `npm run contract`.
+The examples below are real responses, captured by `npm run e2e` on 2026-10-17T15:53:01.286Z (31/31 checks passed) and turned into this file by `npm run contract`.
 
 Predictions are for the **199 held-out MEPS survivors** (`meps/heldout_ids.csv`): real people, forward predictions, outcome unknown to us.
 `survivorId` = `c1-` + the challenge's MEPS `ID`. `updatedAt` is the as-of date of the data (end of 2017), not the build time.
@@ -461,17 +461,18 @@ Excerpt:
   },
   "firstEvent": {
     "definition": "Survivors with no ER visit or hospital stay in 2017; outcome = first acute care in 2018",
+    "estimate": "nested CV of the model search (runs/autoresearch/round-nested-oof.csv), not the post-selection 10x5 CV",
     "n": 326,
     "events": 70,
     "rate": 0.2147239263803681,
-    "aurocModel": 0.6623325892857141,
-    "aurocBaseline": 0.616015625,
-    "deltaAuroc": 0.04631696428571419,
+    "aurocModel": 0.6531808035714286,
+    "aurocBaseline": 0.6344308035714286,
+    "deltaAuroc": 0.018750000000000044,
     "deltaCi95": [
-      -0.03576313550639042,
-      0.12344240905821781
+      -0.06499562176006407,
+      0.102636688297921
     ],
-    "pBetter": 0.868,
+    "pBetter": 0.66,
     "why": "Prior acute care explains most of the ranking on the full target (the 2017 repeat users are easy to find). Finding the first event is the harder, more useful job for prevention."
   },
   "factors": [

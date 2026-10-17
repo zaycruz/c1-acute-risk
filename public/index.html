@@ -67,8 +67,8 @@ async function card(){const M=await (await fetch('/api/c1/metrics')).json();cons
   In practice: of the top fifth flagged, ${S.top20Events.procedure} of ${S.top20Events.of} events are caught vs ${S.top20Events.baseline} for the baseline;
   when it says 50%+ it is right ${pc(S.callsAt50.procedure.cameTrue)} of the time (${S.callsAt50.procedure.n} calls) vs ${pc(S.callsAt50.baseline.cameTrue)} for the baseline (${S.callsAt50.baseline.n} calls). ${esc(S.powerNote)}</span></div>
  <h3>The harder question: who has a <i>first</i> acute event?</h3><div class="verdict"><span class="small">Prior acute care is the strongest signal, so much of any model's ranking is finding last year's repeat users.
-  Among the ${FE.n} survivors with no ER visit or hospital stay in 2017 (${FE.events} had a first one in 2018), our model ranks at AUROC ${f3(FE.aurocModel)} vs baseline ${f3(FE.aurocBaseline)}
-  (Δ ${sg(FE.deltaAuroc)} [${sg(FE.deltaCi95[0])}, ${sg(FE.deltaCi95[1])}]). We propose this as the target for prevention work.</span></div>
+  Among the ${FE.n} survivors with no ER visit or hospital stay in 2017 (${FE.events} had a first one in 2018), the nested-CV search ranks at AUROC ${f3(FE.aurocModel)} vs baseline ${f3(FE.aurocBaseline)}
+  (Δ ${sg(FE.deltaAuroc)} [${sg(FE.deltaCi95[0])}, ${sg(FE.deltaCi95[1])}]): no model finds first events much better than the baseline yet. We propose this as the target for the next round of prevention work.</span></div>
  <h3>Do the clinical records (Synthea) add anything?</h3><div class="verdict"><b>${esc(cr.verdict)}</b><br><span class="small">${esc(cr.detail)}</span></div>
  <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));margin-top:8px">
   <div><h3>Calibration</h3>${calSvg(M.calibrationCurve,F)}</div>
