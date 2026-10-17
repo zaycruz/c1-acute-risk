@@ -51,7 +51,17 @@ def featuresets(s17):
     raw = pd.DataFrame({c: s17[c].where(s17[c] >= 0) for c in RAW_ITEMS}, index=s17.index)
     for c in ("IPNGTD17", "OPTOTV17", "HHTOTD17", "TOTSLF17", "DDNWRK17", "TOTEXP17"):
         raw[c] = np.log1p(raw[c])
-    return {"baseline": baseline_features(s17), "domain": D, "domain_raw": D.join(raw), "compact": D[COMPACT],
+    # self-supervised: factor analysis of all survey items, fitted on all 717 survivors (2017 answers only, no outcomes)
+    from sklearn.decomposition import FactorAnalysis
+    items = raw[[c for c in RAW_ITEMS if c.startswith(("AD", "CEF"))]].join(D[["pain", "fatigue", "fear_recurrence", "financial_toxicity", "cost_delay", "distress_k6", "depression_phq2"]])
+    Zi = StandardScaler().fit_transform(SimpleImputer(strategy="median").fit_transform(items))
+    fa = FactorAnalysis(n_components=5, rotation="varimax", random_state=0).fit(Zi)
+    FA = pd.DataFrame(fa.transform(Zi), index=s17.index, columns=[f"fa{i}" for i in range(5)])
+    SHARED_ = ["age", "female", "hispanic", "nh_black", "nh_asian_other", "public_only", "uninsured", "low_income",
+               "er_visits_17", "hosp_stays_17", "office_visits_17", "current_treatment", "pain", "ca_breast", "ca_colon", "ca_lung", "ca_prostate"]
+    return {"baseline": baseline_features(s17), "domain": D,
+            "prior_fa": D[PRIOR_USE].join(FA), "compact_fa": D[COMPACT].join(FA),
+            "shared_compact": D[list(dict.fromkeys(SHARED_ + COMPACT))], "domain_raw": D.join(raw), "compact": D[COMPACT],
             "prior_use": D[PRIOR_USE],
             # round 2 (chosen after round 1: small sets won)
             "compact_sym": D[COMPACT + ["pain", "fatigue", "activity_limited"]],
@@ -81,6 +91,7 @@ class Count:
         self.reg = reg
 
     def fit(self, X, y, c):
+        c = c[:, 0] if c.ndim == 2 else c
         base = make_pipeline(SimpleImputer(strategy="median", add_indicator=True), StandardScaler(), self.reg)
         oof = np.zeros(len(y))
         for tr, te in StratifiedKFold(5, shuffle=True, random_state=3).split(X, y):
@@ -115,6 +126,116 @@ class AvgCols(Avg):
 
     def predict(self, X):
         return np.mean([m.predict(X if cols is None else X[cols]) for m, cols in self.parts], axis=0)
+
+
+class AuxTarget:
+    """Train on a richer 2018 target (count, nights or log cost: targets only, never predictors), then map the
+    score to P(acute care) with a logistic fitted on out-of-fold scores inside the training data."""
+    def __init__(self, kind, reg_factory):
+        self.kind, self.reg_factory = kind, reg_factory
+
+    def fit(self, X, y, c):
+        t = c[:, {"count": 0, "nights": 1, "logcost": 2}[self.kind]]
+        base = lambda: make_pipeline(SimpleImputer(strategy="median", add_indicator=True), StandardScaler(), self.reg_factory())
+        oof = np.zeros(len(y))
+        for tr, te in StratifiedKFold(5, shuffle=True, random_state=3).split(X, y):
+            oof[te] = base().fit(X.iloc[tr], t[tr]).predict(X.iloc[te])
+        self.cal = LogisticRegression(C=1e4).fit(oof.reshape(-1, 1), y)
+        self.m = base().fit(X, t)
+        return self
+
+    def predict(self, X):
+        return self.cal.predict_proba(self.m.predict(X).reshape(-1, 1))[:, 1]
+
+
+class SyntheaPrior:
+    """Logistic regression whose coefficients are shrunk toward a Synthea model (fitted on 4,033 synthetic person-years
+    on the shared variables) instead of toward zero. Prior strength lam chosen by inner 5-fold CV on log loss.
+    lam -> infinity = the Synthea model with a MEPS intercept; lam -> 0 = MEPS-only, unpenalised."""
+    LAMS = [0.3, 1, 3, 10, 30, 100, 300]
+
+    def __init__(self, shared):
+        self.shared = shared
+
+    @staticmethod
+    def _fit(Z, y, b0, lam):
+        from scipy.optimize import minimize
+        n, k = Z.shape
+
+        def f(w):
+            a, b = w[0], w[1:]
+            z = a + Z @ b
+            ll = np.sum(np.logaddexp(0, z) - y * z) / n
+            g = Z.T @ (1 / (1 + np.exp(-z)) - y) / n
+            return ll + lam / n * np.sum((b - b0) ** 2), np.r_[np.sum(1 / (1 + np.exp(-z)) - y) / n, g + 2 * lam / n * (b - b0)]
+        w = minimize(f, np.r_[0.0, b0], jac=True, method="L-BFGS-B").x
+        return w
+
+    def fit(self, X, y, c):
+        global SYN_B
+        self.imp = SimpleImputer(strategy="median").fit(X)
+        Xi = pd.DataFrame(self.imp.transform(X), columns=X.columns)
+        self.mu, self.sd = Xi.mean(), Xi.std().replace(0, 1)
+        Z = ((Xi - self.mu) / self.sd).values
+        b0 = np.array([SYN_B.get(col, 0.0) * self.sd[col] for col in X.columns])  # raw-scale Synthea coef -> MEPS-standardised scale
+        best = None
+        for lam in self.LAMS:
+            p = np.zeros(len(y))
+            for tr, te in StratifiedKFold(5, shuffle=True, random_state=1).split(Z, y):
+                w = self._fit(Z[tr], y[tr], b0, lam)
+                p[te] = 1 / (1 + np.exp(-(w[0] + Z[te] @ w[1:])))
+            ll = log_loss(y, np.clip(p, 1e-6, 1 - 1e-6))
+            if best is None or ll < best[0]:
+                best = (ll, lam)
+        self.lam = best[1]
+        self.w = self._fit(Z, y, b0, self.lam)
+        return self
+
+    def predict(self, X):
+        Xi = pd.DataFrame(self.imp.transform(X), columns=X.columns)
+        Z = ((Xi - self.mu) / self.sd).values
+        return 1 / (1 + np.exp(-(self.w[0] + Z @ self.w[1:])))
+
+
+class Bag:
+    def __init__(self, factory, n=25):
+        self.factory, self.n = factory, n
+
+    def fit(self, X, y, c):
+        rg = np.random.default_rng(0)
+        self.ms = []
+        for _ in range(self.n):
+            i = rg.integers(0, len(y), len(y))
+            self.ms.append(self.factory().fit(X.iloc[i], y[i], c[i]))
+        return self
+
+    def predict(self, X):
+        return np.mean([m.predict(X) for m in self.ms], axis=0)
+
+
+class Stack:
+    """Level-2 logistic on out-of-fold logits of several (model, columns) parts, fitted inside the training data."""
+    def __init__(self, *parts):
+        self.parts = parts
+
+    def fit(self, X, y, c):
+        L = np.zeros((len(y), len(self.parts)))
+        for tr, te in StratifiedKFold(5, shuffle=True, random_state=5).split(X, y):
+            for j, (f, cols) in enumerate(self.parts):
+                Xc = X if cols is None else X[cols]
+                L[te, j] = _lg(f().fit(Xc.iloc[tr], y[tr], c[tr]).predict(Xc.iloc[te]))
+        self.meta = LogisticRegression(C=1.0).fit(L, y)
+        self.ms = [(f().fit(X if cols is None else X[cols], y, c), cols) for f, cols in self.parts]
+        return self
+
+    def predict(self, X):
+        L = np.column_stack([_lg(m.predict(X if cols is None else X[cols])) for m, cols in self.ms])
+        return self.meta.predict_proba(L)[:, 1]
+
+
+def _lg(p):
+    p = np.clip(p, 1e-4, 1 - 1e-4)
+    return np.log(p / (1 - p))
 
 
 def inner():
@@ -202,6 +323,37 @@ ROUND1 = {
 }
 
 # Round 2: chosen after reading round 1 (log.md). Small feature sets won; refine around them.
+MONO = [1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1]  # COMPACT order: more use / older / worse scores -> higher risk
+
+
+def mono_gbm():
+    return Clf(CalibratedClassifierCV(HistGradientBoostingClassifier(max_depth=2, learning_rate=0.03, max_iter=300, min_samples_leaf=30,
+                                                                     l2_regularization=1.0, monotonic_cst=MONO, random_state=0),
+                                      method="sigmoid", cv=5), impute=False, scale=False)
+
+
+def ridge():
+    from sklearn.linear_model import RidgeCV
+    return RidgeCV(alphas=np.logspace(-1, 3, 9))
+
+
+# Round 3: "outside the box" (after round 2 plateaued at AUROC ~0.70-0.71)
+ROUND3 = {
+    "synthea_prior|shared_compact": ("shared_compact", lambda: SyntheaPrior(None)),
+    "synthea_prior|prior_use": ("prior_use", lambda: SyntheaPrior(None)),
+    "aux_logcost|compact": ("compact", lambda: AuxTarget("logcost", ridge)),
+    "aux_logcost|compact_raw_use": ("compact_raw_use", lambda: AuxTarget("logcost", ridge)),
+    "aux_nights|compact": ("compact", lambda: AuxTarget("nights", lambda: HistGradientBoostingRegressor(loss="poisson", max_depth=2, learning_rate=0.03, max_iter=200, min_samples_leaf=30, random_state=0))),
+    "lr_l2|prior_fa": ("prior_fa", lr_l2),
+    "lr_l2|compact_fa": ("compact_fa", lr_l2),
+    "rf|compact_fa": ("compact_fa", rf),
+    "mono_gbm|compact": ("compact", mono_gbm),
+    "bag(spline_lr)|prior_use": ("prior_use", lambda: Bag(spline_lr, 15)),
+    "stack(rf,spline,synprior,aux_cost)": ("compact_raw_use", lambda: Stack((rf, None), (spline_lr, PRIOR_USE),
+                                                                              (lambda: SyntheaPrior(None), PRIOR_USE),
+                                                                              (lambda: AuxTarget("logcost", ridge), COMPACT))),
+}
+
 ROUND2 = {
     "lr_l2|compact_sym": ("compact_sym", lr_l2),
     "lr_l2|compact_ctx": ("compact_ctx", lr_l2),
@@ -221,11 +373,18 @@ ROUND2 = {
 
 def load(meps):
     s17 = pd.read_csv(os.path.join(meps, "meps2017_survivors.csv")).set_index("ID")
-    dev = pd.read_csv(os.path.join(meps, "meps2018_followup_dev.csv"))[["ID", "outcome_acute_care_2018", "ERTOT18", "IPDIS18"]].set_index("ID")
+    dev = pd.read_csv(os.path.join(meps, "meps2018_followup_dev.csv"))[["ID", "outcome_acute_care_2018", "ERTOT18", "IPDIS18", "IPNGTD18", "TOTEXP18"]].set_index("ID")
     # outcome-year columns are TARGETS only (count target for the Poisson candidates), never predictors
     y = dev.outcome_acute_care_2018.values.astype(int)
     c = (dev.ERTOT18.clip(lower=0) + dev.IPDIS18.clip(lower=0)).values.astype(float)
-    assert ((c > 0) == (y == 1)).mean() > 0.97, "count target does not match the outcome"
+    c = np.column_stack([c, dev.IPNGTD18.clip(lower=0).values, np.log1p(dev.TOTEXP18.clip(lower=0).values)])
+    global SYN_B
+    P = pd.read_csv(os.path.join(ROOT, "analysis", "out", "synthea_panel.csv"))
+    sh = ["age", "female", "hispanic", "nh_black", "nh_asian_other", "public_only", "uninsured", "low_income",
+          "er_visits_17", "hosp_stays_17", "office_visits_17", "current_treatment", "pain", "ca_breast", "ca_colon", "ca_lung", "ca_prostate"]
+    sm = make_pipeline(SimpleImputer(strategy="median"), LogisticRegression(C=1.0, max_iter=5000)).fit(P[sh], P.y)
+    SYN_B = dict(zip(sh, sm.steps[1][1].coef_[0]))
+    assert ((c[:, 0] > 0) == (y == 1)).mean() > 0.97, "count target does not match the outcome"
     F = {k: v.loc[dev.index] for k, v in featuresets(s17).items()}
     return F, y, c
 
@@ -348,12 +507,14 @@ def main():
         run_round(1, ROUND1, F, y, c)
     elif rnd == "2":
         run_round(2, {**{k: ROUND1[k] for k in ("baseline|baseline", "lr_l2|domain")}, **ROUND2}, F, y, c)
+    elif rnd == "3":
+        run_round(3, {**{k: ROUND1[k] for k in ("baseline|baseline", "lr_l2|domain")}, "rf|compact_raw_use": ROUND2["rf|compact_raw_use"], **ROUND3}, F, y, c)
     elif rnd == "nested":
-        pool = {**ROUND1, **ROUND2}
+        pool = {**ROUND1, **ROUND2, **ROUND3}
         nested(pool, F, y, c)
     elif rnd == "nested-interpretable":
         # Pre-stated restriction: only models whose per-survivor drivers can be read off directly (linear / spline GLMs).
-        pool = {k: v for k, v in {**ROUND1, **ROUND2}.items() if k.split("|")[0] in ("baseline", "lr_l2", "lr_l2_wide", "lr_l1", "lr_enet", "spline_lr", "poisson_glm")}
+        pool = {k: v for k, v in {**ROUND1, **ROUND2, **ROUND3}.items() if k.split("|")[0] in ("baseline", "lr_l2", "lr_l2_wide", "lr_l1", "lr_enet", "spline_lr", "poisson_glm", "synthea_prior", "aux_logcost", "bag(spline_lr)")}
         nested(pool, F, y, c, tag="nested-interpretable")
 
 

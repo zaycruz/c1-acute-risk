@@ -63,3 +63,38 @@
 - Procedure vs baseline: dAUROC +0.020 [-0.030, +0.070] P(better) 0.77; d log loss -0.0523 [-0.0975, -0.0052] P(better) 0.99
 - Procedure vs submitted model: dAUROC +0.015 [-0.015, +0.044] P(better) 0.82; d log loss -0.0120 [-0.0280, +0.0060] P(better) 0.91
 - Submitted model vs baseline: dAUROC +0.005 [-0.039, +0.048] P(better) 0.57; d log loss -0.0403 [-0.0819, +0.0001] P(better) 0.97
+
+## Round 3 (14 candidates, 5x5-fold CV, 141 s)
+
+| candidate | AUROC | log loss | Brier | dAUROC vs baseline [95% CI] | P(better) | dLogLoss [95% CI] |
+|---|---|---|---|---|---|---|
+| rf|compact_raw_use | 0.711 | 0.5400 | 0.1799 | +0.054 [-0.003, +0.104] | 0.97 | -0.0719 [-0.1133, -0.0295] |
+| stack(rf,spline,synprior,aux_cost) | 0.706 | 0.5436 | 0.1817 | +0.050 [-0.001, +0.100] | 0.97 | -0.0683 [-0.1098, -0.0300] |
+| bag(spline_lr)|prior_use | 0.701 | 0.5446 | 0.1825 | +0.045 [-0.006, +0.095] | 0.96 | -0.0674 [-0.1093, -0.0298] |
+| synthea_prior|prior_use | 0.692 | 0.5511 | 0.1849 | +0.036 [-0.013, +0.087] | 0.93 | -0.0609 [-0.1023, -0.0237] |
+| mono_gbm|compact | 0.685 | 0.5512 | 0.1853 | +0.029 [-0.020, +0.074] | 0.89 | -0.0607 [-0.1003, -0.0212] |
+| lr_l2|prior_fa | 0.700 | 0.5539 | 0.1862 | +0.044 [-0.003, +0.089] | 0.96 | -0.0580 [-0.0934, -0.0220] |
+| lr_l2|compact_fa | 0.696 | 0.5569 | 0.1873 | +0.040 [-0.005, +0.087] | 0.95 | -0.0551 [-0.0935, -0.0199] |
+| aux_logcost|compact_raw_use | 0.681 | 0.5583 | 0.1889 | +0.024 [-0.035, +0.082] | 0.79 | -0.0537 [-0.0989, -0.0087] |
+| aux_logcost|compact | 0.676 | 0.5589 | 0.1892 | +0.020 [-0.037, +0.076] | 0.74 | -0.0530 [-0.0968, -0.0121] |
+| synthea_prior|shared_compact | 0.688 | 0.5609 | 0.1890 | +0.032 [-0.012, +0.077] | 0.92 | -0.0511 [-0.0883, -0.0158] |
+| rf|compact_fa | 0.665 | 0.5638 | 0.1898 | +0.009 [-0.040, +0.057] | 0.64 | -0.0481 [-0.0890, -0.0086] |
+| aux_nights|compact | 0.661 | 0.5696 | 0.1916 | +0.005 [-0.047, +0.056] | 0.56 | -0.0424 [-0.0843, -0.0008] |
+| lr_l2|domain | 0.666 | 0.5702 | 0.1925 | +0.010 [-0.035, +0.051] | 0.69 | -0.0418 [-0.0794, -0.0047] |
+| baseline|baseline | 0.656 | 0.6120 | 0.2028 | ref | | |
+
+## Stratified check (nested OOF): does the model rank better *within* prior-use groups?
+
+Survivors with no ER visit or hospital stay in 2017 (n=326, 70 events) vs those with one (n=140, 64 events). Paired, stratified bootstrap.
+
+| procedure | no prior acute care: d AUROC | prior acute care: d AUROC | mean within-group: d AUROC |
+|---|---|---|---|
+| search procedure (mostly RF) | +0.019 [-0.065, +0.103] | +0.094 [-0.002, +0.206] | +0.056 [-0.008, +0.126] |
+| interpretable procedure | -0.003 [-0.080, +0.079] | +0.058 [-0.036, +0.149] | +0.028 [-0.032, +0.087] |
+| submitted lr_l2/domain | -0.011 | +0.019 | +0.004 |
+
+## Conclusion after 3 rounds (48 candidates)
+
+- Ceiling: about AUROC 0.70-0.71 out-of-sample. Six prior-use features alone reach 0.697; survey PROs, factor scores, richer 2018 targets, a Synthea prior, monotone boosting, bagging and stacking do not move it.
+- Ranking gain over the baseline is never significant (the needed gain is about +0.056 at n=466). Probability quality (log loss) is significantly better for every reasonable candidate, and for the nested search procedure.
+- The baseline mostly separates "had acute care in 2017" from "did not". Within the prior-use group the search procedure ranks better (+0.094, P(better) 0.97), but the CI just touches 0.

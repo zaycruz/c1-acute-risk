@@ -1,0 +1,288 @@
+{
+ "round": 3,
+ "seconds": 141,
+ "nCandidates": 14,
+ "nRepeats": 5,
+ "results": [
+  {
+   "candidate": "rf|compact_raw_use",
+   "auroc": 0.7105286818917461,
+   "aurocRepeatSd": 0.007855559369033758,
+   "logLoss": 0.5400455511130916,
+   "brier": 0.1798857300489721,
+   "vsBaseline": {
+    "dAuroc": 0.054441647185757946,
+    "dAurocCi95": [
+     -0.0031790036708844696,
+     0.10404169581246842
+    ],
+    "pAurocBetter": 0.97,
+    "dLogLoss": -0.07193812142568423,
+    "dLogLossCi95": [
+     -0.1132749180789253,
+     -0.029531076973322634
+    ],
+    "pLogLossBetter": 1.0
+   }
+  },
+  {
+   "candidate": "stack(rf,spline,synprior,aux_cost)",
+   "auroc": 0.7060106096025894,
+   "aurocRepeatSd": 0.009777629298342345,
+   "logLoss": 0.5436458931097354,
+   "brier": 0.18173262778241817,
+   "vsBaseline": {
+    "dAuroc": 0.049923574896601264,
+    "dAurocCi95": [
+     -0.000520147352539246,
+     0.1000805556662315
+    ],
+    "pAurocBetter": 0.9725,
+    "dLogLoss": -0.0683377794290404,
+    "dLogLossCi95": [
+     -0.10982643969265153,
+     -0.030037121109209416
+    ],
+    "pLogLossBetter": 0.9995
+   }
+  },
+  {
+   "candidate": "bag(spline_lr)|prior_use",
+   "auroc": 0.7007058083078583,
+   "aurocRepeatSd": 0.008115766816967804,
+   "logLoss": 0.5445707234620987,
+   "brier": 0.18253991975674,
+   "vsBaseline": {
+    "dAuroc": 0.044618773601870165,
+    "dAurocCi95": [
+     -0.005606428720426665,
+     0.09481684385726301
+    ],
+    "pAurocBetter": 0.9575,
+    "dLogLoss": -0.06741294907667716,
+    "dLogLossCi95": [
+     -0.10931142039681878,
+     -0.02976935217145368
+    ],
+    "pLogLossBetter": 1.0
+   }
+  },
+  {
+   "candidate": "synthea_prior|prior_use",
+   "auroc": 0.6920293112749506,
+   "aurocRepeatSd": 0.006054165308288208,
+   "logLoss": 0.5510548810701189,
+   "brier": 0.18493532803193563,
+   "vsBaseline": {
+    "dAuroc": 0.03594227656896243,
+    "dAurocCi95": [
+     -0.013413891671289058,
+     0.08735304351221143
+    ],
+    "pAurocBetter": 0.9265,
+    "dLogLoss": -0.06092879146865693,
+    "dLogLossCi95": [
+     -0.10234556098929035,
+     -0.02367115211312357
+    ],
+    "pLogLossBetter": 0.999
+   }
+  },
+  {
+   "candidate": "mono_gbm|compact",
+   "auroc": 0.6846565365941377,
+   "aurocRepeatSd": 0.006973130533275027,
+   "logLoss": 0.5512396216923886,
+   "brier": 0.18531197796784896,
+   "vsBaseline": {
+    "dAuroc": 0.02856950188814955,
+    "dAurocCi95": [
+     -0.019952011598922816,
+     0.07415661309975695
+    ],
+    "pAurocBetter": 0.8885,
+    "dLogLoss": -0.06074405084638723,
+    "dLogLossCi95": [
+     -0.10027155573746352,
+     -0.02119711882601837
+    ],
+    "pLogLossBetter": 0.9995
+   }
+  },
+  {
+   "candidate": "lr_l2|prior_fa",
+   "auroc": 0.6999865132170473,
+   "aurocRepeatSd": 0.0044139181855006706,
+   "logLoss": 0.5539349585609453,
+   "brier": 0.18620808694166507,
+   "vsBaseline": {
+    "dAuroc": 0.04389947851105913,
+    "dAurocCi95": [
+     -0.002859034815231847,
+     0.08943414076078582
+    ],
+    "pAurocBetter": 0.965,
+    "dLogLoss": -0.05804871397783051,
+    "dLogLossCi95": [
+     -0.09344693592893835,
+     -0.02200191550160726
+    ],
+    "pLogLossBetter": 0.9995
+   }
+  },
+  {
+   "candidate": "lr_l2|compact_fa",
+   "auroc": 0.6956482647005934,
+   "aurocRepeatSd": 0.008271033472874539,
+   "logLoss": 0.5568660369330384,
+   "brier": 0.18733147259094737,
+   "vsBaseline": {
+    "dAuroc": 0.03956122999460521,
+    "dAurocCi95": [
+     -0.004801108211824892,
+     0.08664859758445455
+    ],
+    "pAurocBetter": 0.9545,
+    "dLogLoss": -0.05511763560573746,
+    "dLogLossCi95": [
+     -0.09351236485171775,
+     -0.019908462980548155
+    ],
+    "pLogLossBetter": 0.999
+   }
+  },
+  {
+   "candidate": "aux_logcost|compact_raw_use",
+   "auroc": 0.6805655457651503,
+   "aurocRepeatSd": 0.004421219881865825,
+   "logLoss": 0.5582904718097625,
+   "brier": 0.1888912349405935,
+   "vsBaseline": {
+    "dAuroc": 0.0244785110591621,
+    "dAurocCi95": [
+     -0.034516883466362024,
+     0.08192258538394595
+    ],
+    "pAurocBetter": 0.7915,
+    "dLogLoss": -0.05369320072901329,
+    "dLogLossCi95": [
+     -0.09886539704805919,
+     -0.008673537908656123
+    ],
+    "pLogLossBetter": 0.993
+   }
+  },
+  {
+   "candidate": "aux_logcost|compact",
+   "auroc": 0.6756203920158246,
+   "aurocRepeatSd": 0.004271122183909828,
+   "logLoss": 0.5589423267770146,
+   "brier": 0.18920966780667237,
+   "vsBaseline": {
+    "dAuroc": 0.019533357309836408,
+    "dAurocCi95": [
+     -0.03706777038480806,
+     0.07569696923942569
+    ],
+    "pAurocBetter": 0.744,
+    "dLogLoss": -0.05304134576176123,
+    "dLogLossCi95": [
+     -0.09675319118590531,
+     -0.012118063410478346
+    ],
+    "pLogLossBetter": 0.996
+   }
+  },
+  {
+   "candidate": "synthea_prior|shared_compact",
+   "auroc": 0.6880282323323144,
+   "aurocRepeatSd": 0.0029693868400432633,
+   "logLoss": 0.5608665928950991,
+   "brier": 0.1889589976906691,
+   "vsBaseline": {
+    "dAuroc": 0.03194119762632619,
+    "dAurocCi95": [
+     -0.012059102214733105,
+     0.07744732231515254
+    ],
+    "pAurocBetter": 0.9235,
+    "dLogLoss": -0.05111707964367673,
+    "dLogLossCi95": [
+     -0.08828142048079991,
+     -0.015787329486016497
+    ],
+    "pLogLossBetter": 0.998
+   }
+  },
+  {
+   "candidate": "rf|compact_fa",
+   "auroc": 0.6649208775400107,
+   "aurocRepeatSd": 0.0029222193008285255,
+   "logLoss": 0.5638346695855087,
+   "brier": 0.1897945145637687,
+   "vsBaseline": {
+    "dAuroc": 0.008833842834022554,
+    "dAurocCi95": [
+     -0.040062962189944075,
+     0.05684622250201203
+    ],
+    "pAurocBetter": 0.64,
+    "dLogLoss": -0.048149002953267184,
+    "dLogLossCi95": [
+     -0.0890174651894393,
+     -0.008649596638601669
+    ],
+    "pLogLossBetter": 0.9925
+   }
+  },
+  {
+   "candidate": "aux_nights|compact",
+   "auroc": 0.6612794461427801,
+   "aurocRepeatSd": 0.013097386898770751,
+   "logLoss": 0.5695536479222894,
+   "brier": 0.19159975740739177,
+   "vsBaseline": {
+    "dAuroc": 0.005192411436791944,
+    "dAurocCi95": [
+     -0.047043057592994944,
+     0.05575546855626936
+    ],
+    "pAurocBetter": 0.563,
+    "dLogLoss": -0.042430024616486484,
+    "dLogLossCi95": [
+     -0.08428545236074983,
+     -0.0007970851529315875
+    ],
+    "pLogLossBetter": 0.9755
+   }
+  },
+  {
+   "candidate": "lr_l2|domain",
+   "auroc": 0.6661571659773422,
+   "aurocRepeatSd": 0.011435404657892938,
+   "logLoss": 0.5702000759513085,
+   "brier": 0.19246617405905264,
+   "vsBaseline": {
+    "dAuroc": 0.010070131271354033,
+    "dAurocCi95": [
+     -0.035047178725491165,
+     0.051476643544126996
+    ],
+    "pAurocBetter": 0.6855,
+    "dLogLoss": -0.04178359658746733,
+    "dLogLossCi95": [
+     -0.0794385753687223,
+     -0.004679266208455127
+    ],
+    "pLogLossBetter": 0.9885
+   }
+  },
+  {
+   "candidate": "baseline|baseline",
+   "auroc": 0.6560870347059882,
+   "aurocRepeatSd": 0.00754906002005183,
+   "logLoss": 0.6119836725387758,
+   "brier": 0.20275736065631533
+  }
+ ]
+}
