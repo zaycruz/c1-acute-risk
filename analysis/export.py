@@ -196,6 +196,49 @@ def flag_fairness(rows):
                      "ok": f"{g['group']}: works about as well as overall (AUROC {g['auroc']:.2f})"}[g["flag"]]
 
 
+# Standing red-flag rules for the console banner: these need the care team today, whatever the model says.
+CALL_TODAY = ["Fever of 38\u00b0C (100.4\u00b0F) or higher, or chills, especially during or soon after treatment",
+              "Chest pain or new trouble breathing",
+              "A fall, or new confusion",
+              "A swollen, red or painful leg (possible blood clot)",
+              "Feeling hopeless or having thoughts of self-harm"]
+
+
+def red_flags(x, raw, st):
+    """Per-survivor red flags. Survey answers are from 2017, so they say what to ASK about now, not that an emergency is happening."""
+    v = lambda c: raw[c] if raw[c] >= 0 else None
+    found = []
+    hope, down = v("ADHOPE42"), v("ADDPRS42")
+    if (hope is not None and hope >= 3) or (down is not None and down >= 3):
+        found.append({"code": "hopeless", "urgency": "today",
+                      "text": "Reported feeling hopeless most of the time: ask about mood and self-harm today; urgent mental-health referral if yes."})
+    if not np.isnan(x.distress_k6) and x.distress_k6 >= 13:
+        found.append({"code": "serious-distress", "urgency": "today",
+                      "text": f"Serious psychological distress (K6 {x.distress_k6:.0f} of 24): same-day check-in and psycho-oncology referral."})
+    if not np.isnan(x.pain) and x.pain >= 7:
+        found.append({"code": "severe-pain", "urgency": "this-week",
+                      "text": f"Severe pain ({x.pain:.0f} of 10): review the pain plan this week and how to reach the team before the ER."})
+    er, ip = int(max(raw["ERTOT17"], 0)), int(max(raw["IPDIS17"], 0))
+    if er >= 2 or ip >= 2:
+        found.append({"code": "repeat-acute-care", "urgency": "this-week",
+                      "text": f"{er} ER visit(s) and {ip} hospital stay(s) last year: set a same-day call-back route this week."})
+    reasons = []
+    if x.uninsured == 1: reasons.append("uninsured")
+    if x.low_income == 1: reasons.append("income under 200% of poverty")
+    if not np.isnan(x.cost_delay) and x.cost_delay >= 1: reasons.append("delayed care because of cost")
+    if not np.isnan(x.financial_toxicity) and x.financial_toxicity >= 2: reasons.append("financial hardship")
+    social = {"needed": bool(reasons), "reasons": reasons,
+              "text": ("Refer to a social worker or financial navigator (" + ", ".join(reasons) + ").") if reasons else
+                      "No social-needs flags in the survey; still ask about transport, food and housing."}
+    today = [f for f in found if f["urgency"] == "today"]
+    WORDS = {"hopeless": "hopelessness", "serious-distress": "serious distress"}
+    banner = ("Care team today: ask about " + " and ".join(WORDS[f["code"]] for f in today) + " (2017 survey answers)" if today else
+              "Call the care team or go to the ER today for fever, chest pain, a fall, a swollen leg or hopelessness.")
+    return {"careTeamToday": bool(today), "banner": banner, "fromSurvey": found, "callTodayIf": CALL_TODAY,
+            "callTodayText": "If the survivor reports any of these, call the care team or go to the ER today, whatever the risk tier.",
+            "socialNeeds": social, "asOf": "2017 survey answers: they say what to ask about now, not that an emergency is happening"}
+
+
 def add_display(m):
     """Plain-language, ready-to-render text for apps (Coach Console). Every number here comes from the fields above."""
     P = lambda v: f"{round(v * 100)}%"
@@ -233,6 +276,8 @@ def add_display(m):
         "limits": ["Associations, not causes: the factors flag who may need help; changing one is not proven to prevent an ER visit.",
                    "Built from survey answers only. The synthetic clinical records (Synthea) did not improve it and share no patient key with the survey."]
                   + flagged,
+        "redFlagRules": {"callTodayIf": CALL_TODAY, "text": "If a survivor reports any of these, call the care team or go to the ER today, whatever the risk tier.",
+                         "perSurvivor": "redFlags on /api/c1/survivors/:id: careTeamToday, banner, fromSurvey[{code, urgency, text}], socialNeeds{needed, reasons, text}"},
         "perSurvivor": "Each survivor's panel has headline, summary, evidence[] (top drivers in plain words, kind = topic), recommendations[] (audience = care-team | coach | survivor) and caveat (always show it with the risk).",
     }
 
@@ -369,7 +414,7 @@ def main():
             for_ellie = f"Hospital risk {pct}% next year{driver}.{tail}"
         d = {"survivorId": f"c1-{sid}", "displayName": display, "status": st, "headline": headline, "summary": summary,
              "risk": round(p, 4), "thresholds": {"alert": T["alert"], "watch": T["watch"]},
-             "riskWords": risk_words, "forEllie": for_ellie, "fairnessFlags": flags,
+             "riskWords": risk_words, "forEllie": for_ellie, "fairnessFlags": flags, "redFlags": red_flags(x, s17.loc[sid], st),
              "evidence": evidence, "recommendations": recs, "charts": charts, "profile": profile, "caveat": caveat}
         details[f"c1-{sid}"] = d
         roster.append({"survivorId": d["survivorId"], "displayName": display, "status": st, "headline": headline,

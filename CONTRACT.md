@@ -1,7 +1,7 @@
 # C1 Care Team Risk: API contract
 
 Base URL (deployed): `https://c1-acute-risk.zay-259.workers.dev`. All responses are JSON with `access-control-allow-origin: *`; only `GET` (and `OPTIONS`) are accepted, anything else is `405`.
-The examples below are real responses, captured by `npm run e2e` on 2026-10-17T16:11:49.490Z (34/34 checks passed) and turned into this file by `npm run contract`.
+The examples below are real responses, captured by `npm run e2e` on 2026-10-17T16:21:55.669Z (34/34 checks passed) and turned into this file by `npm run contract`.
 
 Predictions are for the **199 held-out MEPS survivors** (`meps/heldout_ids.csv`): real people, forward predictions, outcome unknown to us.
 `survivorId` = `c1-` + the challenge's MEPS `ID`. `updatedAt` is the as-of date of the data (end of 2017), not the build time.
@@ -41,7 +41,7 @@ Sorted by `status` (alert, then watch, then ok), then by risk. Status comes from
 
 ## `GET /api/c1/survivors/:id`: survivor panel
 
-Contract fields: `survivorId, status, headline, summary, evidence, recommendations, charts, profile, caveat`. Extra fields: `displayName`, `risk` (0..1, identical to the submitted `predicted_risk`), `thresholds`, `riskWords` (at most 60 characters, for under the risk number), `forEllie` (one line of at most 160 characters that always includes the caveat, for Ellie to use verbatim), `fairnessFlags[]` (`{attribute, group, flag, text}` for each of this survivor's groups whose fairness flag is not `ok`; empty when none).
+Contract fields: `survivorId, status, headline, summary, evidence, recommendations, charts, profile, caveat`. Extra fields: `displayName`, `risk` (0..1, identical to the submitted `predicted_risk`), `thresholds`, `riskWords` (at most 60 characters, for under the risk number), `forEllie` (one line of at most 160 characters that always includes the caveat, for Ellie to use verbatim), `fairnessFlags[]` (`{attribute, group, flag, text}` for each of this survivor's groups whose fairness flag is not `ok`; empty when none). `redFlags`: what should go to the care team today, for the console's banner: `careTeamToday` (true when a 2017 answer needs a same-day ask), `banner` (at most 120 characters), `fromSurvey[{code, urgency: today|this-week, text}]` (codes `hopeless, serious-distress, severe-pain, repeat-acute-care`), `callTodayIf[]` (the 5 standing symptoms: fever, chest pain or breathing, fall or confusion, swollen leg, hopelessness or self-harm), `callTodayText`, `socialNeeds{needed, reasons[], text}` (the referral line) and `asOf`. The same standing rules are in `display.redFlagRules` on the metrics endpoint.
 
 - `evidence[]`: `{kind, text}`. The first item (`kind: "model"`) states the risk and what the tier meant on development data. Then up to 4 factors that raise this person's risk and up to 2 that lower it, biggest first. Extra keys: `feature`, `logitContribution` (TreeSHAP contribution on the calibrated log-odds scale, relative to an average survivor; see analysis/explain.py). `kind` is one of `prior-acute-care, medications, care-intensity, physical-function, symptoms, distress, financial-toxicity, access, treatment, support, demographic`.
 - `recommendations[]`: `{audience: "coach" | "care-team" | "survivor", text}`. Tier action first, then one per actionable driver. The coach does not diagnose; clinical items go to `care-team`.
@@ -63,6 +63,33 @@ Contract fields: `survivorId, status, headline, summary, evidence, recommendatio
   "riskWords": "Higher than most: about 7 in 10 like them had one",
   "forEllie": "Hospital risk 70% next year (high; average 29%), mainly nights in hospital last year. Association, not cause.",
   "fairnessFlags": [],
+  "redFlags": {
+    "careTeamToday": false,
+    "banner": "Call the care team or go to the ER today for fever, chest pain, a fall, a swollen leg or hopelessness.",
+    "fromSurvey": [
+      {
+        "code": "repeat-acute-care",
+        "urgency": "this-week",
+        "text": "3 ER visit(s) and 4 hospital stay(s) last year: set a same-day call-back route this week."
+      }
+    ],
+    "callTodayIf": [
+      "Fever of 38°C (100.4°F) or higher, or chills, especially during or soon after treatment",
+      "Chest pain or new trouble breathing",
+      "A fall, or new confusion",
+      "A swollen, red or painful leg (possible blood clot)",
+      "Feeling hopeless or having thoughts of self-harm"
+    ],
+    "callTodayText": "If the survivor reports any of these, call the care team or go to the ER today, whatever the risk tier.",
+    "socialNeeds": {
+      "needed": true,
+      "reasons": [
+        "income under 200% of poverty"
+      ],
+      "text": "Refer to a social worker or financial navigator (income under 200% of poverty)."
+    },
+    "asOf": "2017 survey answers: they say what to ask about now, not that an emergency is happening"
+  },
   "evidence": [
     {
       "kind": "model",
@@ -516,6 +543,17 @@ Excerpt:
       "Built from survey answers only. The synthetic clinical records (Synthea) did not improve it and share no patient key with the survey.",
       "NH Black: the model ranks risk poorly (AUROC 0.48, n = 47); use clinical judgement"
     ],
+    "redFlagRules": {
+      "callTodayIf": [
+        "Fever of 38°C (100.4°F) or higher, or chills, especially during or soon after treatment",
+        "Chest pain or new trouble breathing",
+        "A fall, or new confusion",
+        "A swollen, red or painful leg (possible blood clot)",
+        "Feeling hopeless or having thoughts of self-harm"
+      ],
+      "text": "If a survivor reports any of these, call the care team or go to the ER today, whatever the risk tier.",
+      "perSurvivor": "redFlags on /api/c1/survivors/:id: careTeamToday, banner, fromSurvey[{code, urgency, text}], socialNeeds{needed, reasons, text}"
+    },
     "perSurvivor": "Each survivor's panel has headline, summary, evidence[] (top drivers in plain words, kind = topic), recommendations[] (audience = care-team | coach | survivor) and caveat (always show it with the risk)."
   },
   "factors": [

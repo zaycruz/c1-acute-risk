@@ -84,9 +84,13 @@ for (const r of list) {
   if (!(typeof b.forEllie === "string" && b.forEllie.length <= LIM.forEllie && /not cause/i.test(b.forEllie))) over.push([r.survivorId, "forEllie"]);
   if (b.headline.length > LIM.headline) over.push([r.survivorId, "headline"]);
   if (b.evidence.some((e) => e.text.length > LIM.evidence)) over.push([r.survivorId, "evidence"]);
+  const rf = b.redFlags;
+  if (!(rf && typeof rf.careTeamToday === "boolean" && typeof rf.banner === "string" && rf.banner.length <= 120 && rf.callTodayIf?.length === 5 &&
+        Array.isArray(rf.fromSurvey) && rf.fromSurvey.every((f) => ["today", "this-week"].includes(f.urgency) && f.text.length <= 120) &&
+        rf.careTeamToday === rf.fromSurvey.some((f) => f.urgency === "today") && typeof rf.socialNeeds?.text === "string" && rf.socialNeeds.text.length <= 160)) over.push([r.survivorId, "redFlags"]);
   if (!Array.isArray(b.fairnessFlags) || b.fairnessFlags.some((f) => !f.flag || f.flag === "ok" || !f.text)) over.push([r.survivorId, "fairnessFlags"]);
 }
-check("console display fields within agreed lengths (riskWords 60, forEllie 160 with caveat, headline 90, evidence 120)", over.length === 0 && Object.keys(panels).length === list.length, { over: over.slice(0, 10) });
+check("console display fields within agreed lengths (riskWords 60, forEllie 160 with caveat, headline 90, evidence 120) and redFlags well formed", over.length === 0 && Object.keys(panels).length === list.length, { over: over.slice(0, 10) });
 check("every survivor panel matches the contract, the submission risk and its tier", ok === list.length, { ok, failures: failures.slice(0, 10) });
 const missing = await get("/api/c1/survivors/c1-nope");
 check("unknown survivor returns 404 JSON", missing.status === 404 && missing.body?.error);

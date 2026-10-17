@@ -1,5 +1,5 @@
 {
- "at": "2026-10-17T16:11:49.490Z",
+ "at": "2026-10-17T16:21:55.669Z",
  "base": "https://c1-acute-risk.zay-259.workers.dev",
  "passed": 34,
  "total": 34,
@@ -81,7 +81,7 @@
    }
   },
   {
-   "name": "console display fields within agreed lengths (riskWords 60, forEllie 160 with caveat, headline 90, evidence 120)",
+   "name": "console display fields within agreed lengths (riskWords 60, forEllie 160 with caveat, headline 90, evidence 120) and redFlags well formed",
    "ok": true,
    "info": {
     "over": []
@@ -331,25 +331,25 @@
  "responses": {
   "/": {
    "status": 200,
-   "ms": 295,
+   "ms": 560,
    "bytes": 13496
   },
   "/api/c1/survivors": {
    "status": 200,
-   "ms": 148,
+   "ms": 161,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c0946c0e11ae0e-MIA",
+    "cf-ray": "a4c0a2debc0290bf-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 16:11:33 GMT",
+    "date": "Sat, 17 Oct 2026 16:21:24 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=fAcIpIwaSBSUPrZZNmKt88TJe1l9BItVst1RJXaBsIB%2B4eLozHyaXvuCqWMtzagDpKS%2F4atiFPsgFnYMhrx5ycBt0B%2FFea9n5LzYCP8ANihDUTtZVqdetpEUA14StJJM0EOYezx44cqblkrUlHghvvnKYoc%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=e7k40R84Gel%2BQ6MxWC6GhWyafnJg3%2F5p05dxcecZU8jmf8oWxYSHtSibkFPR6fE6%2BcZhxUoqeDSzAgkl%2BovV%2FAWia6waC1MPNXG2qeZQ0Np5shz3rkqA4HvMbK3a61duAQzdlq9DpDnnD0R8QRCgaw6k5Ag%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -1751,20 +1751,20 @@
   },
   "/api/c1/survivors/c1-S71188550": {
    "status": 200,
-   "ms": 44,
+   "ms": 227,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c0946c8858ae0e-MIA",
+    "cf-ray": "a4c0a2dfcef290bf-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 16:11:33 GMT",
+    "date": "Sat, 17 Oct 2026 16:21:25 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=inxfQXUKRiO6l4ZQSAy5q9lR%2BcIpY5KXdE%2Fmv3sIDpCBgHKPFiOrr%2FlBqASjg3y9JmxTpwv7j%2FKmRIj5TlW8nRhwEVgb%2Bz%2FJ8mYV1z7fcMapm6Ro8oMA3LCkOMBEU%2BFrrFANw%2BFEMCbXV1i0GyReiJH2L%2BA%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=S2We12cIVJEaHfXkUvKMdlfKo9wLU33JpFsZHEIA6lg3n3xWMWcV2pVJxRx67ctzryYmlqFfleU5Pmt4w1Ywq7PtgES6%2B4ayjU7pHfNvZqzZR4bTPYh6k1dOhn2nHZtgT3HRH6XDBTBkyCu0DrP1qXho6HE%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -1782,6 +1782,33 @@
     "riskWords": "Higher than most: about 7 in 10 like them had one",
     "forEllie": "Hospital risk 70% next year (high; average 29%), mainly nights in hospital last year. Association, not cause.",
     "fairnessFlags": [],
+    "redFlags": {
+     "careTeamToday": false,
+     "banner": "Call the care team or go to the ER today for fever, chest pain, a fall, a swollen leg or hopelessness.",
+     "fromSurvey": [
+      {
+       "code": "repeat-acute-care",
+       "urgency": "this-week",
+       "text": "3 ER visit(s) and 4 hospital stay(s) last year: set a same-day call-back route this week."
+      }
+     ],
+     "callTodayIf": [
+      "Fever of 38°C (100.4°F) or higher, or chills, especially during or soon after treatment",
+      "Chest pain or new trouble breathing",
+      "A fall, or new confusion",
+      "A swollen, red or painful leg (possible blood clot)",
+      "Feeling hopeless or having thoughts of self-harm"
+     ],
+     "callTodayText": "If the survivor reports any of these, call the care team or go to the ER today, whatever the risk tier.",
+     "socialNeeds": {
+      "needed": true,
+      "reasons": [
+       "income under 200% of poverty"
+      ],
+      "text": "Refer to a social worker or financial navigator (income under 200% of poverty)."
+     },
+     "asOf": "2017 survey answers: they say what to ask about now, not that an emergency is happening"
+    },
     "evidence": [
      {
       "kind": "model",
@@ -1893,20 +1920,20 @@
   },
   "/api/c1/survivors/c1-nope": {
    "status": 404,
-   "ms": 43,
+   "ms": 80,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c094d01aa6ae0e-MIA",
+    "cf-ray": "a4c0a39c9a0c90bf-MIA",
     "connection": "keep-alive",
     "content-length": "30",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 16:11:49 GMT",
+    "date": "Sat, 17 Oct 2026 16:21:55 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=C8lVlFKQQ7EqDhhaLywzVqr%2FjdPcAlNtKPR02VJXdkxdMbUUXdzsWflUCaCXuw%2BI6Az3xBgdz%2Bndg4rZZsD0oGlSlaz9I7kOGuEOwQJQI7XVWMRNd0mI0jd%2FgK9nRtlqni9kwauXMcsqLp%2Fr5ritQF7DlIs%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=wAeW%2BimQN1fmu3ksrk%2B952L8agBV%2BvOgOOAiz2b5OvnG%2Fv2i0tFzrIAyx1S1sxsoyWI01aOJp48E%2F5oeedifJp2JdXYBUN0mEqldcsyJ7ZoS5yRAdzGoCrvl4o%2FhU5OK4%2B%2FaNY%2FEON84pB4NqtPb3XMDeVw%3D\"}]}",
     "server": "cloudflare"
    },
    "body": {
@@ -1915,20 +1942,20 @@
   },
   "/api/c1/metrics": {
    "status": 200,
-   "ms": 99,
+   "ms": 151,
    "headers": {
     "access-control-allow-headers": "content-type",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-origin": "*",
     "alt-svc": "h3=\":443\"; ma=86400",
     "cache-control": "public, max-age=60",
-    "cf-ray": "a4c094d1c883ae0e-MIA",
+    "cf-ray": "a4c0a39e0dd990bf-MIA",
     "connection": "keep-alive",
     "content-encoding": "br",
     "content-type": "application/json; charset=utf-8",
-    "date": "Sat, 17 Oct 2026 16:11:49 GMT",
+    "date": "Sat, 17 Oct 2026 16:21:55 GMT",
     "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
-    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=1yH0OnKpO3LovnOgGjy7j1nX8SoIWUu1jrftVkMlIJRgJpr1WGN%2FJDM32Flkv%2BdSByM3hGhMlYLt87J0%2FS6KiRmq60Jcp5jQvYPXylYOPnOnwELakejuBvrolwgBd9AADbfzB6zlgS6r49Eusg8SRzKiFl8%3D\"}]}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=%2BaEh%2BkEGBzhosMHqrwidtd1qndTDGMkbhFhtT79%2FDlFFzKVGxCCe86t1UPm8qZYtEwavS4erqSI1kSwsV5Ug0S%2B%2BWWmmkTIoQkNK7SmjUUA2vnRZsv7N6Q55F9ZfNcICGSxe7zNsAxL%2F2GP46s83BZ6DBVU%3D\"}]}",
     "server": "cloudflare",
     "transfer-encoding": "chunked"
    },
@@ -4188,6 +4215,17 @@
       "Built from survey answers only. The synthetic clinical records (Synthea) did not improve it and share no patient key with the survey.",
       "NH Black: the model ranks risk poorly (AUROC 0.48, n = 47); use clinical judgement"
      ],
+     "redFlagRules": {
+      "callTodayIf": [
+       "Fever of 38°C (100.4°F) or higher, or chills, especially during or soon after treatment",
+       "Chest pain or new trouble breathing",
+       "A fall, or new confusion",
+       "A swollen, red or painful leg (possible blood clot)",
+       "Feeling hopeless or having thoughts of self-harm"
+      ],
+      "text": "If a survivor reports any of these, call the care team or go to the ER today, whatever the risk tier.",
+      "perSurvivor": "redFlags on /api/c1/survivors/:id: careTeamToday, banner, fromSurvey[{code, urgency, text}], socialNeeds{needed, reasons, text}"
+     },
      "perSurvivor": "Each survivor's panel has headline, summary, evidence[] (top drivers in plain words, kind = topic), recommendations[] (audience = care-team | coach | survivor) and caveat (always show it with the risk)."
     }
    }
